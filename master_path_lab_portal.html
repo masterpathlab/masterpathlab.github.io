@@ -1726,7 +1726,7 @@
                     },
                     body: JSON.stringify(bodyData)
                 });
-                console.log('☁️ Multi-device cloud database updated!');
+                console.log('☁️ Cloud database updated!');
             } catch(err) {
                 console.warn('Cloud sync push notice:', err);
             } finally {
@@ -1751,7 +1751,7 @@
                         }
                     }
                 } catch(err) {
-                    console.warn('Gist fetch error, trying static fallback:', err);
+                    console.warn('Gist fetch notice:', err);
                 }
 
                 if (!parsed) {
@@ -1830,14 +1830,14 @@
                         if (typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
                         if (typeof populatePatientDropdown === 'function') populatePatientDropdown();
                         if (typeof renderPatientReports === 'function') renderPatientReports();
-                        if (isManual) showToast('🟢 Multi-device cloud data synced successfully!');
+                        if (isManual) showToast('🟢 Cloud data synced successfully!');
                     } else if (isManual) {
-                        showToast('🟢 Data is already 100% up to date with cloud!');
+                        showToast('🟢 Data is already up to date with cloud!');
                     }
                 }
             } catch(e) {
                 console.warn('Cloud fetch notice:', e);
-                if (isManual) showToast('⚠️ Could not connect to cloud sync server.', 'error');
+                if (isManual) showToast('⚠️ Could not connect to cloud database.', 'error');
             }
         }
 
@@ -3883,7 +3883,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 saveState();
                 removeFromIndexedDB('reports', reportId);
                 renderAdminLedger();
-                showToast('🗑️ Report record deleted permanently across all devices.');
+                showToast('🗑️ Report record deleted successfully.');
             }
         }
 
@@ -3969,7 +3969,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 populatePatientDropdown();
                 renderPatientsDirectory();
                 renderAdminLedger();
-                showToast(`🗑️ Patient ${pid} permanently deleted across all devices.`);
+                showToast(`🗑️ Patient ${pid} deleted successfully.`);
             }
         }
 
