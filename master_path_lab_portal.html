@@ -3972,7 +3972,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             fetchCloudState();
 
             // Real-time Cloud Synchronization (Phone & Laptop)
-            setInterval(() => fetchCloudState(), 6000);
+            setInterval(() => fetchCloudState(), 3000);
             window.addEventListener('focus', () => fetchCloudState());
         });
     </script>
