@@ -1492,6 +1492,12 @@
         const defaultReports = [];
 
         // Fail-Safe State Management
+        if (localStorage.getItem('mpl_v4_clean_done') !== 'true') {
+            localStorage.removeItem('mpl_patients');
+            localStorage.removeItem('mpl_reports');
+            localStorage.setItem('mpl_v4_clean_done', 'true');
+        }
+
         let storedPatients = null;
         let storedReports = null;
         let storedTestDB = null;
