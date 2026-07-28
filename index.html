@@ -621,12 +621,12 @@
 
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4" autocomplete="off">
                 <div>
-                    <label id="lbl-id" class="block text-xs font-semibold text-slate-300 mb-1">Username / ID</label>
-                    <input type="text" id="login-id-input" name="mpl_sec_id_no_suggest" required autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-form-type="other" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Username">
+                    <label id="lbl-id" for="login-id-input" class="block text-xs font-semibold text-slate-300 mb-1">Username / ID</label>
+                    <input type="text" id="login-id-input" name="login_username" required autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-form-type="other" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Username">
                 </div>
                 <div>
-                    <label id="lbl-pass" class="block text-xs font-semibold text-slate-300 mb-1">Password / Passcode</label>
-                    <input type="text" id="login-pass-input" name="mpl_sec_pwd_no_suggest" required autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-form-type="other" style="-webkit-text-security: disc; text-security: disc;" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Password">
+                    <label id="lbl-pass" for="login-pass-input" class="block text-xs font-semibold text-slate-300 mb-1">Password / Passcode</label>
+                    <input type="password" id="login-pass-input" name="login_password" required autocomplete="new-password" data-lpignore="true" data-1p-ignore="true" data-form-type="other" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Password">
                 </div>
                 
                 <button type="submit" class="w-full btn-3d-active font-black p-3.5 rounded-xl transition shadow-lg text-sm mt-2">
