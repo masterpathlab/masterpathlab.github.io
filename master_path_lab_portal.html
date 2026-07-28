@@ -206,9 +206,6 @@
                     <p class="text-xs text-slate-400">Manage patient records, build pathology test databases, and generate pathology PDF reports.</p>
                 </div>
                 <div class="flex gap-2 flex-wrap items-center">
-                    <button type="button" onclick="clearAllSystemData()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Clear all patient records and reports">
-                        🧹 Clear All Data
-                    </button>
                     <button type="button" onclick="exportDatabaseJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Export all patients, test templates, and reports to JSON file">
                         💾 Export Backup
                     </button>
@@ -1521,52 +1518,99 @@
             console.warn('LocalStorage parse warning:', e);
         }
 
-        if (storedPatients && Array.isArray(storedPatients)) {
-            storedPatients = storedPatients.filter(p => !['1001', '556', '555', '554'].includes(p.pid));
-        }
-        if (storedReports && Array.isArray(storedReports)) {
-            storedReports = storedReports.filter(r => !['REP-1001', 'REP-55601', 'REP-55501', 'REP-55401'].includes(r.id) && !['1001', '556', '555', '554'].includes(r.pid));
+        // IndexedDB Permanent Persistent Backup Engine
+        const MPL_DB_NAME = 'MPL_Permanent_Database_v2';
+        const MPL_DB_VERSION = 1;
+
+        function getIDB() {
+            return new Promise((resolve) => {
+                if (!window.indexedDB) { resolve(null); return; }
+                try {
+                    const req = indexedDB.open(MPL_DB_NAME, MPL_DB_VERSION);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('patients')) db.createObjectStore('patients', { keyPath: 'pid' });
+                        if (!db.objectStoreNames.contains('reports')) db.createObjectStore('reports', { keyPath: 'id' });
+                    };
+                    req.onsuccess = (e) => resolve(e.target.result);
+                    req.onerror = () => resolve(null);
+                } catch(err) {
+                    resolve(null);
+                }
+            });
         }
 
-        function generateNewBackupCodesSet() {
-            return [
-                { code: '4829-1058', used: false, usedAt: null },
-                { code: '8391-4029', used: false, usedAt: null },
-                { code: '2940-5819', used: false, usedAt: null },
-                { code: '7153-9204', used: false, usedAt: null },
-                { code: '6038-1472', used: false, usedAt: null },
-                { code: '9514-3860', used: false, usedAt: null }
-            ];
-        }
-
-        if (!storedAdminCreds || typeof storedAdminCreds !== 'object') {
-            storedAdminCreds = {
-                username: 'admin',
-                password: 'admin',
-                mobile: '9455097721',
-                pin: '1234',
-                backupCodes: generateNewBackupCodesSet()
-            };
-        } else {
-            if (!storedAdminCreds.username) storedAdminCreds.username = 'admin';
-            if (!storedAdminCreds.password) storedAdminCreds.password = 'admin';
-            if (!storedAdminCreds.pin) storedAdminCreds.pin = '1234';
-            if (!storedAdminCreds.backupCodes || !Array.isArray(storedAdminCreds.backupCodes) || storedAdminCreds.backupCodes.length === 0) {
-                storedAdminCreds.backupCodes = generateNewBackupCodesSet();
+        async function syncToIndexedDB() {
+            try {
+                const db = await getIDB();
+                if (!db) return;
+                if (appState.patients && Array.isArray(appState.patients)) {
+                    const txP = db.transaction('patients', 'readwrite');
+                    const storeP = txP.objectStore('patients');
+                    appState.patients.forEach(p => { if (p && p.pid) storeP.put(p); });
+                }
+                if (appState.reports && Array.isArray(appState.reports)) {
+                    const txR = db.transaction('reports', 'readwrite');
+                    const storeR = txR.objectStore('reports');
+                    appState.reports.forEach(r => { if (r && r.id) storeR.put(r); });
+                }
+            } catch(e) {
+                console.warn('IndexedDB sync notice:', e);
             }
         }
 
-        let appState = {
-            currentUser: storedCurrentUser || null,
-            loginMode: 'admin',
-            activeCategoryFilter: 'All',
-            adminCreds: storedAdminCreds,
-            patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : [],
-            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : [],
-            testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
-        };
+        async function restoreFromIndexedDBIfEmpty() {
+            try {
+                const db = await getIDB();
+                if (!db) return;
+                let restored = false;
 
-        saveState();
+                if (!appState.patients || appState.patients.length === 0) {
+                    const patients = await new Promise(res => {
+                        const tx = db.transaction('patients', 'readonly');
+                        const req = tx.objectStore('patients').getAll();
+                        req.onsuccess = () => res(req.result || []);
+                        req.onerror = () => res([]);
+                    });
+                    if (patients && patients.length > 0) {
+                        appState.patients = patients;
+                        restored = true;
+                    }
+                }
+
+                if (!appState.reports || appState.reports.length === 0) {
+                    const reports = await new Promise(res => {
+                        const tx = db.transaction('reports', 'readonly');
+                        const req = tx.objectStore('reports').getAll();
+                        req.onsuccess = () => res(req.result || []);
+                        req.onerror = () => res([]);
+                    });
+                    if (reports && reports.length > 0) {
+                        appState.reports = reports;
+                        restored = true;
+                    }
+                }
+
+                if (restored) {
+                    saveState();
+                    if (typeof renderAdminLedger === 'function') renderAdminLedger();
+                    if (typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                    if (typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                    console.log('✅ Permanent patient data & reports restored from IndexedDB backup!');
+                }
+            } catch(e) {
+                console.warn('IndexedDB restore notice:', e);
+            }
+        }
+
+        async function removeFromIndexedDB(storeName, key) {
+            try {
+                const db = await getIDB();
+                if (!db) return;
+                const tx = db.transaction(storeName, 'readwrite');
+                tx.objectStore(storeName).delete(key);
+            } catch(e) {}
+        }
 
         function saveState() {
             try {
@@ -1575,6 +1619,7 @@
                 localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
                 localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
                 localStorage.setItem('mpl_current_user', JSON.stringify(appState.currentUser));
+                syncToIndexedDB();
             } catch(e) {
                 console.error('LocalStorage save error:', e);
             }
@@ -3553,11 +3598,12 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         function deleteReport(reportId) {
-            if (confirm('Are you sure you want to delete this report record?')) {
+            if (confirm('⚠️ Are you sure you want to PERMANENTLY delete this report record?')) {
                 appState.reports = appState.reports.filter(r => r.id !== reportId);
                 saveState();
+                removeFromIndexedDB('reports', reportId);
                 renderAdminLedger();
-                showToast('Report record deleted.');
+                showToast('🗑️ Report record deleted permanently.');
             }
         }
 
@@ -3624,14 +3670,17 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         function deletePatient(pid) {
-            if (confirm(`Delete patient UHID ${pid} and all associated data?`)) {
+            if (confirm(`⚠️ Are you sure you want to PERMANENTLY delete patient UHID ${pid} and all associated reports? This action cannot be undone.`)) {
                 appState.patients = appState.patients.filter(p => p.pid !== pid);
+                const repIdsToDelete = appState.reports.filter(r => r.pid === pid).map(r => r.id);
                 appState.reports = appState.reports.filter(r => r.pid !== pid);
                 saveState();
+                removeFromIndexedDB('patients', pid);
+                repIdsToDelete.forEach(id => removeFromIndexedDB('reports', id));
                 populatePatientDropdown();
                 renderPatientsDirectory();
                 renderAdminLedger();
-                showToast('Patient deleted.');
+                showToast('🗑️ Patient and associated reports deleted permanently.');
             }
         }
 
@@ -3702,6 +3751,7 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            restoreFromIndexedDBIfEmpty();
             updateUI();
         });
     </script>
