@@ -2048,7 +2048,24 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             }
         }
 
+        function updateUI() {
+            populatePatientDropdown();
+            renderTestDBPresets();
+            renderTestDBTable();
+            renderAdminLedger();
+            renderPatientsDirectory();
+            if (appState.currentUser && appState.currentUser.role === 'patient') {
+                const pNav = document.getElementById('patient-nav');
+                if (pNav) pNav.classList.remove('hidden');
+                renderPatientReports();
+            } else {
+                const pNav = document.getElementById('patient-nav');
+                if (pNav) pNav.classList.add('hidden');
+            }
+        }
+
         function logout() {
+            saveState();
             appState.currentUser = null;
             showToast('Logged out successfully.');
             updateUI();
@@ -2083,7 +2100,16 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const mobile = document.getElementById('reg-mobile').value.trim();
             const email = '';
 
-            const pidNumber = 1002 + appState.patients.length;
+            let maxPid = 1001;
+            if (appState.patients && appState.patients.length > 0) {
+                appState.patients.forEach(p => {
+                    const num = parseInt(p.pid, 10);
+                    if (!isNaN(num) && num > maxPid) {
+                        maxPid = num;
+                    }
+                });
+            }
+            const pidNumber = maxPid + 1;
             const pid = `${pidNumber}`;
             const password = 'pass' + pid;
             const portalUrl = window.location.href.split('#')[0];
