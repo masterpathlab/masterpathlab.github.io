@@ -1716,6 +1716,7 @@
         const GIST_SYNC_ID = 'ed74dd474395ca3a3cb535a6baac275c';
         const GIST_SYNC_TOKEN = 'tDlGb2j5RNJmfY8T1lDwtbKW8PIiNqUrOK_ohg'.split('').reverse().join('');
         const GIST_API_URL = `https://api.github.com/gists/${GIST_SYNC_ID}`;
+        let gistSyncWorking = true; // Will be set to false if token fails
         let isCloudSyncing = false;
 
         async function syncStateToCloud() {
@@ -1759,6 +1760,7 @@
         async function fetchCloudState(isManual = false) {
             try {
                 let parsed = null;
+                if (gistSyncWorking) {
                 try {
                     const res = await fetch(GIST_API_URL, {
                         headers: {
@@ -1771,9 +1773,13 @@
                         if (data && data.files && data.files["mpl_db.json"]) {
                             parsed = JSON.parse(data.files["mpl_db.json"].content);
                         }
+                    } else if (res.status === 401 || res.status === 403) {
+                        gistSyncWorking = false; // Token expired - stop trying
+                        console.warn('Gist token expired, using local storage only.');
                     }
                 } catch(err) {
                     console.warn('Gist fetch notice:', err);
+                }
                 }
 
                 if (!parsed) {
@@ -4180,9 +4186,9 @@ Log in using your Patient ID and Password to view and download your pathology te
             await restoreFromIndexedDBIfEmpty();
             updateUI();
 
-            // Professional Automatic Background Sync (Every 1.5s & On Focus)
-            setInterval(() => fetchCloudState(), 1500);
-            window.addEventListener('focus', () => fetchCloudState());
+            // Background Sync (Every 30s to avoid API rate limits)
+            setInterval(() => { if (gistSyncWorking) fetchCloudState(); }, 30000);
+            window.addEventListener('focus', () => { if (gistSyncWorking) fetchCloudState(); });
         });
     </script>
 </body>
