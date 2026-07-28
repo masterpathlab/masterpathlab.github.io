@@ -1515,14 +1515,18 @@
             storedReports = storedReports.filter(r => !['REP-1001', 'REP-55601', 'REP-55501', 'REP-55401'].includes(r.id) && !['1001', '556', '555', '554'].includes(r.pid));
         }
 
-        const defaultBackupCodes = [
-            { code: '4829-1058', used: false, usedAt: null },
-            { code: '8391-4029', used: false, usedAt: null },
-            { code: '2940-5819', used: false, usedAt: null },
-            { code: '7153-9204', used: false, usedAt: null },
-            { code: '6038-1472', used: false, usedAt: null },
-            { code: '9514-3860', used: false, usedAt: null }
-        ];
+        function generateNewBackupCodesSet() {
+            return [
+                { code: '4829-1058', used: false, usedAt: null },
+                { code: '8391-4029', used: false, usedAt: null },
+                { code: '2940-5819', used: false, usedAt: null },
+                { code: '7153-9204', used: false, usedAt: null },
+                { code: '6038-1472', used: false, usedAt: null },
+                { code: '9514-3860', used: false, usedAt: null }
+            ];
+        }
+
+        const defaultBackupCodes = generateNewBackupCodesSet();
 
         let appState = {
             currentUser: storedCurrentUser || null,
