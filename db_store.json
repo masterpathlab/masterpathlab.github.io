@@ -1,0 +1,24 @@
+{
+  "patients": [
+    {
+      "pid": "UHID-1001",
+      "name": "Rajesh Kumar",
+      "age": "32",
+      "sex": "Male",
+      "mobile": "9455097721",
+      "email": "rajesh@example.com",
+      "password": "1234",
+      "registeredAt": "28 JUL, 2026 10:00 AM"
+    }
+  ],
+  "reports": [],
+  "adminCreds": {
+    "username": "admin",
+    "password": "admin",
+    "mobile": "9455097721",
+    "pin": "1234"
+  },
+  "deletedPids": [],
+  "deletedReportIds": [],
+  "updatedAt": "2026-07-28T19:30:00.000Z"
+}

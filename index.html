@@ -1730,88 +1730,103 @@
 
         async function fetchCloudState(isManual = false) {
             try {
-                const res = await fetch(GIST_API_URL, {
-                    headers: {
-                        'Authorization': `token ${GIST_SYNC_TOKEN}`
-                    },
-                    cache: 'no-store'
-                });
-                if (!res.ok) return;
-                const data = await res.json();
-                if (data && data.files && data.files["mpl_db.json"]) {
-                    const contentStr = data.files["mpl_db.json"].content;
-                    const parsed = JSON.parse(contentStr);
-                    if (parsed && typeof parsed === 'object') {
-                        let updated = false;
-
-                        // Process deleted PIDs blacklist first
-                        if (parsed.deletedPids && Array.isArray(parsed.deletedPids)) {
-                            parsed.deletedPids.forEach(dPid => {
-                                if (!appState.deletedPids.includes(dPid)) {
-                                    appState.deletedPids.push(dPid);
-                                }
-                                if (appState.patients.some(p => p.pid === dPid)) {
-                                    appState.patients = appState.patients.filter(p => p.pid !== dPid);
-                                    removeFromIndexedDB('patients', dPid);
-                                    updated = true;
-                                }
-                            });
+                let parsed = null;
+                try {
+                    const res = await fetch(GIST_API_URL, {
+                        headers: {
+                            'Authorization': `token ${GIST_SYNC_TOKEN}`
+                        },
+                        cache: 'no-store'
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.files && data.files["mpl_db.json"]) {
+                            parsed = JSON.parse(data.files["mpl_db.json"].content);
                         }
+                    }
+                } catch(err) {
+                    console.warn('Gist fetch error, trying static fallback:', err);
+                }
 
-                        // Process deleted Report IDs blacklist
-                        if (parsed.deletedReportIds && Array.isArray(parsed.deletedReportIds)) {
-                            parsed.deletedReportIds.forEach(dId => {
-                                if (!appState.deletedReportIds.includes(dId)) {
-                                    appState.deletedReportIds.push(dId);
-                                }
-                                if (appState.reports.some(r => r.id === dId)) {
-                                    appState.reports = appState.reports.filter(r => r.id !== dId);
-                                    removeFromIndexedDB('reports', dId);
-                                    updated = true;
-                                }
-                            });
+                if (!parsed) {
+                    try {
+                        const resFallback = await fetch('db_store.json', { cache: 'no-store' });
+                        if (resFallback.ok) {
+                            parsed = await resFallback.json();
                         }
+                    } catch(e) {}
+                }
 
-                        if (parsed.patients && Array.isArray(parsed.patients)) {
-                            const cleanPatients = parsed.patients.filter(p => p && p.pid && !appState.deletedPids.includes(p.pid));
-                            if (JSON.stringify(appState.patients) !== JSON.stringify(cleanPatients)) {
-                                appState.patients = cleanPatients;
+                if (parsed && typeof parsed === 'object') {
+                    let updated = false;
+
+                    // Process deleted PIDs blacklist first
+                    if (parsed.deletedPids && Array.isArray(parsed.deletedPids)) {
+                        parsed.deletedPids.forEach(dPid => {
+                            if (!appState.deletedPids.includes(dPid)) {
+                                appState.deletedPids.push(dPid);
+                            }
+                            if (appState.patients.some(p => p.pid === dPid)) {
+                                appState.patients = appState.patients.filter(p => p.pid !== dPid);
+                                removeFromIndexedDB('patients', dPid);
                                 updated = true;
                             }
-                        }
+                        });
+                    }
 
-                        if (parsed.reports && Array.isArray(parsed.reports)) {
-                            const cleanReports = parsed.reports.filter(r => r && r.id && !appState.deletedReportIds.includes(r.id));
-                            if (JSON.stringify(appState.reports) !== JSON.stringify(cleanReports)) {
-                                appState.reports = cleanReports;
+                    // Process deleted Report IDs blacklist
+                    if (parsed.deletedReportIds && Array.isArray(parsed.deletedReportIds)) {
+                        parsed.deletedReportIds.forEach(dId => {
+                            if (!appState.deletedReportIds.includes(dId)) {
+                                appState.deletedReportIds.push(dId);
+                            }
+                            if (appState.reports.some(r => r.id === dId)) {
+                                appState.reports = appState.reports.filter(r => r.id !== dId);
+                                removeFromIndexedDB('reports', dId);
                                 updated = true;
                             }
-                        }
+                        });
+                    }
 
-                        if (parsed.adminCreds && typeof parsed.adminCreds === 'object' && parsed.adminCreds.username) {
-                            if (JSON.stringify(appState.adminCreds) !== JSON.stringify(parsed.adminCreds)) {
-                                appState.adminCreds = parsed.adminCreds;
-                                updated = true;
-                            }
+                    if (parsed.patients && Array.isArray(parsed.patients)) {
+                        const cleanPatients = parsed.patients.filter(p => p && p.pid && !appState.deletedPids.includes(p.pid));
+                        if (JSON.stringify(appState.patients) !== JSON.stringify(cleanPatients)) {
+                            appState.patients = cleanPatients;
+                            updated = true;
                         }
+                    }
 
-                        if (parsed.testDB && Array.isArray(parsed.testDB) && parsed.testDB.length >= defaultTestDB.length) {
-                            if (JSON.stringify(appState.testDB) !== JSON.stringify(parsed.testDB)) {
-                                appState.testDB = parsed.testDB;
-                                updated = true;
-                            }
+                    if (parsed.reports && Array.isArray(parsed.reports)) {
+                        const cleanReports = parsed.reports.filter(r => r && r.id && !appState.deletedReportIds.includes(r.id));
+                        if (JSON.stringify(appState.reports) !== JSON.stringify(cleanReports)) {
+                            appState.reports = cleanReports;
+                            updated = true;
                         }
+                    }
 
-                        if (updated) {
-                            saveStateLocalOnly();
-                            if (typeof renderAdminLedger === 'function') renderAdminLedger();
-                            if (typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
-                            if (typeof populatePatientDropdown === 'function') populatePatientDropdown();
-                            if (typeof renderPatientReports === 'function') renderPatientReports();
-                            if (isManual) showToast('🟢 Multi-device cloud data synced successfully!');
-                        } else if (isManual) {
-                            showToast('🟢 Data is already 100% up to date with cloud!');
+                    if (parsed.adminCreds && typeof parsed.adminCreds === 'object' && parsed.adminCreds.username) {
+                        if (JSON.stringify(appState.adminCreds) !== JSON.stringify(parsed.adminCreds)) {
+                            appState.adminCreds = parsed.adminCreds;
+                            updated = true;
                         }
+                    }
+
+                    if (parsed.testDB && Array.isArray(parsed.testDB) && parsed.testDB.length >= defaultTestDB.length) {
+                        if (JSON.stringify(appState.testDB) !== JSON.stringify(parsed.testDB)) {
+                            appState.testDB = parsed.testDB;
+                            updated = true;
+                        }
+                    }
+
+                    if (updated) {
+                        saveStateLocalOnly();
+                        if (typeof renderAdminLedger === 'function') renderAdminLedger();
+                        if (typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                        if (typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                        if (typeof renderPatientReports === 'function') renderPatientReports();
+                        if (isManual) showToast('🟢 Multi-device cloud data synced successfully!');
+                    } else if (isManual) {
+                        showToast('🟢 Data is already 100% up to date with cloud!');
                     }
                 }
             } catch(e) {
