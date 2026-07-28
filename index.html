@@ -2132,6 +2132,16 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
 
         // Login Modal Controls & Strict Authentication Engine
         function openLoginModal(mode) {
+            if (mode === 'admin' && appState.currentUser && appState.currentUser.role === 'admin') {
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            if (mode === 'patient' && appState.currentUser && appState.currentUser.role === 'patient') {
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
             appState.loginMode = mode || 'admin';
             const modal = document.getElementById('login-modal');
             if (modal) {
