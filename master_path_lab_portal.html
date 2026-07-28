@@ -1773,7 +1773,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             }, 4000);
         }
 
-        // Navigation
+        // Navigation & View Controller
         function updateUI() {
             const landing = document.getElementById('view-landing');
             const admin = document.getElementById('view-admin');
@@ -1796,10 +1796,15 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 if (admin) admin.classList.remove('hidden');
                 if (authSection) {
                     authSection.innerHTML = `
-                        <span class="text-xs text-cyan-400 font-semibold bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg mr-2 shadow-sm">
-                            🔑 Admin Logged In
-                        </span>
-                        <button type="button" onclick="logout()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">Logout</button>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Logged in as Admin
+                            </span>
+                            <button type="button" onclick="logout()" class="bg-slate-800 text-slate-300 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">
+                                Logout
+                            </button>
+                        </div>
                     `;
                 }
                 populatePatientDropdown();
@@ -1811,9 +1816,14 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 if (patient) patient.classList.remove('hidden');
                 if (authSection) {
                     authSection.innerHTML = `
-                        <span class="text-xs text-cyan-400 font-semibold bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg mr-3 shadow-sm">
-                            👤 ${appState.currentUser.name} (UHID: ${appState.currentUser.pid})
-                        </span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+                                👤 Patient: ${appState.currentUser.name} (UHID: ${appState.currentUser.pid})
+                            </span>
+                            <button type="button" onclick="logout()" class="bg-slate-800 text-slate-300 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">
+                                Logout
+                            </button>
+                        </div>
                     `;
                 }
                 renderPatientReports();
@@ -2053,69 +2063,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             }
         }
 
-        function updateUI() {
-            populatePatientDropdown();
-            renderTestDBPresets();
-            renderTestDBTable();
-            renderAdminLedger();
-            renderPatientsDirectory();
 
-            const vLanding = document.getElementById('view-landing');
-            const vAdmin = document.getElementById('view-admin');
-            const vPatient = document.getElementById('view-patient');
-            const pNav = document.getElementById('patient-nav');
-            const hAuth = document.getElementById('header-auth-section');
-
-            if (appState.currentUser && appState.currentUser.role === 'admin') {
-                if (vLanding) vLanding.classList.add('hidden');
-                if (vPatient) vPatient.classList.add('hidden');
-                if (vAdmin) vAdmin.classList.remove('hidden');
-                if (pNav) pNav.classList.add('hidden');
-                if (hAuth) {
-                    hAuth.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                Logged in as Admin
-                            </span>
-                            <button type="button" onclick="logout()" class="bg-slate-800 text-slate-300 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">
-                                Logout
-                            </button>
-                        </div>
-                    `;
-                }
-            } else if (appState.currentUser && appState.currentUser.role === 'patient') {
-                if (vLanding) vLanding.classList.add('hidden');
-                if (vAdmin) vAdmin.classList.add('hidden');
-                if (vPatient) vPatient.classList.remove('hidden');
-                if (pNav) pNav.classList.remove('hidden');
-                if (hAuth) {
-                    hAuth.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
-                                👤 Patient: ${appState.currentUser.name} (UHID: ${appState.currentUser.pid})
-                            </span>
-                            <button type="button" onclick="logout()" class="bg-slate-800 text-slate-300 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">
-                                Logout
-                            </button>
-                        </div>
-                    `;
-                }
-                renderPatientReports();
-            } else {
-                if (vAdmin) vAdmin.classList.add('hidden');
-                if (vPatient) vPatient.classList.add('hidden');
-                if (vLanding) vLanding.classList.remove('hidden');
-                if (pNav) pNav.classList.add('hidden');
-                if (hAuth) {
-                    hAuth.innerHTML = `
-                        <button type="button" onclick="openLoginModal('admin')" class="btn-3d-active font-black px-4 py-2 rounded-xl text-xs shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0">
-                            🔑 Admin Login
-                        </button>
-                    `;
-                }
-            }
-        }
 
         function logout() {
             appState.currentUser = null;
