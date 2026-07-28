@@ -603,28 +603,33 @@
 
     <!-- Login Modal -->
     <div id="login-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
+        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             
-            <div class="mb-6">
+            <div class="mb-4">
                 <h3 id="modal-title" class="text-xl font-bold text-white">Login</h3>
-                <p class="text-xs text-slate-400 mt-1">Authenticate to access system records or lab reports.</p>
+                <p id="modal-subtitle" class="text-xs text-slate-400 mt-1">Authenticate to access system records or lab reports.</p>
+            </div>
+
+            <!-- Login Credentials Info & Quick Auto-Fill Box -->
+            <div id="login-credentials-hint" class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs mb-4">
+                <!-- Populated dynamically -->
             </div>
 
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4" autocomplete="off">
                 <div>
                     <label id="lbl-id" class="block text-xs font-semibold text-slate-300 mb-1">Username / ID</label>
-                    <input type="text" id="login-id-input" name="mpl_no_autofill_user" required autocomplete="off" data-lpignore="true" data-1p-ignore="true" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Username">
+                    <input type="text" id="login-id-input" name="mpl_no_autofill_user" required autocomplete="off" data-lpignore="true" data-1p-ignore="true" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Username">
                 </div>
                 <div>
                     <label id="lbl-pass" class="block text-xs font-semibold text-slate-300 mb-1">Password / Passcode</label>
-                    <input type="password" id="login-pass-input" name="admin_pass_input" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Password">
+                    <input type="password" id="login-pass-input" name="admin_pass_input" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Password">
                 </div>
                 
                 <button type="submit" class="w-full btn-3d-active font-black p-3.5 rounded-xl transition shadow-lg text-sm mt-2">
-                    Authenticate & Access
+                    Login & Access Portal &rarr;
                 </button>
-                <div class="flex justify-between items-center mt-3 text-xs pt-1">
+                <div id="login-recovery-link" class="flex justify-between items-center mt-3 text-xs pt-1">
                     <button type="button" onclick="openPinRecoveryModal()" class="text-amber-400 hover:text-amber-300 font-semibold underline flex items-center gap-1">
                         🛡️ Forgot Password? Reset via Backup Code / PIN
                     </button>
@@ -679,29 +684,6 @@
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
-            <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
-            <h3 id="modal-title" class="text-lg font-bold text-white mb-1">Portal Login</h3>
-            <p class="text-xs text-slate-400 mb-4">Enter your credentials to access your portal.</p>
-
-            <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
-                <div>
-                    <label id="lbl-id" class="block text-slate-300 mb-1 font-semibold">User ID / UHID</label>
-                    <input type="text" id="login-id-input" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-cyan-500 font-semibold">
-                </div>
-                <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Password / Passcode</label>
-                    <input type="password" id="login-pass-input" name="modal_pass_input" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-cyan-500 font-semibold">
-                </div>
-                <button type="submit" class="w-full btn-3d-active font-black p-3.5 rounded-xl transition shadow-lg mt-2 text-xs">
-                    Login & Access Portal &rarr;
-                </button>
-            </form>
         </div>
     </div>
 
@@ -1497,7 +1479,18 @@
             }
         ];
 
-        const defaultPatients = [];
+        const defaultPatients = [
+            {
+                pid: 'UHID-1001',
+                name: 'Rajesh Kumar',
+                age: '32',
+                sex: 'Male',
+                mobile: '9455097721',
+                email: 'rajesh@example.com',
+                password: '1234',
+                registeredAt: '28 JUL, 2026 10:00 AM'
+            }
+        ];
 
         const defaultReports = [];
 
@@ -1516,6 +1509,73 @@
             storedCurrentUser = JSON.parse(localStorage.getItem('mpl_current_user'));
         } catch(e) {
             console.warn('LocalStorage parse warning:', e);
+        }
+
+        function generateNewBackupCodesSet() {
+            return [
+                { code: '4829-1058', used: false, usedAt: null },
+                { code: '8391-4029', used: false, usedAt: null },
+                { code: '2940-5819', used: false, usedAt: null },
+                { code: '7153-9204', used: false, usedAt: null },
+                { code: '6038-1472', used: false, usedAt: null },
+                { code: '9514-3860', used: false, usedAt: null }
+            ];
+        }
+
+        let adminCredsData = storedAdminCreds;
+        if (!adminCredsData || typeof adminCredsData !== 'object') {
+            adminCredsData = {
+                username: 'admin',
+                password: 'admin',
+                mobile: '9455097721',
+                pin: '1234',
+                backupCodes: generateNewBackupCodesSet()
+            };
+        } else {
+            if (!adminCredsData.username) adminCredsData.username = 'admin';
+            if (!adminCredsData.password) adminCredsData.password = 'admin';
+            if (!adminCredsData.pin) adminCredsData.pin = '1234';
+            if (!adminCredsData.backupCodes || !Array.isArray(adminCredsData.backupCodes) || adminCredsData.backupCodes.length === 0) {
+                adminCredsData.backupCodes = generateNewBackupCodesSet();
+            }
+        }
+
+        let appState = {
+            currentUser: storedCurrentUser || null,
+            loginMode: 'admin',
+            activeCategoryFilter: 'All',
+            adminCreds: adminCredsData,
+            patients: (storedPatients && Array.isArray(storedPatients) && storedPatients.length > 0) ? storedPatients : defaultPatients,
+            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : defaultReports,
+            testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
+        };
+
+        function autoFillAdminCreds() {
+            const creds = getOrInitAdminCreds();
+            const idInput = document.getElementById('login-id-input');
+            const passInput = document.getElementById('login-pass-input');
+            if (idInput) idInput.value = creds.username || 'admin';
+            if (passInput) passInput.value = creds.password || 'admin';
+            showToast('⚡ Admin Username & Password auto-filled!');
+        }
+
+        function autoFillPatientCreds(pid, pass) {
+            const idInput = document.getElementById('login-id-input');
+            const passInput = document.getElementById('login-pass-input');
+            if (idInput) idInput.value = pid;
+            if (passInput) passInput.value = pass;
+            showToast(`⚡ Patient UHID ${pid} & Passcode auto-filled!`);
+        }
+
+        function copyPatientCredentials(pid) {
+            const patient = appState.patients.find(p => p.pid === pid);
+            if (!patient) return;
+            const text = `Master Path Lab Portal Login Details:\nUHID: ${patient.pid}\nPasscode: ${patient.password}\nPortal Link: ${window.location.origin}${window.location.pathname}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`📋 UHID & Password for ${patient.name} copied to clipboard!`);
+            }).catch(() => {
+                showToast(`UHID: ${patient.pid} | Passcode: ${patient.password}`);
+            });
         }
 
         // IndexedDB Permanent Persistent Backup Engine
@@ -1908,24 +1968,87 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             
             const title = document.getElementById('modal-title');
             if (title) title.innerText = (mode === 'admin') ? '🔑 Admin Control Center Login' : '👤 Patient Portal Login';
+
+            const subtitle = document.getElementById('modal-subtitle');
+            if (subtitle) subtitle.innerText = (mode === 'admin') ? 'Enter Admin credentials to manage lab records & reports.' : 'Enter your Patient UHID and Passcode to view your pathology reports.';
             
             const lbl = document.getElementById('lbl-id');
             if (lbl) lbl.innerText = (mode === 'admin') ? 'Admin Username' : 'UHID / Patient ID';
 
             const lblPass = document.getElementById('lbl-pass');
             if (lblPass) lblPass.innerText = (mode === 'admin') ? 'Admin Password' : 'Patient Passcode';
+
+            const recoveryLink = document.getElementById('login-recovery-link');
+            if (recoveryLink) recoveryLink.style.display = (mode === 'admin') ? 'flex' : 'none';
+
+            const hintBox = document.getElementById('login-credentials-hint');
+            if (hintBox) {
+                if (mode === 'admin') {
+                    const creds = getOrInitAdminCreds();
+                    hintBox.innerHTML = `
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div>
+                                <span class="text-slate-400 block text-[11px] font-semibold">🔑 Admin Login Credentials:</span>
+                                <div class="font-mono text-cyan-400 font-bold mt-0.5 text-xs">
+                                    Username: <span class="text-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${creds.username || 'admin'}</span> &nbsp;|&nbsp; 
+                                    Password: <span class="text-amber-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${creds.password || 'admin'}</span>
+                                </div>
+                            </div>
+                            <button type="button" onclick="autoFillAdminCreds()" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm">
+                                ⚡ Auto-Fill Admin Credentials
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    if (appState.patients && appState.patients.length > 0) {
+                        const firstP = appState.patients[0];
+                        hintBox.innerHTML = `
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <div>
+                                        <span class="text-slate-400 block text-[11px] font-semibold">👤 Patient Login Details (${appState.patients.length} Registered):</span>
+                                        <div class="font-mono text-cyan-400 font-bold mt-0.5 text-xs">
+                                            UHID: <span class="text-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${firstP.pid}</span> &nbsp;|&nbsp; 
+                                            Passcode: <span class="text-amber-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${firstP.password}</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="autoFillPatientCreds('${firstP.pid}', '${firstP.password}')" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm">
+                                        ⚡ Auto-Fill ${firstP.name.split(' ')[0]}
+                                    </button>
+                                </div>
+                                ${appState.patients.length > 1 ? `
+                                    <div class="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
+                                        <span class="font-semibold">Other Registered Patients:</span>
+                                        ${appState.patients.slice(1, 4).map(p => `
+                                            <button type="button" onclick="autoFillPatientCreds('${p.pid}', '${p.password}')" class="bg-slate-900 text-cyan-300 hover:bg-slate-800 px-2 py-0.5 rounded-lg font-mono text-[11px] border border-slate-800">
+                                                ${p.pid} (${p.password})
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    } else {
+                        hintBox.innerHTML = `
+                            <div class="text-amber-400 font-semibold text-xs">
+                                ℹ️ Enter the UHID (e.g. UHID-1001) and Passcode provided to you by Master Path Lab upon registration.
+                            </div>
+                        `;
+                    }
+                }
+            }
             
             const idInput = document.getElementById('login-id-input');
             if (idInput) {
                 idInput.value = '';
-                idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username' : 'Enter UHID / Patient ID';
+                idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username (Default: admin)' : 'Enter UHID (e.g. UHID-1001)';
                 idInput.removeAttribute('readonly');
             }
             
             const passInput = document.getElementById('login-pass-input');
             if (passInput) {
                 passInput.value = '';
-                passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password' : 'Enter Patient Passcode';
+                passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password (Default: admin)' : 'Enter Patient Passcode (e.g. 1234)';
                 passInput.removeAttribute('readonly');
             }
 
@@ -3636,6 +3759,9 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <td class="p-3 text-xs text-slate-400">${p.mobile || 'N/A'}</td>
                     <td class="p-3 font-mono text-xs text-amber-400 font-bold">${p.password}</td>
                     <td class="p-3 text-right flex justify-end gap-2 flex-wrap">
+                        <button type="button" onclick="copyPatientCredentials('${p.pid}')" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-500 hover:text-white transition" title="Copy UHID & Passcode for ${p.pid}">
+                            📋 Copy ID & Pass
+                        </button>
                         <button type="button" onclick="openCombinedReportViewModal('${p.pid}')" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition" title="Preview all reports for UHID ${p.pid} in web viewer">
                             👁️ Preview All
                         </button>
