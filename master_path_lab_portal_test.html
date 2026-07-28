@@ -15,13 +15,13 @@
     
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://hamzakhan81143-svg.github.io/master-path-lab-portal/">
+    <meta property="og:url" content="https://masterpathlab.github.io/">
     <meta property="og:title" content="Master Path Lab - Pathology Report & Database Portal">
     <meta property="og:description" content="Official portal for Master Path Lab. Search pathology reports, manage tests, and download PDF lab reports online.">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://hamzakhan81143-svg.github.io/master-path-lab-portal/">
+    <meta property="twitter:url" content="https://masterpathlab.github.io/">
     <meta property="twitter:title" content="Master Path Lab - Pathology Report & Database Portal">
     <meta property="twitter:description" content="Official portal for Master Path Lab. Search pathology reports, manage tests, and download PDF lab reports online.">
     
@@ -31,10 +31,25 @@
       "@context": "https://schema.org",
       "@type": "MedicalBusiness",
       "name": "Master Path Lab",
-      "url": "https://hamzakhan81143-svg.github.io/master-path-lab-portal/",
+      "url": "https://masterpathlab.github.io/",
       "description": "Pathology Report & Diagnostic Center Database Portal",
       "medicalSpecialty": "Pathology"
     }
+    </script>
+    <script>
+        // Force clear old cached Service Worker and site caches on live domain
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(r => r.unregister());
+                });
+            }
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(n => caches.delete(n));
+                });
+            }
+        }
     </script>
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1529,27 +1544,32 @@
             ];
         }
 
-        const defaultBackupCodes = generateNewBackupCodesSet();
+        if (!storedAdminCreds || typeof storedAdminCreds !== 'object') {
+            storedAdminCreds = {
+                username: 'admin',
+                password: 'admin',
+                mobile: '9455097721',
+                pin: '1234',
+                backupCodes: generateNewBackupCodesSet()
+            };
+        } else {
+            if (!storedAdminCreds.username) storedAdminCreds.username = 'admin';
+            if (!storedAdminCreds.password) storedAdminCreds.password = 'admin';
+            if (!storedAdminCreds.pin) storedAdminCreds.pin = '1234';
+            if (!storedAdminCreds.backupCodes || !Array.isArray(storedAdminCreds.backupCodes) || storedAdminCreds.backupCodes.length === 0) {
+                storedAdminCreds.backupCodes = generateNewBackupCodesSet();
+            }
+        }
 
         let appState = {
             currentUser: storedCurrentUser || null,
             loginMode: 'admin',
             activeCategoryFilter: 'All',
-            adminCreds: storedAdminCreds || {
-                username: 'admin',
-                password: 'admin',
-                mobile: '9455097721',
-                pin: '1234',
-                backupCodes: defaultBackupCodes
-            },
+            adminCreds: storedAdminCreds,
             patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : [],
             reports: (storedReports && Array.isArray(storedReports)) ? storedReports : [],
             testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
         };
-
-        if (!appState.adminCreds.backupCodes || !Array.isArray(appState.adminCreds.backupCodes) || appState.adminCreds.backupCodes.length === 0) {
-            appState.adminCreds.backupCodes = generateNewBackupCodesSet();
-        }
 
         saveState();
 
@@ -1841,7 +1861,10 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
         function openLoginModal(mode) {
             appState.loginMode = mode || 'admin';
             const modal = document.getElementById('login-modal');
-            if (modal) modal.classList.remove('hidden');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
             
             const title = document.getElementById('modal-title');
             if (title) title.innerText = (mode === 'admin') ? '🔑 Admin Control Center Login' : '👤 Patient Portal Login';
@@ -1856,8 +1879,10 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             if (hintBox) {
                 if (mode === 'admin') {
                     hintBox.classList.remove('hidden');
+                    hintBox.style.display = 'flex';
                 } else {
                     hintBox.classList.add('hidden');
+                    hintBox.style.display = 'none';
                 }
             }
             
@@ -1885,7 +1910,10 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
 
         function closeLoginModal() {
             const modal = document.getElementById('login-modal');
-            if (modal) modal.classList.add('hidden');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
         }
 
         // Security PIN Recovery & Admin Credentials Management
