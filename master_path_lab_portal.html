@@ -214,7 +214,7 @@
                     </button>
                     <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-md" title="Import database from JSON file">
                         📥 Import Backup
-                        <input type="file" accept=".json" onchange="importDatabaseJSON(event)" class="hidden">
+                        <input type="file" id="import-backup-file-input" name="import_backup_file" aria-label="Import Backup JSON File" accept=".json" onchange="importDatabaseJSON(event)" class="hidden">
                     </label>
                     <button type="button" onclick="openChangeAdminModal()" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Change Admin Username and Password">
                         🔑 Change Admin ID & Password
@@ -2708,7 +2708,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 <td colspan="5" class="p-2">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Group Header:</span>
-                        <input type="text" value="${groupName}" placeholder="e.g. BLOOD INDICES or WBC COUNT" class="flex-grow bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-xs font-extrabold outline-none focus:border-amber-400 group-name-input uppercase">
+                        <input type="text" name="group_header_name" aria-label="Group Header Name" value="${groupName}" placeholder="e.g. BLOOD INDICES or WBC COUNT" class="flex-grow bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-xs font-extrabold outline-none focus:border-amber-400 group-name-input uppercase">
                     </div>
                 </td>
                 <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-xs">✕</button></td>
@@ -2723,12 +2723,12 @@ Log in using your Patient ID and Password to view and download your pathology te
             tr.className = 'border-b border-slate-800/80 test-row hover:bg-slate-950/40 transition';
             tr.innerHTML = `
                 <td class="p-2">
-                    <input type="text" value="${inv}" placeholder="Investigation Name (e.g. Hemoglobin)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-inv font-semibold">
-                    <input type="text" value="${sub}" placeholder="Method/Sub-label (e.g. Calculated or Photometry)" class="w-full bg-slate-950/60 border border-slate-800/80 rounded p-1 text-[11px] text-slate-400 outline-none mt-1 test-sub">
+                    <input type="text" name="investigation_name" aria-label="Investigation Name" value="${inv}" placeholder="Investigation Name (e.g. Hemoglobin)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-inv font-semibold">
+                    <input type="text" name="sub_label" aria-label="Method or Sub Label" value="${sub}" placeholder="Method/Sub-label (e.g. Calculated or Photometry)" class="w-full bg-slate-950/60 border border-slate-800/80 rounded p-1 text-[11px] text-slate-400 outline-none mt-1 test-sub">
                 </td>
-                <td class="p-2"><input type="text" value="${res}" placeholder="Result" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-res font-bold"></td>
+                <td class="p-2"><input type="text" name="test_result" aria-label="Result Value" value="${res}" placeholder="Result" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-res font-bold"></td>
                 <td class="p-2">
-                    <select class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-flag">
+                    <select name="test_flag" aria-label="Flag Category" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-flag">
                         <option value="Normal" ${flag === 'Normal' ? 'selected' : ''}>Normal</option>
                         <option value="Low" ${flag === 'Low' ? 'selected' : ''}>Low (Blue)</option>
                         <option value="High" ${flag === 'High' ? 'selected' : ''}>High (Red)</option>
@@ -2736,8 +2736,8 @@ Log in using your Patient ID and Password to view and download your pathology te
                         <option value="Critical" ${flag === 'Critical' ? 'selected' : ''}>Critical (Bold)</option>
                     </select>
                 </td>
-                <td class="p-2"><input type="text" value="${ref}" placeholder="Reference Range" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-ref"></td>
-                <td class="p-2"><input type="text" value="${unit}" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-unit"></td>
+                <td class="p-2"><input type="text" name="test_ref_range" aria-label="Reference Range" value="${ref}" placeholder="Reference Range" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-ref"></td>
+                <td class="p-2"><input type="text" name="test_unit" aria-label="Unit" value="${unit}" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-unit"></td>
                 <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 transition text-xs">✕</button></td>
             `;
             tbody.appendChild(tr);
@@ -2749,8 +2749,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             const tr = document.createElement('tr');
             tr.className = 'border-b border-slate-800/80 ref-row';
             tr.innerHTML = `
-                <td class="p-2"><input type="text" value="${gender}" placeholder="Male / Female / Children" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none ref-gender"></td>
-                <td class="p-2"><input type="text" value="${range}" placeholder="e.g. 13.5 - 17.5" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none ref-range"></td>
+                <td class="p-2"><input type="text" name="ref_gender" aria-label="Gender or Age Category" value="${gender}" placeholder="Male / Female / Children" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none ref-gender"></td>
+                <td class="p-2"><input type="text" name="ref_range" aria-label="Reference Range Value" value="${range}" placeholder="e.g. 13.5 - 17.5" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none ref-range"></td>
                 <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-xs">✕</button></td>
             `;
             tbody.appendChild(tr);
@@ -3336,7 +3336,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 <span>+91 9455097721</span>
                             </div>
                             <div class="flex items-center justify-end gap-1">
-                                <img src="${typeof GMAIL_LOGO_B64 !== 'undefined' ? GMAIL_LOGO_B64 : ''}" class="h-3.5 object-contain">
+                                <img src="${typeof GMAIL_LOGO_B64 !== 'undefined' ? GMAIL_LOGO_B64 : ''}" alt="Gmail Logo" class="h-3.5 object-contain">
                                 <span class="font-normal">sultanromeo655@gmail.com</span>
                             </div>
                         </div>
