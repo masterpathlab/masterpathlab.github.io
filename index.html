@@ -191,6 +191,14 @@
                 <p id="inline-box-subtitle" class="text-xs text-slate-400 mb-4">Enter Admin credentials to manage lab records & reports.</p>
 
                 <form onsubmit="handleInlineLoginSubmit(event)" class="space-y-4" autocomplete="off">
+                    <!-- Quick Auto-Fill Admin Shortcut -->
+                    <div id="inline-admin-shortcut" class="bg-cyan-500/10 border border-cyan-500/30 p-2.5 rounded-xl flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-semibold">Default Admin ID: <strong class="text-cyan-400 font-mono">admin</strong> | Pass: <strong class="text-amber-400 font-mono">admin</strong></span>
+                        <button type="button" onclick="autoFillAdminCredsInline()" class="bg-cyan-500 text-slate-950 px-2.5 py-1 rounded-lg text-[11px] font-extrabold hover:bg-cyan-400 transition shadow-sm">
+                            ⚡ Auto-Fill Admin
+                        </button>
+                    </div>
+
                     <div>
                         <label id="inline-lbl-id" for="inline-id-input" class="block text-xs font-semibold text-slate-300 mb-1">Admin Username</label>
                         <input type="text" id="inline-id-input" required autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Admin Username (admin)">
@@ -2158,6 +2166,15 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
 
         let inlineLoginMode = 'admin';
 
+        function autoFillAdminCredsInline() {
+            const adminCreds = getOrInitAdminCreds();
+            const idInput = document.getElementById('inline-id-input');
+            const passInput = document.getElementById('inline-pass-input');
+            if (idInput) idInput.value = adminCreds.username || 'admin';
+            if (passInput) passInput.value = adminCreds.password || 'admin';
+            showToast('⚡ Admin credentials auto-filled!');
+        }
+
         function switchInlineLoginTab(mode) {
             inlineLoginMode = mode || 'admin';
             appState.loginMode = inlineLoginMode;
@@ -2171,6 +2188,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const idInput = document.getElementById('inline-id-input');
             const passInput = document.getElementById('inline-pass-input');
             const recovery = document.getElementById('inline-box-recovery');
+            const shortcutBox = document.getElementById('inline-admin-shortcut');
 
             if (inlineLoginMode === 'admin') {
                 if (btnAdmin) { btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-black transition btn-3d-active'; }
@@ -2182,6 +2200,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 if (idInput) { idInput.placeholder = 'Enter Admin Username (admin)'; idInput.value = ''; }
                 if (passInput) { passInput.placeholder = 'Enter Admin Password (admin)'; passInput.value = ''; }
                 if (recovery) recovery.style.display = 'flex';
+                if (shortcutBox) shortcutBox.style.display = 'flex';
             } else {
                 if (btnPatient) { btnPatient.className = 'flex-1 py-2.5 rounded-xl text-xs font-black transition btn-3d-active'; }
                 if (btnAdmin) { btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-black transition bg-slate-950 text-slate-400 border border-slate-800 hover:text-white'; }
@@ -2192,6 +2211,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 if (idInput) { idInput.placeholder = 'Enter UHID (e.g. UHID-1001)'; idInput.value = ''; }
                 if (passInput) { passInput.placeholder = 'Enter Patient Passcode'; passInput.value = ''; }
                 if (recovery) recovery.style.display = 'none';
+                if (shortcutBox) shortcutBox.style.display = 'none';
             }
 
             const box = document.getElementById('inline-login-box');
