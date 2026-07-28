@@ -4044,8 +4044,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             await restoreFromIndexedDBIfEmpty();
             updateUI();
 
-            // Real-time Cloud Synchronization (Phone & Laptop)
-            setInterval(() => fetchCloudState(), 3000);
+            // Professional Automatic Background Sync (Every 1.5s & On Focus)
+            setInterval(() => fetchCloudState(), 1500);
             window.addEventListener('focus', () => fetchCloudState());
         });
     </script>
