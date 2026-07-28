@@ -1,9 +1,0 @@
-{
-  "description": "Master Path Lab Portal Multi-Device Cloud Sync Database",
-  "public": true,
-  "files": {
-    "mpl_db.json": {
-      "content": "{\"patients\":[{\"pid\":\"UHID-1001\",\"name\":\"Rajesh Kumar\",\"age\":\"32\",\"sex\":\"Male\",\"mobile\":\"9455097721\",\"email\":\"rajesh@example.com\",\"password\":\"1234\",\"registeredAt\":\"28 JUL, 2026 10:00 AM\"}],\"reports\":[]}"
-    }
-  }
-}
