@@ -1,36 +1,5 @@
 {
-  "patients": [
-    {
-      "pid": "UHID-1001",
-      "name": "Rajesh Kumar",
-      "age": "32",
-      "sex": "Male",
-      "mobile": "9455097721",
-      "email": "rajesh@example.com",
-      "password": "1234",
-      "registeredAt": "28 JUL, 2026 10:00 AM"
-    },
-    {
-      "pid": "1002",
-      "name": "Mohd hamza",
-      "age": "22",
-      "sex": "Male",
-      "mobile": "N/A",
-      "email": "",
-      "password": "pass1002",
-      "registeredAt": "28 JUL, 2026 11:30 AM"
-    },
-    {
-      "pid": "1003",
-      "name": "Mohd hamza",
-      "age": "2",
-      "sex": "Male",
-      "mobile": "N/A",
-      "email": "",
-      "password": "pass1003",
-      "registeredAt": "28 JUL, 2026 11:45 AM"
-    }
-  ],
+  "patients": [],
   "reports": [],
   "adminCreds": {
     "username": "admin",
@@ -40,5 +9,5 @@
   },
   "deletedPids": [],
   "deletedReportIds": [],
-  "updatedAt": "2026-07-28T19:38:00.000Z"
+  "updatedAt": "2026-07-28T20:10:00.000Z"
 }

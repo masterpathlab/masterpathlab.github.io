@@ -167,13 +167,49 @@
             <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto mb-10 leading-relaxed">
                 Complete pathology suite: CBC, Widal, Dengue, Thyroid, Lipid, LFT, KFT, Diabetic, Urine, Stool, Semen, Serology, Iron, Vitamins, Coagulation & Cardiac Markers.
             </p>
-            <div class="flex justify-center gap-4 flex-wrap mb-16">
-                <button type="button" onclick="openLoginModal('patient')" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-8 py-3.5 rounded-xl border border-slate-700 transition transform hover:-translate-y-0.5 active:translate-y-0 text-sm">
-                    Patient Portal Login
+            <div class="flex justify-center gap-4 flex-wrap mb-8">
+                <button type="button" onclick="switchInlineLoginTab('patient')" class="bg-slate-900 hover:bg-slate-800 text-cyan-400 font-semibold px-8 py-3.5 rounded-xl border border-cyan-500/30 transition transform hover:-translate-y-0.5 active:translate-y-0 text-sm">
+                    👤 Patient Portal Login
                 </button>
-                <button type="button" onclick="openLoginModal('admin')" class="btn-3d-active font-black px-8 py-3.5 rounded-xl shadow-xl transition transform hover:-translate-y-0.5 active:translate-y-0 text-sm">
-                    Admin Dashboard &rarr;
+                <button type="button" onclick="switchInlineLoginTab('admin')" class="btn-3d-active font-black px-8 py-3.5 rounded-xl shadow-xl transition transform hover:-translate-y-0.5 active:translate-y-0 text-sm">
+                    🔑 Admin Dashboard Login &rarr;
                 </button>
+            </div>
+
+            <!-- Direct Main Page Login Box (100% Works on All Devices) -->
+            <div id="inline-login-box" class="max-w-md mx-auto glass-panel p-6 rounded-2xl border border-cyan-500/40 shadow-2xl mb-16 text-left">
+                <div class="flex gap-2 mb-4 border-b border-slate-800 pb-3">
+                    <button type="button" id="inline-tab-admin" onclick="switchInlineLoginTab('admin')" class="flex-1 py-2.5 rounded-xl text-xs font-black transition btn-3d-active">
+                        🔑 Admin Control Center
+                    </button>
+                    <button type="button" id="inline-tab-patient" onclick="switchInlineLoginTab('patient')" class="flex-1 py-2.5 rounded-xl text-xs font-black transition bg-slate-950 text-slate-400 border border-slate-800 hover:text-white">
+                        👤 Patient Portal
+                    </button>
+                </div>
+
+                <h3 id="inline-box-title" class="text-base font-bold text-white mb-1">🔑 Admin Control Center Login</h3>
+                <p id="inline-box-subtitle" class="text-xs text-slate-400 mb-4">Enter Admin credentials to manage lab records & reports.</p>
+
+                <form onsubmit="handleInlineLoginSubmit(event)" class="space-y-4" autocomplete="off">
+                    <div>
+                        <label id="inline-lbl-id" for="inline-id-input" class="block text-xs font-semibold text-slate-300 mb-1">Admin Username</label>
+                        <input type="text" id="inline-id-input" required autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Admin Username (admin)">
+                    </div>
+                    <div>
+                        <label id="inline-lbl-pass" for="inline-pass-input" class="block text-xs font-semibold text-slate-300 mb-1">Admin Password</label>
+                        <input type="password" id="inline-pass-input" required autocomplete="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm font-semibold" placeholder="Enter Admin Password (admin)">
+                    </div>
+
+                    <button type="submit" class="w-full btn-3d-active font-black p-3.5 rounded-xl transition shadow-lg text-sm">
+                        Login & Access Portal &rarr;
+                    </button>
+                    
+                    <div id="inline-box-recovery" class="flex justify-between items-center mt-3 text-xs pt-1">
+                        <button type="button" onclick="openPinRecoveryModal()" class="text-amber-400 hover:text-amber-300 font-semibold underline flex items-center gap-1">
+                            🛡️ Forgot Password? Reset via Backup Code / PIN
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Features Grid -->
@@ -1479,19 +1515,7 @@
             }
         ];
 
-        const defaultPatients = [
-            {
-                pid: 'UHID-1001',
-                name: 'Rajesh Kumar',
-                age: '32',
-                sex: 'Male',
-                mobile: '9455097721',
-                email: 'rajesh@example.com',
-                password: '1234',
-                registeredAt: '28 JUL, 2026 10:00 AM'
-            }
-        ];
-
+        const defaultPatients = [];
         const defaultReports = [];
 
         // State Management - Loads & Persists Admin Patients, Reports & Session
@@ -1540,7 +1564,7 @@
             }
         }
 
-        const MPL_SYNC_VERSION = 'v2026_cloud_master_v3';
+        const MPL_SYNC_VERSION = 'v2026_clean_production_v4';
         if (localStorage.getItem('mpl_sync_version') !== MPL_SYNC_VERSION) {
             localStorage.removeItem('mpl_patients');
             localStorage.removeItem('mpl_reports');
@@ -1560,8 +1584,8 @@
             adminCreds: adminCredsData,
             deletedPids: Array.isArray(storedDeletedPids) ? storedDeletedPids : [],
             deletedReportIds: Array.isArray(storedDeletedReportIds) ? storedDeletedReportIds : [],
-            patients: (storedPatients && Array.isArray(storedPatients) && storedPatients.length > 0) ? storedPatients : defaultPatients,
-            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : defaultReports,
+            patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : [],
+            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : [],
             testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
         };
 
@@ -2130,8 +2154,95 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             }
         }
 
+        let inlineLoginMode = 'admin';
+
+        function switchInlineLoginTab(mode) {
+            inlineLoginMode = mode || 'admin';
+            appState.loginMode = inlineLoginMode;
+
+            const btnAdmin = document.getElementById('inline-tab-admin');
+            const btnPatient = document.getElementById('inline-tab-patient');
+            const title = document.getElementById('inline-box-title');
+            const sub = document.getElementById('inline-box-subtitle');
+            const lblId = document.getElementById('inline-lbl-id');
+            const lblPass = document.getElementById('inline-lbl-pass');
+            const idInput = document.getElementById('inline-id-input');
+            const passInput = document.getElementById('inline-pass-input');
+            const recovery = document.getElementById('inline-box-recovery');
+
+            if (inlineLoginMode === 'admin') {
+                if (btnAdmin) { btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-black transition btn-3d-active'; }
+                if (btnPatient) { btnPatient.className = 'flex-1 py-2.5 rounded-xl text-xs font-black transition bg-slate-950 text-slate-400 border border-slate-800 hover:text-white'; }
+                if (title) title.innerText = '🔑 Admin Control Center Login';
+                if (sub) sub.innerText = 'Enter Admin credentials to manage lab records & reports.';
+                if (lblId) lblId.innerText = 'Admin Username';
+                if (lblPass) lblPass.innerText = 'Admin Password';
+                if (idInput) { idInput.placeholder = 'Enter Admin Username (admin)'; idInput.value = ''; }
+                if (passInput) { passInput.placeholder = 'Enter Admin Password (admin)'; passInput.value = ''; }
+                if (recovery) recovery.style.display = 'flex';
+            } else {
+                if (btnPatient) { btnPatient.className = 'flex-1 py-2.5 rounded-xl text-xs font-black transition btn-3d-active'; }
+                if (btnAdmin) { btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-black transition bg-slate-950 text-slate-400 border border-slate-800 hover:text-white'; }
+                if (title) title.innerText = '👤 Patient Portal Login';
+                if (sub) sub.innerText = 'Enter your Patient UHID and Passcode to view your pathology reports.';
+                if (lblId) lblId.innerText = 'UHID / Patient ID';
+                if (lblPass) lblPass.innerText = 'Patient Passcode';
+                if (idInput) { idInput.placeholder = 'Enter UHID (e.g. UHID-1001)'; idInput.value = ''; }
+                if (passInput) { passInput.placeholder = 'Enter Patient Passcode'; passInput.value = ''; }
+                if (recovery) recovery.style.display = 'none';
+            }
+
+            const box = document.getElementById('inline-login-box');
+            if (box) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (idInput) setTimeout(() => idInput.focus(), 200);
+        }
+
+        function handleInlineLoginSubmit(event) {
+            if (event && event.preventDefault) event.preventDefault();
+            const idEl = document.getElementById('inline-id-input');
+            const passEl = document.getElementById('inline-pass-input');
+            const idInput = idEl ? idEl.value.trim() : '';
+            const passInput = passEl ? passEl.value.trim() : '';
+
+            if (!idInput || !passInput) {
+                showToast('Please enter both ID and Password.', 'error');
+                return;
+            }
+
+            const adminCreds = getOrInitAdminCreds();
+
+            if (inlineLoginMode === 'admin') {
+                const isMatchStored = (idInput.toLowerCase() === (adminCreds.username || 'admin').toLowerCase() && passInput === (adminCreds.password || 'admin'));
+                const isMatchDefault = (idInput.toLowerCase() === 'admin' && passInput === 'admin');
+
+                if (isMatchStored || isMatchDefault) {
+                    appState.currentUser = { role: 'admin' };
+                    saveState();
+                    showToast('🔑 Welcome back, Admin!');
+                    updateUI();
+                } else {
+                    showToast('❌ Invalid Admin Username or Password! (Default: admin / admin)', 'error');
+                }
+            } else {
+                const patient = appState.patients.find(p => p.pid.toLowerCase() === idInput.toLowerCase() && p.password === passInput);
+                if (patient) {
+                    appState.currentUser = { role: 'patient', pid: patient.pid, name: patient.name };
+                    saveState();
+                    showToast(`👤 Welcome back, ${patient.name}!`);
+                    updateUI();
+                } else {
+                    showToast('❌ Invalid UHID or Passcode! Please check your registration credentials.', 'error');
+                }
+            }
+        }
+
         // Login Modal Controls & Strict Authentication Engine
         function openLoginModal(mode) {
+            switchInlineLoginTab(mode);
+            openLoginModalWindow(mode);
+        }
+
+        function openLoginModalWindow(mode) {
             appState.currentUser = null;
             saveStateLocalOnly();
             updateUI();

@@ -1,0 +1,7 @@
+{
+  "files": {
+    "mpl_db.json": {
+      "content": "{\"patients\":[],\"reports\":[],\"adminCreds\":{\"username\":\"admin\",\"password\":\"admin\",\"mobile\":\"9455097721\",\"pin\":\"1234\"},\"deletedPids\":[],\"deletedReportIds\":[]}"
+    }
+  }
+}
