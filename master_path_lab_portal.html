@@ -2104,12 +2104,12 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const patient = document.getElementById('view-patient');
             const authSection = document.getElementById('header-auth-section');
 
-            if (landing) landing.classList.add('hidden');
-            if (admin) admin.classList.add('hidden');
-            if (patient) patient.classList.add('hidden');
+            if (landing) { landing.classList.add('hidden'); landing.style.display = 'none'; }
+            if (admin) { admin.classList.add('hidden'); admin.style.display = 'none'; }
+            if (patient) { patient.classList.add('hidden'); patient.style.display = 'none'; }
 
             if (!appState.currentUser) {
-                if (landing) landing.classList.remove('hidden');
+                if (landing) { landing.classList.remove('hidden'); landing.style.display = 'block'; }
                 if (authSection) {
                     authSection.innerHTML = `
                         <button type="button" onclick="openLoginModal('patient')" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 px-4 py-2 rounded-xl text-xs font-bold transition mr-2">Patient Portal</button>
@@ -2117,7 +2117,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                     `;
                 }
             } else if (appState.currentUser.role === 'admin') {
-                if (admin) admin.classList.remove('hidden');
+                if (admin) { admin.classList.remove('hidden'); admin.style.display = 'block'; }
                 if (authSection) {
                     authSection.innerHTML = `
                         <div class="flex items-center gap-3">
@@ -2131,13 +2131,14 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                         </div>
                     `;
                 }
-                populatePatientDropdown();
-                renderTestDBPresets();
-                renderTestDBTable();
-                renderAdminLedger();
-                renderPatientsDirectory();
+                try { switchAdminTab('register'); } catch(e){}
+                try { populatePatientDropdown(); } catch(e){}
+                try { renderTestDBPresets(); } catch(e){}
+                try { renderTestDBTable(); } catch(e){}
+                try { renderAdminLedger(); } catch(e){}
+                try { renderPatientsDirectory(); } catch(e){}
             } else if (appState.currentUser.role === 'patient') {
-                if (patient) patient.classList.remove('hidden');
+                if (patient) { patient.classList.remove('hidden'); patient.style.display = 'block'; }
                 if (authSection) {
                     authSection.innerHTML = `
                         <div class="flex items-center gap-3">
@@ -2150,8 +2151,9 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                         </div>
                     `;
                 }
-                renderPatientReports();
+                try { renderPatientReports(); } catch(e){}
             }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         let inlineLoginMode = 'admin';
