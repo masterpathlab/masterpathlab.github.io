@@ -250,13 +250,6 @@
                     <p class="text-xs text-slate-400">Manage patient records, build pathology test databases, and generate pathology PDF reports.</p>
                 </div>
                 <div class="flex gap-2 flex-wrap items-center">
-                    <button type="button" onclick="exportDatabaseJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Export all patients, test templates, and reports to JSON file">
-                        💾 Export Backup
-                    </button>
-                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-md" title="Import database from JSON file">
-                        📥 Import Backup
-                        <input type="file" id="import-backup-file-input" name="import_backup_file" aria-label="Import Backup JSON File" accept=".json" onchange="importDatabaseJSON(event)" class="hidden">
-                    </label>
                     <button type="button" onclick="openChangeAdminModal()" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Change Admin Username and Password">
                         🔑 Change Admin ID & Password
                     </button>
