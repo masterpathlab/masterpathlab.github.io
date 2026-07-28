@@ -1531,7 +1531,7 @@
             storedReports = JSON.parse(localStorage.getItem('mpl_reports'));
             storedTestDB = JSON.parse(localStorage.getItem('mpl_test_db'));
             storedAdminCreds = JSON.parse(localStorage.getItem('mpl_admin_creds'));
-            storedCurrentUser = JSON.parse(localStorage.getItem('mpl_current_user'));
+            storedCurrentUser = JSON.parse(sessionStorage.getItem('mpl_current_user') || localStorage.getItem('mpl_current_user') || 'null');
         } catch(e) {
             console.warn('LocalStorage parse warning:', e);
         }
@@ -1863,13 +1863,43 @@
             }
         }
 
+        function logout() {
+            appState.currentUser = null;
+            try {
+                sessionStorage.removeItem('mpl_current_user');
+                localStorage.removeItem('mpl_current_user');
+            } catch(e){}
+            saveStateLocalOnly();
+            showToast('🔒 Logged out successfully.');
+            updateUI();
+        }
+
+        // Automatic Logout engine when page tab is closed / cut
+        window.addEventListener('beforeunload', function() {
+            try {
+                sessionStorage.removeItem('mpl_current_user');
+                localStorage.removeItem('mpl_current_user');
+            } catch(e){}
+        });
+        window.addEventListener('pagehide', function() {
+            try {
+                sessionStorage.removeItem('mpl_current_user');
+                localStorage.removeItem('mpl_current_user');
+            } catch(e){}
+        });
+
         function saveStateLocalOnly() {
             try {
                 localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
                 localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                 localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
                 localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
-                localStorage.setItem('mpl_current_user', JSON.stringify(appState.currentUser));
+                if (appState.currentUser) {
+                    sessionStorage.setItem('mpl_current_user', JSON.stringify(appState.currentUser));
+                } else {
+                    sessionStorage.removeItem('mpl_current_user');
+                    localStorage.removeItem('mpl_current_user');
+                }
                 localStorage.setItem('mpl_deleted_pids', JSON.stringify(appState.deletedPids || []));
                 localStorage.setItem('mpl_deleted_report_ids', JSON.stringify(appState.deletedReportIds || []));
                 syncToIndexedDB();
