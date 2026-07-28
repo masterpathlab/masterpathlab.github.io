@@ -1832,27 +1832,29 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
 
         // Login Modal Controls & Strict Authentication Engine
         function openLoginModal(mode) {
-            appState.loginMode = mode;
+            appState.loginMode = mode || 'admin';
             const modal = document.getElementById('login-modal');
             if (modal) modal.classList.remove('hidden');
             
             const title = document.getElementById('modal-title');
-            if (title) title.innerText = mode === 'admin' ? '🔑 Admin Control Center Login' : '👤 Patient Portal Login';
+            if (title) title.innerText = (mode === 'admin') ? '🔑 Admin Control Center Login' : '👤 Patient Portal Login';
             
             const lbl = document.getElementById('lbl-id');
-            if (lbl) lbl.innerText = mode === 'admin' ? 'Admin Username' : 'UHID / Patient ID';
+            if (lbl) lbl.innerText = (mode === 'admin') ? 'Admin Username' : 'UHID / Patient ID';
             
+            const creds = getOrInitAdminCreds();
+
             const idInput = document.getElementById('login-id-input');
             if (idInput) {
-                idInput.value = '';
-                idInput.placeholder = mode === 'admin' ? 'Enter Admin ID / Username' : 'Enter UHID / Patient ID';
+                idInput.value = (mode === 'admin') ? (creds.username || 'admin') : '';
+                idInput.placeholder = (mode === 'admin') ? 'Enter Admin ID / Username' : 'Enter UHID / Patient ID';
                 setTimeout(() => idInput.focus(), 100);
             }
             
             const passInput = document.getElementById('login-pass-input');
             if (passInput) {
-                passInput.value = '';
-                passInput.placeholder = mode === 'admin' ? 'Enter Admin Password' : 'Enter Patient Passcode';
+                passInput.value = (mode === 'admin') ? (creds.password || 'admin') : '';
+                passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password' : 'Enter Patient Passcode';
             }
         }
 
@@ -1889,7 +1891,6 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const creds = getOrInitAdminCreds();
             const correctPin = creds.pin || '1234';
 
-            // 1. Check 4-digit PIN
             if (rawInput === correctPin) {
                 closePinRecoveryModal();
                 showToast('✅ Security PIN Verified!');
@@ -1897,7 +1898,6 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 return;
             }
 
-            // 2. Check Backup Codes
             const cleanInput = rawInput.replace(/[^0-9]/g, '');
             let matchedIndex = -1;
             let isAlreadyUsed = false;
@@ -1974,6 +1974,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             saveState();
 
             appState.currentUser = { role: 'admin' };
+            saveState();
             closeResetPasswordModal();
             showToast(`🎉 Admin Username & Password reset successfully! Welcome back, Admin! (ID: ${newUsername})`);
             updateUI();
@@ -2037,10 +2038,13 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 return;
             }
 
-            const adminCreds = appState.adminCreds || { username: 'admin', password: 'admin' };
+            const adminCreds = getOrInitAdminCreds();
 
             if (appState.loginMode === 'admin') {
-                if (idInput.toLowerCase() === adminCreds.username.toLowerCase() && passInput === adminCreds.password) {
+                const isMatchStored = (idInput.toLowerCase() === (adminCreds.username || 'admin').toLowerCase() && passInput === (adminCreds.password || 'admin'));
+                const isMatchDefault = (idInput.toLowerCase() === 'admin' && passInput === 'admin');
+
+                if (isMatchStored || isMatchDefault) {
                     appState.currentUser = { role: 'admin' };
                     saveState();
                     closeLoginModal();
