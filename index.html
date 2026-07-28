@@ -191,8 +191,8 @@
                     <p class="text-xs text-slate-400">Manage patient records, build pathology test databases, and generate pathology PDF reports.</p>
                 </div>
                 <div class="flex gap-2 flex-wrap items-center">
-                    <button type="button" onclick="restoreDefaultData()" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md">
-                        🔄 Restore 30 Demo Tests
+                    <button type="button" onclick="clearAllSystemData()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Clear all patient records and reports">
+                        🧹 Clear All Data
                     </button>
                     <button type="button" onclick="exportDatabaseJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Export all patients, test templates, and reports to JSON file">
                         💾 Export Backup
@@ -510,9 +510,6 @@
                     </div>
                     <div class="flex gap-2 items-center flex-wrap">
                         <input type="text" id="ledger-search-input" onkeyup="renderAdminLedger()" placeholder="🔍 Search by patient, test, or ID..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
-                        <button type="button" onclick="restoreDefaultData()" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition">
-                            🔄 Restore Demo Reports
-                        </button>
                     </div>
                 </div>
                 <div class="overflow-x-auto border border-slate-800 rounded-xl custom-scrollbar">
@@ -1494,18 +1491,27 @@
 
         const defaultReports = [];
 
-        // Fail-Safe State Management - Hard Wipe All Legacy Reports & Patients
+        // State Management - Loads & Persists Admin Patients & Reports
+        let storedPatients = null;
+        let storedReports = null;
+        let storedTestDB = null;
+        let storedAdminCreds = null;
+
         try {
-            localStorage.removeItem('mpl_patients');
-            localStorage.removeItem('mpl_reports');
-            storedAdminCreds = JSON.parse(localStorage.getItem('mpl_admin_creds'));
+            storedPatients = JSON.parse(localStorage.getItem('mpl_patients'));
+            storedReports = JSON.parse(localStorage.getItem('mpl_reports'));
             storedTestDB = JSON.parse(localStorage.getItem('mpl_test_db'));
+            storedAdminCreds = JSON.parse(localStorage.getItem('mpl_admin_creds'));
         } catch(e) {
             console.warn('LocalStorage parse warning:', e);
         }
 
-        let storedPatients = [];
-        let storedReports = [];
+        if (storedPatients && Array.isArray(storedPatients)) {
+            storedPatients = storedPatients.filter(p => !['1001', '556', '555', '554'].includes(p.pid));
+        }
+        if (storedReports && Array.isArray(storedReports)) {
+            storedReports = storedReports.filter(r => !['REP-1001', 'REP-55601', 'REP-55501', 'REP-55401'].includes(r.id) && !['1001', '556', '555', '554'].includes(r.pid));
+        }
 
         const defaultBackupCodes = [
             { code: '4829-1058', used: false, usedAt: null },
@@ -1527,8 +1533,8 @@
                 pin: '1234',
                 backupCodes: defaultBackupCodes
             },
-            patients: [],
-            reports: [],
+            patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : [],
+            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : [],
             testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
         };
 
@@ -1687,20 +1693,25 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             }
         }
 
-        function restoreDefaultData() {
-            appState.patients = [...defaultPatients];
-            appState.reports = [...defaultReports];
-            appState.testDB = [...defaultTestDB];
-            saveState();
-            populatePatientDropdown();
-            renderTestDBPresets();
-            renderTestDBTable();
-            renderAdminLedger();
-            renderPatientsDirectory();
-            if (appState.currentUser && appState.currentUser.role === 'patient') {
-                renderPatientReports();
+        function clearAllSystemData() {
+            if (confirm('⚠️ Are you sure you want to CLEAR all registered patients and reports? This cannot be undone.')) {
+                appState.patients = [];
+                appState.reports = [];
+                localStorage.setItem('mpl_patients', JSON.stringify([]));
+                localStorage.setItem('mpl_reports', JSON.stringify([]));
+                saveState();
+                populatePatientDropdown();
+                renderAdminLedger();
+                renderPatientsDirectory();
+                if (appState.currentUser && appState.currentUser.role === 'patient') {
+                    renderPatientReports();
+                }
+                showToast('🧹 All patient records & reports cleared successfully!');
             }
-            showToast('All 30 master BMLT pathology tests restored successfully!');
+        }
+
+        function restoreDefaultData() {
+            clearAllSystemData();
         }
 
         function exportDatabaseJSON() {
@@ -3386,7 +3397,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
 
             if (filteredReports.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No diagnostic reports found. <button type="button" onclick="restoreDefaultData()" class="text-cyan-400 font-bold underline ml-2">Restore Sample Reports</button></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No diagnostic reports found.</td></tr>`;
                 return;
             }
             filteredReports.forEach(rep => {
