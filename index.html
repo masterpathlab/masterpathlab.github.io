@@ -617,7 +617,7 @@
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4" autocomplete="off">
                 <div>
                     <label id="lbl-id" class="block text-xs font-semibold text-slate-300 mb-1">Username / ID</label>
-                    <input type="text" id="login-id-input" name="mpl_no_autofill_user" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Username">
+                    <input type="text" id="login-id-input" name="mpl_no_autofill_user" required autocomplete="off" data-lpignore="true" data-1p-ignore="true" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Username">
                 </div>
                 <div>
                     <label id="lbl-pass" class="block text-xs font-semibold text-slate-300 mb-1">Password / Passcode</label>
@@ -1874,14 +1874,14 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             if (idInput) {
                 idInput.value = '';
                 idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username' : 'Enter UHID / Patient ID';
-                idInput.setAttribute('readonly', 'readonly');
+                idInput.removeAttribute('readonly');
             }
             
             const passInput = document.getElementById('login-pass-input');
             if (passInput) {
                 passInput.value = '';
                 passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password' : 'Enter Patient Passcode';
-                passInput.setAttribute('readonly', 'readonly');
+                passInput.removeAttribute('readonly');
             }
 
             setTimeout(() => {
