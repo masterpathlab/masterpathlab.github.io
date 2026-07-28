@@ -1491,17 +1491,19 @@
 
         const defaultReports = [];
 
-        // State Management - Loads & Persists Admin Patients & Reports
+        // State Management - Loads & Persists Admin Patients, Reports & Session
         let storedPatients = null;
         let storedReports = null;
         let storedTestDB = null;
         let storedAdminCreds = null;
+        let storedCurrentUser = null;
 
         try {
             storedPatients = JSON.parse(localStorage.getItem('mpl_patients'));
             storedReports = JSON.parse(localStorage.getItem('mpl_reports'));
             storedTestDB = JSON.parse(localStorage.getItem('mpl_test_db'));
             storedAdminCreds = JSON.parse(localStorage.getItem('mpl_admin_creds'));
+            storedCurrentUser = JSON.parse(localStorage.getItem('mpl_current_user'));
         } catch(e) {
             console.warn('LocalStorage parse warning:', e);
         }
@@ -1523,7 +1525,7 @@
         ];
 
         let appState = {
-            currentUser: null,
+            currentUser: storedCurrentUser || null,
             loginMode: 'admin',
             activeCategoryFilter: 'All',
             adminCreds: storedAdminCreds || {
@@ -1550,6 +1552,7 @@
                 localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                 localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
                 localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
+                localStorage.setItem('mpl_current_user', JSON.stringify(appState.currentUser));
             } catch(e) {
                 console.error('LocalStorage save error:', e);
             }
@@ -2029,6 +2032,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             if (appState.loginMode === 'admin') {
                 if (idInput.toLowerCase() === adminCreds.username.toLowerCase() && passInput === adminCreds.password) {
                     appState.currentUser = { role: 'admin' };
+                    saveState();
                     closeLoginModal();
                     showToast('🔑 Welcome back, Admin!');
                     updateUI();
@@ -2039,6 +2043,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 const patient = appState.patients.find(p => p.pid.toUpperCase() === idInput.toUpperCase() && p.password === passInput);
                 if (patient) {
                     appState.currentUser = { role: 'patient', pid: patient.pid, name: patient.name };
+                    saveState();
                     closeLoginModal();
                     showToast(`👤 Welcome back, ${patient.name}!`);
                     updateUI();
@@ -2054,19 +2059,67 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             renderTestDBTable();
             renderAdminLedger();
             renderPatientsDirectory();
-            if (appState.currentUser && appState.currentUser.role === 'patient') {
-                const pNav = document.getElementById('patient-nav');
+
+            const vLanding = document.getElementById('view-landing');
+            const vAdmin = document.getElementById('view-admin');
+            const vPatient = document.getElementById('view-patient');
+            const pNav = document.getElementById('patient-nav');
+            const hAuth = document.getElementById('header-auth-section');
+
+            if (appState.currentUser && appState.currentUser.role === 'admin') {
+                if (vLanding) vLanding.classList.add('hidden');
+                if (vPatient) vPatient.classList.add('hidden');
+                if (vAdmin) vAdmin.classList.remove('hidden');
+                if (pNav) pNav.classList.add('hidden');
+                if (hAuth) {
+                    hAuth.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Logged in as Admin
+                            </span>
+                            <button type="button" onclick="logout()" class="bg-slate-800 text-slate-300 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">
+                                Logout
+                            </button>
+                        </div>
+                    `;
+                }
+            } else if (appState.currentUser && appState.currentUser.role === 'patient') {
+                if (vLanding) vLanding.classList.add('hidden');
+                if (vAdmin) vAdmin.classList.add('hidden');
+                if (vPatient) vPatient.classList.remove('hidden');
                 if (pNav) pNav.classList.remove('hidden');
+                if (hAuth) {
+                    hAuth.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+                                👤 Patient: ${appState.currentUser.name} (UHID: ${appState.currentUser.pid})
+                            </span>
+                            <button type="button" onclick="logout()" class="bg-slate-800 text-slate-300 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">
+                                Logout
+                            </button>
+                        </div>
+                    `;
+                }
                 renderPatientReports();
             } else {
-                const pNav = document.getElementById('patient-nav');
+                if (vAdmin) vAdmin.classList.add('hidden');
+                if (vPatient) vPatient.classList.add('hidden');
+                if (vLanding) vLanding.classList.remove('hidden');
                 if (pNav) pNav.classList.add('hidden');
+                if (hAuth) {
+                    hAuth.innerHTML = `
+                        <button type="button" onclick="openLoginModal('admin')" class="btn-3d-active font-black px-4 py-2 rounded-xl text-xs shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0">
+                            🔑 Admin Login
+                        </button>
+                    `;
+                }
             }
         }
 
         function logout() {
-            saveState();
             appState.currentUser = null;
+            saveState();
             showToast('Logged out successfully.');
             updateUI();
         }
@@ -3655,7 +3708,9 @@ Log in using your Patient ID and Password to view and download your pathology te
                 `;
                 list.appendChild(card);
             });
-        }
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
     </script>
 </body>
 </html>
