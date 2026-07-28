@@ -1655,7 +1655,7 @@
                 }
 
                 if (restored) {
-                    saveState();
+                    saveStateLocalOnly();
                     if (typeof renderAdminLedger === 'function') renderAdminLedger();
                     if (typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
                     if (typeof populatePatientDropdown === 'function') populatePatientDropdown();
@@ -1806,10 +1806,10 @@
                     pin: '1234',
                     backupCodes: generateNewBackupCodesSet()
                 };
-                saveState();
+                saveStateLocalOnly();
             } else if (!appState.adminCreds.backupCodes || !Array.isArray(appState.adminCreds.backupCodes) || appState.adminCreds.backupCodes.length === 0) {
                 appState.adminCreds.backupCodes = generateNewBackupCodesSet();
-                saveState();
+                saveStateLocalOnly();
             }
             return appState.adminCreds;
         }
@@ -3966,10 +3966,10 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            restoreFromIndexedDBIfEmpty();
+        window.addEventListener('DOMContentLoaded', async () => {
+            await fetchCloudState();
+            await restoreFromIndexedDBIfEmpty();
             updateUI();
-            fetchCloudState();
 
             // Real-time Cloud Synchronization (Phone & Laptop)
             setInterval(() => fetchCloudState(), 3000);
