@@ -1984,29 +1984,17 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const hintBox = document.getElementById('login-credentials-hint');
             if (hintBox) {
                 if (mode === 'admin') {
-                    const creds = getOrInitAdminCreds();
-                    hintBox.innerHTML = `
-                        <div class="flex items-center justify-between flex-wrap gap-2">
-                            <div>
-                                <span class="text-slate-400 block text-[11px] font-semibold">🔑 Admin Login Credentials:</span>
-                                <div class="font-mono text-cyan-400 font-bold mt-0.5 text-xs">
-                                    Username: <span class="text-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${creds.username || 'admin'}</span> &nbsp;|&nbsp; 
-                                    Password: <span class="text-amber-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${creds.password || 'admin'}</span>
-                                </div>
-                            </div>
-                            <button type="button" onclick="autoFillAdminCreds()" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm">
-                                ⚡ Auto-Fill Admin Credentials
-                            </button>
-                        </div>
-                    `;
+                    hintBox.style.display = 'none';
+                    hintBox.innerHTML = '';
                 } else {
+                    hintBox.style.display = 'block';
                     if (appState.patients && appState.patients.length > 0) {
                         const firstP = appState.patients[0];
                         hintBox.innerHTML = `
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between flex-wrap gap-2">
                                     <div>
-                                        <span class="text-slate-400 block text-[11px] font-semibold">👤 Patient Login Details (${appState.patients.length} Registered):</span>
+                                        <span class="text-slate-400 block text-[11px] font-semibold">👤 Patient Login Details:</span>
                                         <div class="font-mono text-cyan-400 font-bold mt-0.5 text-xs">
                                             UHID: <span class="text-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${firstP.pid}</span> &nbsp;|&nbsp; 
                                             Passcode: <span class="text-amber-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${firstP.password}</span>
@@ -2016,16 +2004,6 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                                         ⚡ Auto-Fill ${firstP.name.split(' ')[0]}
                                     </button>
                                 </div>
-                                ${appState.patients.length > 1 ? `
-                                    <div class="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
-                                        <span class="font-semibold">Other Registered Patients:</span>
-                                        ${appState.patients.slice(1, 4).map(p => `
-                                            <button type="button" onclick="autoFillPatientCreds('${p.pid}', '${p.password}')" class="bg-slate-900 text-cyan-300 hover:bg-slate-800 px-2 py-0.5 rounded-lg font-mono text-[11px] border border-slate-800">
-                                                ${p.pid} (${p.password})
-                                            </button>
-                                        `).join('')}
-                                    </div>
-                                ` : ''}
                             </div>
                         `;
                     } else {
@@ -2041,14 +2019,14 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const idInput = document.getElementById('login-id-input');
             if (idInput) {
                 idInput.value = '';
-                idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username (Default: admin)' : 'Enter UHID (e.g. UHID-1001)';
+                idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username' : 'Enter UHID (e.g. UHID-1001)';
                 idInput.removeAttribute('readonly');
             }
             
             const passInput = document.getElementById('login-pass-input');
             if (passInput) {
                 passInput.value = '';
-                passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password (Default: admin)' : 'Enter Patient Passcode (e.g. 1234)';
+                passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password' : 'Enter Patient Passcode';
                 passInput.removeAttribute('readonly');
             }
 
