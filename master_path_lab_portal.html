@@ -1543,11 +1543,20 @@
             }
         }
 
+        let storedDeletedPids = null;
+        let storedDeletedReportIds = null;
+        try {
+            storedDeletedPids = JSON.parse(localStorage.getItem('mpl_deleted_pids'));
+            storedDeletedReportIds = JSON.parse(localStorage.getItem('mpl_deleted_report_ids'));
+        } catch(e) {}
+
         let appState = {
             currentUser: storedCurrentUser || null,
             loginMode: 'admin',
             activeCategoryFilter: 'All',
             adminCreds: adminCredsData,
+            deletedPids: Array.isArray(storedDeletedPids) ? storedDeletedPids : [],
+            deletedReportIds: Array.isArray(storedDeletedReportIds) ? storedDeletedReportIds : [],
             patients: (storedPatients && Array.isArray(storedPatients) && storedPatients.length > 0) ? storedPatients : defaultPatients,
             reports: (storedReports && Array.isArray(storedReports)) ? storedReports : defaultReports,
             testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
@@ -1690,6 +1699,8 @@
                     reports: appState.reports || [],
                     adminCreds: appState.adminCreds || {},
                     testDB: appState.testDB || [],
+                    deletedPids: appState.deletedPids || [],
+                    deletedReportIds: appState.deletedReportIds || [],
                     updatedAt: new Date().toISOString()
                 };
 
@@ -1733,16 +1744,46 @@
                     if (parsed && typeof parsed === 'object') {
                         let updated = false;
 
+                        // Process deleted PIDs blacklist first
+                        if (parsed.deletedPids && Array.isArray(parsed.deletedPids)) {
+                            parsed.deletedPids.forEach(dPid => {
+                                if (!appState.deletedPids.includes(dPid)) {
+                                    appState.deletedPids.push(dPid);
+                                }
+                                if (appState.patients.some(p => p.pid === dPid)) {
+                                    appState.patients = appState.patients.filter(p => p.pid !== dPid);
+                                    removeFromIndexedDB('patients', dPid);
+                                    updated = true;
+                                }
+                            });
+                        }
+
+                        // Process deleted Report IDs blacklist
+                        if (parsed.deletedReportIds && Array.isArray(parsed.deletedReportIds)) {
+                            parsed.deletedReportIds.forEach(dId => {
+                                if (!appState.deletedReportIds.includes(dId)) {
+                                    appState.deletedReportIds.push(dId);
+                                }
+                                if (appState.reports.some(r => r.id === dId)) {
+                                    appState.reports = appState.reports.filter(r => r.id !== dId);
+                                    removeFromIndexedDB('reports', dId);
+                                    updated = true;
+                                }
+                            });
+                        }
+
                         if (parsed.patients && Array.isArray(parsed.patients)) {
-                            if (JSON.stringify(appState.patients) !== JSON.stringify(parsed.patients)) {
-                                appState.patients = parsed.patients;
+                            const cleanPatients = parsed.patients.filter(p => p && p.pid && !appState.deletedPids.includes(p.pid));
+                            if (JSON.stringify(appState.patients) !== JSON.stringify(cleanPatients)) {
+                                appState.patients = cleanPatients;
                                 updated = true;
                             }
                         }
 
                         if (parsed.reports && Array.isArray(parsed.reports)) {
-                            if (JSON.stringify(appState.reports) !== JSON.stringify(parsed.reports)) {
-                                appState.reports = parsed.reports;
+                            const cleanReports = parsed.reports.filter(r => r && r.id && !appState.deletedReportIds.includes(r.id));
+                            if (JSON.stringify(appState.reports) !== JSON.stringify(cleanReports)) {
+                                appState.reports = cleanReports;
                                 updated = true;
                             }
                         }
@@ -1786,6 +1827,8 @@
                 localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
                 localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
                 localStorage.setItem('mpl_current_user', JSON.stringify(appState.currentUser));
+                localStorage.setItem('mpl_deleted_pids', JSON.stringify(appState.deletedPids || []));
+                localStorage.setItem('mpl_deleted_report_ids', JSON.stringify(appState.deletedReportIds || []));
                 syncToIndexedDB();
             } catch(e) {
                 console.error('LocalStorage save error:', e);
@@ -3812,11 +3855,14 @@ Log in using your Patient ID and Password to view and download your pathology te
 
         function deleteReport(reportId) {
             if (confirm('⚠️ Are you sure you want to PERMANENTLY delete this report record?')) {
+                if (!appState.deletedReportIds.includes(reportId)) {
+                    appState.deletedReportIds.push(reportId);
+                }
                 appState.reports = appState.reports.filter(r => r.id !== reportId);
                 saveState();
                 removeFromIndexedDB('reports', reportId);
                 renderAdminLedger();
-                showToast('🗑️ Report record deleted permanently.');
+                showToast('🗑️ Report record deleted permanently across all devices.');
             }
         }
 
@@ -3887,8 +3933,14 @@ Log in using your Patient ID and Password to view and download your pathology te
 
         function deletePatient(pid) {
             if (confirm(`⚠️ Are you sure you want to PERMANENTLY delete patient UHID ${pid} and all associated reports? This action cannot be undone.`)) {
+                if (!appState.deletedPids.includes(pid)) {
+                    appState.deletedPids.push(pid);
+                }
                 appState.patients = appState.patients.filter(p => p.pid !== pid);
                 const repIdsToDelete = appState.reports.filter(r => r.pid === pid).map(r => r.id);
+                repIdsToDelete.forEach(rid => {
+                    if (!appState.deletedReportIds.includes(rid)) appState.deletedReportIds.push(rid);
+                });
                 appState.reports = appState.reports.filter(r => r.pid !== pid);
                 saveState();
                 removeFromIndexedDB('patients', pid);
@@ -3896,7 +3948,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 populatePatientDropdown();
                 renderPatientsDirectory();
                 renderAdminLedger();
-                showToast('🗑️ Patient and associated reports deleted permanently.');
+                showToast(`🗑️ Patient ${pid} permanently deleted across all devices.`);
             }
         }
 
