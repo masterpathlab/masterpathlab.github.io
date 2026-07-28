@@ -617,16 +617,11 @@
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
                     <label id="lbl-id" class="block text-xs font-semibold text-slate-300 mb-1">Username / ID</label>
-                    <input type="text" id="login-id-input" required autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Username (Default: admin)">
+                    <input type="text" id="login-id-input" required autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Username">
                 </div>
                 <div>
                     <label id="lbl-pass" class="block text-xs font-semibold text-slate-300 mb-1">Password / Passcode</label>
-                    <input type="password" id="login-pass-input" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Password (Default: admin)">
-                </div>
-
-                <div id="login-hint-box" class="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-3 text-xs text-cyan-300 flex items-center justify-between">
-                    <span>💡 Default Admin: <strong>admin / admin</strong></span>
-                    <button type="button" onclick="fillDefaultAdminCreds()" class="bg-cyan-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg text-xs hover:bg-cyan-400 transition">Auto Fill</button>
+                    <input type="password" id="login-pass-input" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Password">
                 </div>
                 
                 <button type="submit" class="w-full btn-3d-active font-black p-3.5 rounded-xl transition shadow-lg text-sm mt-2">
@@ -1874,38 +1869,19 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
 
             const lblPass = document.getElementById('lbl-pass');
             if (lblPass) lblPass.innerText = (mode === 'admin') ? 'Admin Password' : 'Patient Passcode';
-
-            const hintBox = document.getElementById('login-hint-box');
-            if (hintBox) {
-                if (mode === 'admin') {
-                    hintBox.classList.remove('hidden');
-                    hintBox.style.display = 'flex';
-                } else {
-                    hintBox.classList.add('hidden');
-                    hintBox.style.display = 'none';
-                }
-            }
             
             const idInput = document.getElementById('login-id-input');
             if (idInput) {
                 idInput.value = '';
-                idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username (e.g. admin)' : 'Enter UHID / Patient ID';
+                idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username' : 'Enter UHID / Patient ID';
                 setTimeout(() => idInput.focus(), 100);
             }
             
             const passInput = document.getElementById('login-pass-input');
             if (passInput) {
                 passInput.value = '';
-                passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password (e.g. admin)' : 'Enter Patient Passcode';
+                passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password' : 'Enter Patient Passcode';
             }
-        }
-
-        function fillDefaultAdminCreds() {
-            const idInput = document.getElementById('login-id-input');
-            const passInput = document.getElementById('login-pass-input');
-            const creds = getOrInitAdminCreds();
-            if (idInput) idInput.value = creds.username || 'admin';
-            if (passInput) passInput.value = creds.password || 'admin';
         }
 
         function closeLoginModal() {
