@@ -602,7 +602,7 @@
     </footer>
 
     <!-- Login Modal -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="login-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4" style="display: none;">
         <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             
@@ -2132,16 +2132,6 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
 
         // Login Modal Controls & Strict Authentication Engine
         function openLoginModal(mode) {
-            if (mode === 'admin' && appState.currentUser && appState.currentUser.role === 'admin') {
-                updateUI();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                return;
-            }
-            if (mode === 'patient' && appState.currentUser && appState.currentUser.role === 'patient') {
-                updateUI();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                return;
-            }
             appState.loginMode = mode || 'admin';
             const modal = document.getElementById('login-modal');
             if (modal) {
