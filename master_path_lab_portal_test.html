@@ -1494,40 +1494,18 @@
 
         const defaultReports = [];
 
-        // Fail-Safe State Management & Unconditional Demo Data Purge
-        (function autoCleanDemoData() {
-            try {
-                let p = localStorage.getItem('mpl_patients');
-                let r = localStorage.getItem('mpl_reports');
-                if (!p || p.includes('1001') || p.includes('556') || p.includes('555') || p.includes('554') || p.includes('khan') || p.includes('SUHAIL')) {
-                    localStorage.setItem('mpl_patients', JSON.stringify([]));
-                }
-                if (!r || r.includes('REP-1001') || r.includes('REP-55601') || r.includes('REP-55501') || r.includes('REP-55401') || r.includes('khan') || r.includes('SUHAIL')) {
-                    localStorage.setItem('mpl_reports', JSON.stringify([]));
-                }
-            } catch(e) {}
-        })();
-
-        let storedPatients = null;
-        let storedReports = null;
-        let storedTestDB = null;
-        let storedAdminCreds = null;
-
+        // Fail-Safe State Management - Hard Wipe All Legacy Reports & Patients
         try {
-            storedPatients = JSON.parse(localStorage.getItem('mpl_patients'));
-            storedReports = JSON.parse(localStorage.getItem('mpl_reports'));
-            storedTestDB = JSON.parse(localStorage.getItem('mpl_test_db'));
+            localStorage.removeItem('mpl_patients');
+            localStorage.removeItem('mpl_reports');
             storedAdminCreds = JSON.parse(localStorage.getItem('mpl_admin_creds'));
+            storedTestDB = JSON.parse(localStorage.getItem('mpl_test_db'));
         } catch(e) {
             console.warn('LocalStorage parse warning:', e);
         }
 
-        if (storedPatients && Array.isArray(storedPatients)) {
-            storedPatients = storedPatients.filter(p => !['1001', '556', '555', '554'].includes(p.pid));
-        }
-        if (storedReports && Array.isArray(storedReports)) {
-            storedReports = storedReports.filter(r => !['REP-1001', 'REP-55601', 'REP-55501', 'REP-55401'].includes(r.id) && !['1001', '556', '555', '554'].includes(r.pid));
-        }
+        let storedPatients = [];
+        let storedReports = [];
 
         const defaultBackupCodes = [
             { code: '4829-1058', used: false, usedAt: null },
@@ -1549,8 +1527,8 @@
                 pin: '1234',
                 backupCodes: defaultBackupCodes
             },
-            patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : defaultPatients,
-            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : defaultReports,
+            patients: [],
+            reports: [],
             testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
         };
 
