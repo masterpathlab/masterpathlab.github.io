@@ -1543,12 +1543,18 @@
             }
         }
 
-        let storedDeletedPids = null;
-        let storedDeletedReportIds = null;
-        try {
-            storedDeletedPids = JSON.parse(localStorage.getItem('mpl_deleted_pids'));
-            storedDeletedReportIds = JSON.parse(localStorage.getItem('mpl_deleted_report_ids'));
-        } catch(e) {}
+        const MPL_SYNC_VERSION = 'v2026_cloud_master_v3';
+        if (localStorage.getItem('mpl_sync_version') !== MPL_SYNC_VERSION) {
+            localStorage.removeItem('mpl_patients');
+            localStorage.removeItem('mpl_reports');
+            localStorage.removeItem('mpl_deleted_pids');
+            localStorage.removeItem('mpl_deleted_report_ids');
+            localStorage.setItem('mpl_sync_version', MPL_SYNC_VERSION);
+            storedPatients = null;
+            storedReports = null;
+            storedDeletedPids = null;
+            storedDeletedReportIds = null;
+        }
 
         let appState = {
             currentUser: storedCurrentUser || null,
