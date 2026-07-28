@@ -1,4 +1,4 @@
-﻿
+
 // Universal Fail-Safe AutoTable Invoker
         function callAutoTable(doc, options) {
             try {
@@ -522,100 +522,9 @@
             }
         ];
 
-        const defaultPatients = [
-            { pid: '1001', name: 'khan bhai', age: 16, sex: 'Male', mobile: '9898989898', email: 'khan@example.com', password: 'pass1001', registeredAt: '2026-07-27 02:40 PM' },
-            { pid: '556', name: 'SK MOHD SUHAIL', age: 20, sex: 'Male', mobile: '9876543210', email: 'suhail@example.com', password: 'pass556', registeredAt: '2026-07-27 02:31 PM' },
-            { pid: '555', name: 'Yash M. Patel', age: 21, sex: 'Male', mobile: '9812345678', email: 'yash@example.com', password: 'pass555', registeredAt: '2026-07-27 02:35 PM' },
-            { pid: '554', name: 'Yashvi M. Patel', age: 18, sex: 'Female', mobile: '9855544433', email: 'yashvi@example.com', password: 'pass554', registeredAt: '2026-07-27 02:45 PM' }
-        ];
+        const defaultPatients = [];
 
-        const defaultReports = [
-            {
-                id: 'REP-1001',
-                pid: '1001',
-                patientName: 'khan bhai',
-                date: '21 OCT 2026 04:35 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '125, Shivam Bungalow, S G Road, Bengaluru',
-                testTitle: 'THYROID PROFILE (TOTAL T3, T4, TSH)',
-                sampleType: 'Serum (2 ml)',
-                tat: '6 hrs',
-                instruments: 'CLIA Chemiluminescence Immunoassay',
-                interpNote: 'Thyroid function evaluated via total hormone levels',
-                params: defaultTestDB[1].params,
-                bulletComments: defaultTestDB[1].bulletComments,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55601',
-                pid: '556',
-                patientName: 'SK MOHD SUHAIL',
-                date: '21 OCT 2026 12:00 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '125, Shivam Bungalow, S G Road, Bengaluru',
-                testTitle: 'Complete Blood Count (CBC)',
-                sampleType: 'Blood',
-                tat: '1 hr',
-                instruments: 'Fully automated cell counter - Mindray 300',
-                interpNote: 'Further confirm for Anemia',
-                params: defaultTestDB[0].params,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55501',
-                pid: '555',
-                patientName: 'Yash M. Patel',
-                date: '02 DEC 2026 04:35 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '125, Shivam Bungalow, S G Road, Mumbai',
-                testTitle: 'Mean Corpuscular Hemoglobin Concentration (MCHC)',
-                sampleType: 'Blood',
-                tat: '1 hr',
-                instruments: 'Fully Automated Cell Counter',
-                interpNote: '',
-                params: defaultTestDB[28].params,
-                bulletComments: defaultTestDB[28].bulletComments,
-                bulletLowCauses: defaultTestDB[28].bulletLowCauses,
-                bulletHighCauses: defaultTestDB[28].bulletHighCauses,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55401',
-                pid: '554',
-                patientName: 'Yashvi M. Patel',
-                date: '02 DEC 2026 05:00 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '125, Shivam Bungalow, S G Road, Mumbai',
-                testTitle: 'HEMOGLOBIN (HB)',
-                sampleType: 'Blood (2 ml)',
-                tat: '1 hr (Normal : 1 - 2 hrs)',
-                instruments: 'Photometric Cyanmethemoglobin',
-                interpNote: '',
-                params: defaultTestDB[29].params,
-                genderRanges: defaultTestDB[29].genderRanges,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            }
-        ];
+        const defaultReports = [];
 
         // Fail-Safe State Management
         let storedPatients = null;

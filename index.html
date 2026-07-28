@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta name="google-site-verification" content="XiARFYn8ORLMdjLRRibw4HISVeWGdAhKYu5EI2Zvo2k" />
     <title>Master Path Lab - Pathology Report & Database Portal</title>
     <meta name="description" content="Master Path Lab Official Portal - View pathology test reports, search patient databases, manage diagnostic lab records, and download PDF reports online.">
@@ -1491,12 +1494,19 @@
 
         const defaultReports = [];
 
-        // Fail-Safe State Management
-        if (localStorage.getItem('mpl_v4_clean_done') !== 'true') {
-            localStorage.removeItem('mpl_patients');
-            localStorage.removeItem('mpl_reports');
-            localStorage.setItem('mpl_v4_clean_done', 'true');
-        }
+        // Fail-Safe State Management & Unconditional Demo Data Purge
+        (function autoCleanDemoData() {
+            try {
+                let p = localStorage.getItem('mpl_patients');
+                let r = localStorage.getItem('mpl_reports');
+                if (!p || p.includes('1001') || p.includes('556') || p.includes('555') || p.includes('554') || p.includes('khan') || p.includes('SUHAIL')) {
+                    localStorage.setItem('mpl_patients', JSON.stringify([]));
+                }
+                if (!r || r.includes('REP-1001') || r.includes('REP-55601') || r.includes('REP-55501') || r.includes('REP-55401') || r.includes('khan') || r.includes('SUHAIL')) {
+                    localStorage.setItem('mpl_reports', JSON.stringify([]));
+                }
+            } catch(e) {}
+        })();
 
         let storedPatients = null;
         let storedReports = null;
