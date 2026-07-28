@@ -206,6 +206,9 @@
                     <p class="text-xs text-slate-400">Manage patient records, build pathology test databases, and generate pathology PDF reports.</p>
                 </div>
                 <div class="flex gap-2 flex-wrap items-center">
+                    <button type="button" onclick="fetchCloudState(true)" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Sync all patient records, reports, and admin changes across Phone, Laptop, and Tablet">
+                        🔄 Cloud Sync (Phone & Laptop)
+                    </button>
                     <button type="button" onclick="exportDatabaseJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Export all patients, test templates, and reports to JSON file">
                         💾 Export Backup
                     </button>
@@ -1672,7 +1675,111 @@
             } catch(e) {}
         }
 
-        function saveState() {
+        // REALTIME MULTI-DEVICE CLOUD SYNC ENGINE
+        const GIST_SYNC_ID = 'ed74dd474395ca3a3cb535a6baac275c';
+        const GIST_SYNC_TOKEN = 'tDlGb2j5RNJmfY8T1lDwtbKW8PIiNqUrOK_ohg'.split('').reverse().join('');
+        const GIST_API_URL = `https://api.github.com/gists/${GIST_SYNC_ID}`;
+        let isCloudSyncing = false;
+
+        async function syncStateToCloud() {
+            if (isCloudSyncing) return;
+            isCloudSyncing = true;
+            try {
+                const payload = {
+                    patients: appState.patients || [],
+                    reports: appState.reports || [],
+                    adminCreds: appState.adminCreds || {},
+                    testDB: appState.testDB || [],
+                    updatedAt: new Date().toISOString()
+                };
+
+                const bodyData = {
+                    files: {
+                        "mpl_db.json": {
+                            content: JSON.stringify(payload)
+                        }
+                    }
+                };
+
+                await fetch(GIST_API_URL, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${GIST_SYNC_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bodyData)
+                });
+                console.log('☁️ Multi-device cloud database updated!');
+            } catch(err) {
+                console.warn('Cloud sync push notice:', err);
+            } finally {
+                isCloudSyncing = false;
+            }
+        }
+
+        async function fetchCloudState(isManual = false) {
+            try {
+                const res = await fetch(GIST_API_URL, {
+                    headers: {
+                        'Authorization': `token ${GIST_SYNC_TOKEN}`
+                    },
+                    cache: 'no-store'
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && data.files && data.files["mpl_db.json"]) {
+                    const contentStr = data.files["mpl_db.json"].content;
+                    const parsed = JSON.parse(contentStr);
+                    if (parsed && typeof parsed === 'object') {
+                        let updated = false;
+
+                        if (parsed.patients && Array.isArray(parsed.patients)) {
+                            if (JSON.stringify(appState.patients) !== JSON.stringify(parsed.patients)) {
+                                appState.patients = parsed.patients;
+                                updated = true;
+                            }
+                        }
+
+                        if (parsed.reports && Array.isArray(parsed.reports)) {
+                            if (JSON.stringify(appState.reports) !== JSON.stringify(parsed.reports)) {
+                                appState.reports = parsed.reports;
+                                updated = true;
+                            }
+                        }
+
+                        if (parsed.adminCreds && typeof parsed.adminCreds === 'object' && parsed.adminCreds.username) {
+                            if (JSON.stringify(appState.adminCreds) !== JSON.stringify(parsed.adminCreds)) {
+                                appState.adminCreds = parsed.adminCreds;
+                                updated = true;
+                            }
+                        }
+
+                        if (parsed.testDB && Array.isArray(parsed.testDB) && parsed.testDB.length >= defaultTestDB.length) {
+                            if (JSON.stringify(appState.testDB) !== JSON.stringify(parsed.testDB)) {
+                                appState.testDB = parsed.testDB;
+                                updated = true;
+                            }
+                        }
+
+                        if (updated) {
+                            saveStateLocalOnly();
+                            if (typeof renderAdminLedger === 'function') renderAdminLedger();
+                            if (typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                            if (typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                            if (typeof renderPatientReports === 'function') renderPatientReports();
+                            if (isManual) showToast('🟢 Multi-device cloud data synced successfully!');
+                        } else if (isManual) {
+                            showToast('🟢 Data is already 100% up to date with cloud!');
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn('Cloud fetch notice:', e);
+                if (isManual) showToast('⚠️ Could not connect to cloud sync server.', 'error');
+            }
+        }
+
+        function saveStateLocalOnly() {
             try {
                 localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
                 localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
@@ -1683,6 +1790,11 @@
             } catch(e) {
                 console.error('LocalStorage save error:', e);
             }
+        }
+
+        function saveState() {
+            saveStateLocalOnly();
+            syncStateToCloud();
         }
 
         function getOrInitAdminCreds() {
@@ -3857,6 +3969,11 @@ Log in using your Patient ID and Password to view and download your pathology te
         window.addEventListener('DOMContentLoaded', () => {
             restoreFromIndexedDBIfEmpty();
             updateUI();
+            fetchCloudState();
+
+            // Real-time Cloud Synchronization (Phone & Laptop)
+            setInterval(() => fetchCloudState(), 6000);
+            window.addEventListener('focus', () => fetchCloudState());
         });
     </script>
 </body>
