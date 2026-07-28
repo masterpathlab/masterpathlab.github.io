@@ -2132,11 +2132,15 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
 
         // Login Modal Controls & Strict Authentication Engine
         function openLoginModal(mode) {
+            appState.currentUser = null;
+            saveStateLocalOnly();
+            updateUI();
+
             appState.loginMode = mode || 'admin';
             const modal = document.getElementById('login-modal');
             if (modal) {
                 modal.classList.remove('hidden');
-                modal.style.display = 'flex';
+                modal.style.setProperty('display', 'flex', 'important');
             }
             
             const title = document.getElementById('modal-title');
@@ -2194,6 +2198,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 idInput.value = '';
                 idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username' : 'Enter UHID (e.g. UHID-1001)';
                 idInput.removeAttribute('readonly');
+                setTimeout(() => idInput.focus(), 150);
             }
             
             const passInput = document.getElementById('login-pass-input');
@@ -2202,22 +2207,13 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
                 passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password' : 'Enter Patient Passcode';
                 passInput.removeAttribute('readonly');
             }
-
-            setTimeout(() => {
-                if (idInput) idInput.value = '';
-                if (passInput) passInput.value = '';
-            }, 100);
-            setTimeout(() => {
-                if (idInput) idInput.value = '';
-                if (passInput) passInput.value = '';
-            }, 300);
         }
 
         function closeLoginModal() {
             const modal = document.getElementById('login-modal');
             if (modal) {
                 modal.classList.add('hidden');
-                modal.style.display = 'none';
+                modal.style.setProperty('display', 'none', 'important');
             }
         }
 
