@@ -614,14 +614,14 @@
                 <p class="text-xs text-slate-400 mt-1">Authenticate to access system records or lab reports.</p>
             </div>
 
-            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4" autocomplete="off">
                 <div>
                     <label id="lbl-id" class="block text-xs font-semibold text-slate-300 mb-1">Username / ID</label>
-                    <input type="text" id="login-id-input" required autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Username">
+                    <input type="text" id="login-id-input" name="mpl_no_autofill_user" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Username">
                 </div>
                 <div>
                     <label id="lbl-pass" class="block text-xs font-semibold text-slate-300 mb-1">Password / Passcode</label>
-                    <input type="password" id="login-pass-input" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Password">
+                    <input type="password" id="login-pass-input" name="mpl_no_autofill_pass" required autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Enter Password">
                 </div>
                 
                 <button type="submit" class="w-full btn-3d-active font-black p-3.5 rounded-xl transition shadow-lg text-sm mt-2">
@@ -1874,14 +1874,24 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             if (idInput) {
                 idInput.value = '';
                 idInput.placeholder = (mode === 'admin') ? 'Enter Admin Username' : 'Enter UHID / Patient ID';
-                setTimeout(() => idInput.focus(), 100);
+                idInput.setAttribute('readonly', 'readonly');
             }
             
             const passInput = document.getElementById('login-pass-input');
             if (passInput) {
                 passInput.value = '';
                 passInput.placeholder = (mode === 'admin') ? 'Enter Admin Password' : 'Enter Patient Passcode';
+                passInput.setAttribute('readonly', 'readonly');
             }
+
+            setTimeout(() => {
+                if (idInput) idInput.value = '';
+                if (passInput) passInput.value = '';
+            }, 100);
+            setTimeout(() => {
+                if (idInput) idInput.value = '';
+                if (passInput) passInput.value = '';
+            }, 300);
         }
 
         function closeLoginModal() {
