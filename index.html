@@ -1874,20 +1874,6 @@
             updateUI();
         }
 
-        // Automatic Logout engine when page tab is closed / cut
-        window.addEventListener('beforeunload', function() {
-            try {
-                sessionStorage.removeItem('mpl_current_user');
-                localStorage.removeItem('mpl_current_user');
-            } catch(e){}
-        });
-        window.addEventListener('pagehide', function() {
-            try {
-                sessionStorage.removeItem('mpl_current_user');
-                localStorage.removeItem('mpl_current_user');
-            } catch(e){}
-        });
-
         function saveStateLocalOnly() {
             try {
                 localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
@@ -1896,6 +1882,7 @@
                 localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
                 if (appState.currentUser) {
                     sessionStorage.setItem('mpl_current_user', JSON.stringify(appState.currentUser));
+                    localStorage.setItem('mpl_current_user', JSON.stringify(appState.currentUser));
                 } else {
                     sessionStorage.removeItem('mpl_current_user');
                     localStorage.removeItem('mpl_current_user');
