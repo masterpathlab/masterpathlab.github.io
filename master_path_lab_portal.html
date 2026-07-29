@@ -777,8 +777,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-300 mb-1 font-semibold">Sample Type</label>
-                        <input type="text" id="nt-sample" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500" placeholder="Serum (2 ml)">
+                        <label class="block text-slate-300 mb-1 font-semibold">Sample Type (Optional)</label>
+                        <input type="text" id="nt-sample" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500" placeholder="e.g. Serum (2 ml)">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -3141,7 +3141,11 @@ Log in using your Patient ID and Password to view and download your pathology te
             // --- 5. INVESTIGATION PARAMETERS TABLE ---
             const tableBody = [];
             let tatText = reportObj.tat ? (reportObj.tat.startsWith('TAT') ? reportObj.tat : `TAT : ${reportObj.tat}`) : '';
-            tableBody.push(['Primary Sample Type :', reportObj.sampleType || 'Blood', tatText, '']);
+            if (reportObj.sampleType && reportObj.sampleType.trim()) {
+                tableBody.push(['Primary Sample Type :', reportObj.sampleType.trim(), tatText, '']);
+            } else if (tatText) {
+                tableBody.push(['', '', tatText, '']);
+            }
 
             (reportObj.params || []).forEach(p => {
                 if (p.isGroup) {
@@ -3927,7 +3931,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 doctor: 'DR. SELF / DEMO',
                 location: 'MAIN LABORATORY AZAMGARH',
                 testTitle: test.title || 'NEW PATHOLOGY TEST PANEL',
-                sampleType: test.sampleType || 'Serum',
+                sampleType: test.sampleType || '',
                 tat: test.tat || '2 hrs',
                 instruments: test.instruments || 'Automated Laboratory Analyzer',
                 interpNote: test.interpNote || '',
@@ -4056,11 +4060,12 @@ Log in using your Patient ID and Password to view and download your pathology te
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
-                                <td>Primary Sample Type :</td>
-                                <td class="font-bold text-slate-900">${reportObj.sampleType || 'Blood'}</td>
-                                <td colspan="2" class="text-slate-500">${reportObj.tat ? (reportObj.tat.startsWith('TAT') ? reportObj.tat : 'TAT : ' + reportObj.tat) : ''}</td>
-                            </tr>
+                            ${(reportObj.sampleType && reportObj.sampleType.trim()) || (reportObj.tat && reportObj.tat.trim()) ? `
+                                <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
+                                    ${reportObj.sampleType && reportObj.sampleType.trim() ? `<td>Primary Sample Type :</td><td class="font-bold text-slate-900">${reportObj.sampleType.trim()}</td>` : `<td colspan="2"></td>`}
+                                    <td colspan="2" class="text-slate-500">${reportObj.tat ? (reportObj.tat.startsWith('TAT') ? reportObj.tat : 'TAT : ' + reportObj.tat) : ''}</td>
+                                </tr>
+                            ` : ''}
                             ${paramsHtml}
                         </tbody>
                     </table>
@@ -4122,7 +4127,7 @@ Log in using your Patient ID and Password to view and download your pathology te
         function getModalTestDefinitionData() {
             const title = document.getElementById('nt-title').value.trim() || 'NEW PATHOLOGY TEST PANEL';
             const category = document.getElementById('nt-category').value;
-            const sampleType = document.getElementById('nt-sample').value.trim() || 'Serum';
+            const sampleType = document.getElementById('nt-sample').value.trim();
             const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
             const instruments = document.getElementById('nt-instruments').value.trim() || 'Automated Analyzer';
 
