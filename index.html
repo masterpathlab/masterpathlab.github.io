@@ -251,7 +251,7 @@
                         </div>
                         <div class="flex gap-2">
                             <input type="text" id="preset-search-input" onkeyup="filterPresetCards()" placeholder="🔍 Search test (e.g. Widal, Dengue, CRP)..." class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64 shadow-sm">
-                            <button type="button" onclick="clearReportFormRows()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white text-xs px-3 py-1.5 rounded-lg transition font-semibold">
+                            <button type="button" onclick="clearEntireReportForm()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white text-xs px-3 py-1.5 rounded-lg transition font-semibold">
                                 Clear Form
                             </button>
                         </div>
@@ -2737,6 +2737,54 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (rows1) rows1.innerHTML = '';
             if (rows2) rows2.innerHTML = '';
         }
+
+        function clearEntireReportForm() {
+            if (confirm('Clear the entire report form including patient selection?')) {
+                // Clear patient details
+                const patSelect = document.getElementById('rep-patient-select');
+                if (patSelect) {
+                    patSelect.value = '';
+                    if (typeof autofillPatientData === 'function') autofillPatientData();
+                }
+                const doctor = document.getElementById('rep-doctor');
+                if (doctor) doctor.value = '';
+                const collector = document.getElementById('rep-collector');
+                if (collector) collector.value = '';
+                const location = document.getElementById('rep-location');
+                if (location) location.value = '';
+                
+                // Clear test fields
+                const title = document.getElementById('rep-test-title');
+                if (title) title.value = '';
+                const sample = document.getElementById('rep-sample-type');
+                if (sample) sample.value = '';
+                const tat = document.getElementById('rep-tat');
+                if (tat) tat.value = '';
+                const inst = document.getElementById('rep-instruments');
+                if (inst) inst.value = '';
+                const interp = document.getElementById('rep-interp-note');
+                if (interp) interp.value = '';
+                const comm = document.getElementById('rep-bullet-comments');
+                if (comm) comm.value = '';
+                const low = document.getElementById('rep-bullet-low-causes');
+                if (low) low.value = '';
+                const high = document.getElementById('rep-bullet-high-causes');
+                if (high) high.value = '';
+
+                // Clear search input
+                const search = document.getElementById('preset-search-input');
+                if (search) {
+                    search.value = '';
+                    if (typeof filterPresetCards === 'function') filterPresetCards();
+                }
+
+                // Clear dynamic rows
+                clearReportFormRows();
+                
+                showToast('Form cleared successfully.');
+            }
+        }
+
 
         // Dynamic Form Rows Management
         function addGroupRow(groupName = 'BLOOD INDICES') {
