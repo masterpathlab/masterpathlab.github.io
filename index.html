@@ -747,7 +747,7 @@
 
     <!-- New Test Definition Modal -->
     <div id="modal-new-test" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-lg w-full shadow-2xl relative">
+        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-3xl w-full shadow-2xl relative overflow-x-auto">
             <button type="button" onclick="closeNewTestModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 class="text-lg font-bold text-white mb-1">Add New Pathology Test Definition</h3>
             <p class="text-xs text-slate-400 mb-4">Define a reusable test panel template for your master database.</p>
@@ -793,11 +793,26 @@
                         <label class="block text-slate-300 font-semibold">Test Parameters</label>
                         <button type="button" onclick="addNTParamRow()" class="text-cyan-400 hover:text-cyan-300 text-xs font-bold">+ Add Row</button>
                     </div>
-                    <div id="nt-params-container" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-1">
-                        <div class="grid grid-cols-[1fr_80px_60px_20px] gap-2 items-center nt-param-row">
-                            <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-[11px]">
-                            <input type="text" placeholder="Ref" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-ref text-[11px]">
-                            <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-unit text-[11px]">
+                    <!-- Column headers -->
+                    <div class="grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 mb-1 px-1">
+                        <span class="text-[9px] text-slate-500 uppercase">Name</span>
+                        <span class="text-[9px] text-slate-500 uppercase">Method</span>
+                        <span class="text-[9px] text-cyan-500 uppercase">♂ Male</span>
+                        <span class="text-[9px] text-pink-400 uppercase">♀ Female</span>
+                        <span class="text-[9px] text-green-400 uppercase">👶 Child</span>
+                        <span class="text-[9px] text-amber-400 uppercase">🍼 Neo</span>
+                        <span class="text-[9px] text-slate-500 uppercase">Unit</span>
+                        <span></span>
+                    </div>
+                    <div id="nt-params-container" class="space-y-2 max-h-52 overflow-y-auto custom-scrollbar pr-1">
+                        <div class="grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row">
+                            <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-name text-[10px]">
+                            <input type="text" placeholder="Method" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-sub text-[10px]">
+                            <input type="text" placeholder="M Ref" class="w-full bg-slate-950 border border-cyan-800/40 rounded-lg p-1.5 text-cyan-300 nt-param-ref-male text-[10px]">
+                            <input type="text" placeholder="F Ref" class="w-full bg-slate-950 border border-pink-800/40 rounded-lg p-1.5 text-pink-300 nt-param-ref-female text-[10px]">
+                            <input type="text" placeholder="Ch Ref" class="w-full bg-slate-950 border border-green-800/40 rounded-lg p-1.5 text-green-300 nt-param-ref-child text-[10px]">
+                            <input type="text" placeholder="Neo Ref" class="w-full bg-slate-950 border border-amber-800/40 rounded-lg p-1.5 text-amber-300 nt-param-ref-neo text-[10px]">
+                            <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-unit text-[10px]">
                             <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-1 hover:text-red-300">&times;</button>
                         </div>
                     </div>
@@ -3727,11 +3742,15 @@ Log in using your Patient ID and Password to view and download your pathology te
             const container = document.getElementById('nt-params-container');
             if (!container) return;
             const div = document.createElement('div');
-            div.className = 'grid grid-cols-[1fr_80px_60px_20px] gap-2 items-center nt-param-row';
+            div.className = 'grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row';
             div.innerHTML = `
-                <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-[11px]">
-                <input type="text" placeholder="Ref" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-ref text-[11px]">
-                <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-unit text-[11px]">
+                <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-name text-[10px]">
+                <input type="text" placeholder="Method" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-sub text-[10px]">
+                <input type="text" placeholder="M Ref" class="w-full bg-slate-950 border border-cyan-800/40 rounded-lg p-1.5 text-cyan-300 nt-param-ref-male text-[10px]">
+                <input type="text" placeholder="F Ref" class="w-full bg-slate-950 border border-pink-800/40 rounded-lg p-1.5 text-pink-300 nt-param-ref-female text-[10px]">
+                <input type="text" placeholder="Ch Ref" class="w-full bg-slate-950 border border-green-800/40 rounded-lg p-1.5 text-green-300 nt-param-ref-child text-[10px]">
+                <input type="text" placeholder="Neo Ref" class="w-full bg-slate-950 border border-amber-800/40 rounded-lg p-1.5 text-amber-300 nt-param-ref-neo text-[10px]">
+                <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-unit text-[10px]">
                 <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-1 hover:text-red-300">&times;</button>
             `;
             container.appendChild(div);
@@ -3746,10 +3765,14 @@ Log in using your Patient ID and Password to view and download your pathology te
             const container = document.getElementById('nt-params-container');
             if (container) {
                 container.innerHTML = `
-                    <div class="grid grid-cols-[1fr_80px_60px_20px] gap-2 items-center nt-param-row">
-                        <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-[11px]">
-                        <input type="text" placeholder="Ref" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-ref text-[11px]">
-                        <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-unit text-[11px]">
+                    <div class="grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row">
+                        <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-name text-[10px]">
+                        <input type="text" placeholder="Method" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-sub text-[10px]">
+                        <input type="text" placeholder="M Ref" class="w-full bg-slate-950 border border-cyan-800/40 rounded-lg p-1.5 text-cyan-300 nt-param-ref-male text-[10px]">
+                        <input type="text" placeholder="F Ref" class="w-full bg-slate-950 border border-pink-800/40 rounded-lg p-1.5 text-pink-300 nt-param-ref-female text-[10px]">
+                        <input type="text" placeholder="Ch Ref" class="w-full bg-slate-950 border border-green-800/40 rounded-lg p-1.5 text-green-300 nt-param-ref-child text-[10px]">
+                        <input type="text" placeholder="Neo Ref" class="w-full bg-slate-950 border border-amber-800/40 rounded-lg p-1.5 text-amber-300 nt-param-ref-neo text-[10px]">
+                        <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-unit text-[10px]">
                         <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-1 hover:text-red-300">&times;</button>
                     </div>
                 `;
@@ -3771,18 +3794,48 @@ Log in using your Patient ID and Password to view and download your pathology te
 
             const paramRows = document.querySelectorAll('#nt-params-container .nt-param-row');
             const params = [];
+            const genderRanges = [];
             paramRows.forEach(row => {
                 const paramName = row.querySelector('.nt-param-name').value.trim();
-                const paramRef = row.querySelector('.nt-param-ref').value.trim();
+                const paramSub = row.querySelector('.nt-param-sub') ? row.querySelector('.nt-param-sub').value.trim() : '';
+                const refMale = row.querySelector('.nt-param-ref-male') ? row.querySelector('.nt-param-ref-male').value.trim() : '';
+                const refFemale = row.querySelector('.nt-param-ref-female') ? row.querySelector('.nt-param-ref-female').value.trim() : '';
+                const refChild = row.querySelector('.nt-param-ref-child') ? row.querySelector('.nt-param-ref-child').value.trim() : '';
+                const refNeo = row.querySelector('.nt-param-ref-neo') ? row.querySelector('.nt-param-ref-neo').value.trim() : '';
                 const paramUnit = row.querySelector('.nt-param-unit').value.trim();
                 
                 if (paramName) {
-                    params.push({ inv: paramName, sub: '', res: '', flag: 'Normal', ref: paramRef, unit: paramUnit });
+                    // Store the male ref as default ref (most commonly used)
+                    params.push({ 
+                        inv: paramName, 
+                        sub: paramSub, 
+                        res: '', 
+                        flag: 'Normal', 
+                        ref: refMale || refFemale || refChild || refNeo || '', 
+                        unit: paramUnit,
+                        refMale: refMale,
+                        refFemale: refFemale,
+                        refChild: refChild,
+                        refNeo: refNeo
+                    });
                 }
             });
 
             if (params.length === 0) {
-                params.push({ inv: 'Parameter 1', sub: '', res: '', flag: 'Normal', ref: '0 - 100', unit: 'unit' });
+                params.push({ inv: 'Parameter 1', sub: '', res: '', flag: 'Normal', ref: '0 - 100', unit: 'unit', refMale: '', refFemale: '', refChild: '', refNeo: '' });
+            }
+
+            // Auto-build genderRanges summary for the test
+            const hasGenderRefs = params.some(p => p.refMale || p.refFemale || p.refChild || p.refNeo);
+            if (hasGenderRefs) {
+                const maleRefs = params.filter(p => p.refMale).map(p => `${p.inv}: ${p.refMale} ${p.unit}`).join(', ');
+                const femaleRefs = params.filter(p => p.refFemale).map(p => `${p.inv}: ${p.refFemale} ${p.unit}`).join(', ');
+                const childRefs = params.filter(p => p.refChild).map(p => `${p.inv}: ${p.refChild} ${p.unit}`).join(', ');
+                const neoRefs = params.filter(p => p.refNeo).map(p => `${p.inv}: ${p.refNeo} ${p.unit}`).join(', ');
+                if (maleRefs) genderRanges.push({ gender: 'Male', range: maleRefs });
+                if (femaleRefs) genderRanges.push({ gender: 'Female', range: femaleRefs });
+                if (childRefs) genderRanges.push({ gender: 'Children', range: childRefs });
+                if (neoRefs) genderRanges.push({ gender: 'Neonate', range: neoRefs });
             }
 
             const newTest = {
@@ -3793,7 +3846,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 tat,
                 instruments,
                 params,
-                genderRanges: []
+                genderRanges
             };
 
             appState.testDB.push(newTest);
