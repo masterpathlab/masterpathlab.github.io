@@ -1757,6 +1757,9 @@
         }
 
         async function initAppFromFirestore() {
+            if (navigator.storage && navigator.storage.persist) {
+                try { navigator.storage.persist(); } catch(e) {}
+            }
             if (!dbInstance) { saveState(); return; }
             try {
                 const badge = document.getElementById('idb-status-badge');
