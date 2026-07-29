@@ -3140,7 +3140,7 @@ Log in using your Patient ID and Password to view and download your pathology te
 
             // --- 5. INVESTIGATION PARAMETERS TABLE ---
             const tableBody = [];
-            let tatText = reportObj.tat ? (reportObj.tat.startsWith('TAT') ? reportObj.tat : `TAT : ${reportObj.tat}`) : '';
+            let tatText = (reportObj.tat && reportObj.tat.trim()) ? (reportObj.tat.startsWith('TAT') ? reportObj.tat.trim() : `TAT : ${reportObj.tat.trim()}`) : '';
             if (reportObj.sampleType && reportObj.sampleType.trim()) {
                 tableBody.push(['Primary Sample Type :', reportObj.sampleType.trim(), tatText, '']);
             } else if (tatText) {
@@ -3808,7 +3808,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             const title = document.getElementById('nt-title').value.trim();
             const category = document.getElementById('nt-category').value;
             const sampleType = document.getElementById('nt-sample').value.trim();
-            const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
+            const tat = document.getElementById('nt-tat').value.trim();
             const instruments = document.getElementById('nt-instruments').value.trim();
 
             const container = document.getElementById('nt-params-container');
@@ -3933,7 +3933,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 location: 'MAIN LABORATORY AZAMGARH',
                 testTitle: test.title || 'NEW PATHOLOGY TEST PANEL',
                 sampleType: test.sampleType || '',
-                tat: test.tat || '2 hrs',
+                tat: test.tat || '',
                 instruments: test.instruments || 'Automated Laboratory Analyzer',
                 interpNote: test.interpNote || '',
                 bulletComments: test.bulletComments || '',
@@ -4129,7 +4129,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             const title = document.getElementById('nt-title').value.trim() || 'NEW PATHOLOGY TEST PANEL';
             const category = document.getElementById('nt-category').value;
             const sampleType = document.getElementById('nt-sample').value.trim();
-            const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
+            const tat = document.getElementById('nt-tat').value.trim();
             const instruments = document.getElementById('nt-instruments').value.trim() || 'Automated Analyzer';
 
             const container = document.getElementById('nt-params-container');
