@@ -789,11 +789,17 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Default Parameter</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <input type="text" id="nt-param-name" placeholder="Parameter Name" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
-                        <input type="text" id="nt-param-ref" placeholder="0 - 100" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
-                        <input type="text" id="nt-param-unit" placeholder="unit" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-slate-300 font-semibold">Test Parameters</label>
+                        <button type="button" onclick="addNTParamRow()" class="text-cyan-400 hover:text-cyan-300 text-xs font-bold">+ Add Row</button>
+                    </div>
+                    <div id="nt-params-container" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-1">
+                        <div class="grid grid-cols-[1fr_80px_60px_20px] gap-2 items-center nt-param-row">
+                            <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-[11px]">
+                            <input type="text" placeholder="Ref" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-ref text-[11px]">
+                            <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-unit text-[11px]">
+                            <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-1 hover:text-red-300">&times;</button>
+                        </div>
                     </div>
                 </div>
                 <button type="submit" class="w-full btn-3d-active font-black p-3 rounded-xl transition shadow-lg mt-2 text-xs">
@@ -3717,7 +3723,37 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         // Test Master Database Modal Controls
+        function addNTParamRow() {
+            const container = document.getElementById('nt-params-container');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'grid grid-cols-[1fr_80px_60px_20px] gap-2 items-center nt-param-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-[11px]">
+                <input type="text" placeholder="Ref" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-ref text-[11px]">
+                <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-unit text-[11px]">
+                <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-1 hover:text-red-300">&times;</button>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
         function openNewTestModal() {
+            // Reset form fields
+            const form = document.querySelector('#modal-new-test form');
+            if (form) form.reset();
+            
+            const container = document.getElementById('nt-params-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="grid grid-cols-[1fr_80px_60px_20px] gap-2 items-center nt-param-row">
+                        <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-[11px]">
+                        <input type="text" placeholder="Ref" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-ref text-[11px]">
+                        <input type="text" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-unit text-[11px]">
+                        <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-1 hover:text-red-300">&times;</button>
+                    </div>
+                `;
+            }
             document.getElementById('modal-new-test').classList.remove('hidden');
         }
 
@@ -3732,15 +3768,21 @@ Log in using your Patient ID and Password to view and download your pathology te
             const sampleType = document.getElementById('nt-sample').value.trim();
             const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
             const instruments = document.getElementById('nt-instruments').value.trim();
-            const paramName = document.getElementById('nt-param-name').value.trim();
-            const paramRef = document.getElementById('nt-param-ref').value.trim();
-            const paramUnit = document.getElementById('nt-param-unit').value.trim();
 
+            const paramRows = document.querySelectorAll('#nt-params-container .nt-param-row');
             const params = [];
-            if (paramName) {
-                params.push({ inv: paramName, sub: '', res: 'Normal', flag: 'Normal', ref: paramRef || '0 - 100', unit: paramUnit || 'unit' });
-            } else {
-                params.push({ inv: 'Parameter 1', sub: '', res: 'Normal', flag: 'Normal', ref: '0 - 100', unit: 'unit' });
+            paramRows.forEach(row => {
+                const paramName = row.querySelector('.nt-param-name').value.trim();
+                const paramRef = row.querySelector('.nt-param-ref').value.trim();
+                const paramUnit = row.querySelector('.nt-param-unit').value.trim();
+                
+                if (paramName) {
+                    params.push({ inv: paramName, sub: '', res: '', flag: 'Normal', ref: paramRef, unit: paramUnit });
+                }
+            });
+
+            if (params.length === 0) {
+                params.push({ inv: 'Parameter 1', sub: '', res: '', flag: 'Normal', ref: '0 - 100', unit: 'unit' });
             }
 
             const newTest = {
