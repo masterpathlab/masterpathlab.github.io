@@ -84,6 +84,9 @@
             background: #06b6d4;
         }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
 
@@ -1679,51 +1682,48 @@
         const IDB_VERSION = 1;
         let dbInstance = null;
 
-        function initIndexedDB() {
-            return new Promise((resolve) => {
-                if (!window.indexedDB) {
-                    resolve(false);
-                    return;
-                }
-                const req = indexedDB.open(IDB_NAME, IDB_VERSION);
-                req.onupgradeneeded = function(e) {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains('appStore')) {
-                        db.createObjectStore('appStore', { keyPath: 'key' });
-                    }
-                };
-                req.onsuccess = function(e) {
-                    dbInstance = e.target.result;
-                    const badge = document.getElementById('idb-status-badge');
-                    if (badge) badge.innerText = 'IndexedDB Permanent Active';
-                    resolve(true);
-                };
-                req.onerror = function() { resolve(false); };
-            });
+        const firebaseConfig = {
+            apiKey: "AIzaSyDytk0aOaMnkxLJ6Q7W7vPUxGR9iqN2lFs",
+            authDomain: "master-path-lab.firebaseapp.com",
+            projectId: "master-path-lab",
+            storageBucket: "master-path-lab.firebasestorage.app"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        dbInstance = firebase.firestore();
+
+        async function initIndexedDB() {
+            const badge = document.getElementById('idb-status-badge');
+            if (badge) {
+                badge.innerText = 'Firebase Database Active 🟢';
+                badge.className = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
+            }
+            return true;
         }
 
-        function saveToIndexedDB(key, val) {
+        async function saveToIndexedDB(key, val) {
             if (!dbInstance) return;
             try {
-                const tx = dbInstance.transaction('appStore', 'readwrite');
-                const store = tx.objectStore('appStore');
-                store.put({ key: key, value: val });
-            } catch(e) {}
+                await dbInstance.collection('appData').doc(key).set({ value: val });
+            } catch(e) {
+                console.error("Firebase save error:", e);
+            }
         }
 
-        function loadFromIndexedDB(key) {
-            return new Promise((resolve) => {
-                if (!dbInstance) { resolve(null); return; }
-                try {
-                    const tx = dbInstance.transaction('appStore', 'readonly');
-                    const store = tx.objectStore('appStore');
-                    const req = store.get(key);
-                    req.onsuccess = function() {
-                        resolve(req.result ? req.result.value : null);
-                    };
-                    req.onerror = function() { resolve(null); };
-                } catch(e) { resolve(null); }
-            });
+        async function loadFromIndexedDB(key) {
+            if (!dbInstance) return null;
+            try {
+                const doc = await dbInstance.collection('appData').doc(key).get();
+                if (doc.exists) {
+                    return doc.data().value;
+                }
+            } catch(e) {
+                console.error("Firebase load error:", e);
+            }
+            return null;
         }
 
         // --- OPTIONAL REALTIME CLOUD SYNC ENGINE ---
