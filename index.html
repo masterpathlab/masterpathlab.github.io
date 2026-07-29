@@ -1670,7 +1670,7 @@
             },
             patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : [],
             reports: (storedReports && Array.isArray(storedReports)) ? storedReports : [],
-            testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
+            testDB: (storedTestDB && Array.isArray(storedTestDB)) ? storedTestDB : defaultTestDB
         };
 
         if (!appState.adminCreds.backupCodes || !Array.isArray(appState.adminCreds.backupCodes) || appState.adminCreds.backupCodes.length === 0) {
@@ -1787,7 +1787,7 @@
                     if (data && (data.patients || data.reports)) {
                         if (Array.isArray(data.patients) && data.patients.length > 0) appState.patients = data.patients;
                         if (Array.isArray(data.reports) && data.reports.length > 0) appState.reports = data.reports;
-                        if (Array.isArray(data.testDB) && data.testDB.length >= defaultTestDB.length) appState.testDB = data.testDB;
+                        if (Array.isArray(data.testDB)) appState.testDB = data.testDB;
                         saveState();
                         populatePatientDropdown();
                         renderPatientsDirectory();
