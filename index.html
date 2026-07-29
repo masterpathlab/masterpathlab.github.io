@@ -1808,10 +1808,12 @@
                 const pDoc = await dbInstance.collection('appData').doc('mpl_patients').get();
                 const rDoc = await dbInstance.collection('appData').doc('mpl_reports').get();
                 const cDoc = await dbInstance.collection('appData').doc('mpl_admin_creds').get();
+                const tDoc = await dbInstance.collection('appData').doc('mpl_test_db').get();
                 
                 let remotePatients = pDoc.exists ? pDoc.data().value : null;
                 let remoteReports = rDoc.exists ? rDoc.data().value : null;
                 let remoteCreds = cDoc.exists ? cDoc.data().value : null;
+                let remoteTestDB = tDoc.exists ? tDoc.data().value : null;
 
                 let needsLocalUpdate = false;
                 if (remotePatients && Array.isArray(remotePatients) && remotePatients.length > 0) {
@@ -1826,14 +1828,21 @@
                     appState.adminCreds = remoteCreds;
                     needsLocalUpdate = true;
                 }
+                if (remoteTestDB && Array.isArray(remoteTestDB) && remoteTestDB.length > 0) {
+                    appState.testDB = remoteTestDB;
+                    needsLocalUpdate = true;
+                }
 
                 if (needsLocalUpdate) {
                     localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
                     localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                     localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
+                    localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
                     if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
                     if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
                     if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                    if(typeof renderTestDBTable === 'function') renderTestDBTable();
+                    if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
                 } else {
                     saveState();
                 }
@@ -1863,6 +1872,18 @@
                             appState.reports = newReps;
                             localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                             if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                        }
+                    }
+                });
+                
+                dbInstance.collection('appData').doc('mpl_test_db').onSnapshot((doc) => {
+                    if (doc.exists && doc.data().value) {
+                        const newTestDB = doc.data().value;
+                        if (JSON.stringify(newTestDB) !== JSON.stringify(appState.testDB)) {
+                            appState.testDB = newTestDB;
+                            localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
+                            if(typeof renderTestDBTable === 'function') renderTestDBTable();
+                            if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
                         }
                     }
                 });
@@ -2015,56 +2036,6 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             } else {
                 fallbackCopyText(text);
             }
-        }
-
-        function exportDatabaseJSON() {
-            const data = {
-                patients: appState.patients,
-                reports: appState.reports,
-                testDB: appState.testDB,
-                adminCreds: appState.adminCreds,
-                exportedAt: new Date().toISOString(),
-                app: 'Master Path Lab'
-            };
-            const jsonStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Master_Path_Lab_Full_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('💾 Full Lab Database JSON Backup exported!');
-        }
-
-        function importDatabaseJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data && (data.patients || data.reports || data.testDB)) {
-                        if (Array.isArray(data.patients)) appState.patients = data.patients;
-                        if (Array.isArray(data.reports)) appState.reports = data.reports;
-                        if (Array.isArray(data.testDB) && data.testDB.length >= defaultTestDB.length) appState.testDB = data.testDB;
-                        if (data.adminCreds && data.adminCreds.username) appState.adminCreds = data.adminCreds;
-                        saveState();
-                        populatePatientDropdown();
-                        renderPatientsDirectory();
-                        renderAdminLedger();
-                        renderTestMasterDBTable();
-                        showToast('📥 Lab Database imported successfully!');
-                    } else {
-                        showToast('Invalid backup file format.', 'error');
-                    }
-                } catch(err) {
-                    showToast('Failed to parse backup JSON file.', 'error');
-                }
-            };
-            reader.readAsText(file);
         }
 
         function regenerateBackupCodes() {
@@ -2824,53 +2795,9 @@ Log in using your Patient ID and Password to view and download your pathology te
             tbody.appendChild(tr);
         }
 
-        // Initialize default rows & IndexedDB / Cloud recovery on load
-        window.onload = async function() {
+        // Initialize default rows on load
+        window.onload = function() {
             loadTestFromDB('TDB-CBC');
-
-            const urlInput = document.getElementById('cloud-sync-url');
-            if (urlInput && storedCloudUrl) urlInput.value = storedCloudUrl;
-            const cloudBadge = document.getElementById('cloud-status-badge');
-            if (storedCloudUrl && cloudBadge) {
-                cloudBadge.innerText = 'Cloud Sync Active 🟢';
-                cloudBadge.className = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
-            }
-
-            // High-Durability IndexedDB Startup Sync
-            const idbReady = await initIndexedDB();
-            if (idbReady) {
-                const idbPatients = await loadFromIndexedDB('mpl_patients');
-                const idbReports = await loadFromIndexedDB('mpl_reports');
-                const idbTestDB = await loadFromIndexedDB('mpl_test_db');
-                const idbCreds = await loadFromIndexedDB('mpl_admin_creds');
-
-                let recovered = false;
-                if ((!appState.patients || appState.patients.length === 0) && idbPatients && Array.isArray(idbPatients) && idbPatients.length > 0) {
-                    appState.patients = idbPatients;
-                    recovered = true;
-                }
-                if ((!appState.reports || appState.reports.length === 0) && idbReports && Array.isArray(idbReports) && idbReports.length > 0) {
-                    appState.reports = idbReports;
-                    recovered = true;
-                }
-                if (idbTestDB && Array.isArray(idbTestDB) && idbTestDB.length > appState.testDB.length) {
-                    appState.testDB = idbTestDB;
-                    recovered = true;
-                }
-                if (idbCreds && idbCreds.username) {
-                    appState.adminCreds = idbCreds;
-                    recovered = true;
-                }
-
-                if (recovered) {
-                    saveState();
-                }
-            }
-
-            if (storedCloudUrl) {
-                await syncFromCloud();
-            }
-
             updateUI();
         };
 

@@ -1808,10 +1808,12 @@
                 const pDoc = await dbInstance.collection('appData').doc('mpl_patients').get();
                 const rDoc = await dbInstance.collection('appData').doc('mpl_reports').get();
                 const cDoc = await dbInstance.collection('appData').doc('mpl_admin_creds').get();
+                const tDoc = await dbInstance.collection('appData').doc('mpl_test_db').get();
                 
                 let remotePatients = pDoc.exists ? pDoc.data().value : null;
                 let remoteReports = rDoc.exists ? rDoc.data().value : null;
                 let remoteCreds = cDoc.exists ? cDoc.data().value : null;
+                let remoteTestDB = tDoc.exists ? tDoc.data().value : null;
 
                 let needsLocalUpdate = false;
                 if (remotePatients && Array.isArray(remotePatients) && remotePatients.length > 0) {
@@ -1826,14 +1828,21 @@
                     appState.adminCreds = remoteCreds;
                     needsLocalUpdate = true;
                 }
+                if (remoteTestDB && Array.isArray(remoteTestDB) && remoteTestDB.length > 0) {
+                    appState.testDB = remoteTestDB;
+                    needsLocalUpdate = true;
+                }
 
                 if (needsLocalUpdate) {
                     localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
                     localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                     localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
+                    localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
                     if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
                     if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
                     if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                    if(typeof renderTestDBTable === 'function') renderTestDBTable();
+                    if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
                 } else {
                     saveState();
                 }
@@ -1863,6 +1872,18 @@
                             appState.reports = newReps;
                             localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                             if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                        }
+                    }
+                });
+                
+                dbInstance.collection('appData').doc('mpl_test_db').onSnapshot((doc) => {
+                    if (doc.exists && doc.data().value) {
+                        const newTestDB = doc.data().value;
+                        if (JSON.stringify(newTestDB) !== JSON.stringify(appState.testDB)) {
+                            appState.testDB = newTestDB;
+                            localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
+                            if(typeof renderTestDBTable === 'function') renderTestDBTable();
+                            if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
                         }
                     }
                 });
