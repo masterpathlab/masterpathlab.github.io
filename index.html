@@ -793,14 +793,9 @@
                         <label class="block text-slate-300 font-semibold">Test Parameters</label>
                         <button type="button" onclick="addNTParamRow()" class="text-cyan-400 hover:text-cyan-300 text-xs font-bold">+ Add Row</button>
                     </div>
-                    <div class="mb-2">
-                        <label class="block text-slate-400 mb-1 text-[10px] font-semibold">Default Method / Sub-label (applies to all parameters)</label>
-                        <input type="text" id="nt-default-method" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white outline-none focus:border-cyan-500 text-xs" placeholder="e.g. CLIA, Photometry, Calculated, Enzymatic">
-                    </div>
                     <!-- Column headers -->
-                    <div class="grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 mb-1 px-1">
+                    <div class="grid grid-cols-[1fr_70px_70px_70px_70px_50px_20px] gap-1 mb-1 px-1">
                         <span class="text-[9px] text-slate-500 uppercase">Name</span>
-                        <span class="text-[9px] text-slate-500 uppercase">Method</span>
                         <span class="text-[9px] text-cyan-500 uppercase">♂ Male</span>
                         <span class="text-[9px] text-pink-400 uppercase">♀ Female</span>
                         <span class="text-[9px] text-green-400 uppercase">👶 Child</span>
@@ -809,9 +804,8 @@
                         <span></span>
                     </div>
                     <div id="nt-params-container" class="space-y-2 max-h-52 overflow-y-auto custom-scrollbar pr-1">
-                        <div class="grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row">
+                        <div class="grid grid-cols-[1fr_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row">
                             <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-name text-[10px]">
-                            <input type="text" placeholder="Method" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-sub text-[10px]">
                             <input type="text" placeholder="M Ref" class="w-full bg-slate-950 border border-cyan-800/40 rounded-lg p-1.5 text-cyan-300 nt-param-ref-male text-[10px]">
                             <input type="text" placeholder="F Ref" class="w-full bg-slate-950 border border-pink-800/40 rounded-lg p-1.5 text-pink-300 nt-param-ref-female text-[10px]">
                             <input type="text" placeholder="Ch Ref" class="w-full bg-slate-950 border border-green-800/40 rounded-lg p-1.5 text-green-300 nt-param-ref-child text-[10px]">
@@ -3746,10 +3740,9 @@ Log in using your Patient ID and Password to view and download your pathology te
             const container = document.getElementById('nt-params-container');
             if (!container) return;
             const div = document.createElement('div');
-            div.className = 'grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row';
+            div.className = 'grid grid-cols-[1fr_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row';
             div.innerHTML = `
                 <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-name text-[10px]">
-                <input type="text" placeholder="Method" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-sub text-[10px]">
                 <input type="text" placeholder="M Ref" class="w-full bg-slate-950 border border-cyan-800/40 rounded-lg p-1.5 text-cyan-300 nt-param-ref-male text-[10px]">
                 <input type="text" placeholder="F Ref" class="w-full bg-slate-950 border border-pink-800/40 rounded-lg p-1.5 text-pink-300 nt-param-ref-female text-[10px]">
                 <input type="text" placeholder="Ch Ref" class="w-full bg-slate-950 border border-green-800/40 rounded-lg p-1.5 text-green-300 nt-param-ref-child text-[10px]">
@@ -3769,9 +3762,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             const container = document.getElementById('nt-params-container');
             if (container) {
                 container.innerHTML = `
-                    <div class="grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row">
+                    <div class="grid grid-cols-[1fr_70px_70px_70px_70px_50px_20px] gap-1 items-center nt-param-row">
                         <input type="text" placeholder="Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-name text-[10px]">
-                        <input type="text" placeholder="Method" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white nt-param-sub text-[10px]">
                         <input type="text" placeholder="M Ref" class="w-full bg-slate-950 border border-cyan-800/40 rounded-lg p-1.5 text-cyan-300 nt-param-ref-male text-[10px]">
                         <input type="text" placeholder="F Ref" class="w-full bg-slate-950 border border-pink-800/40 rounded-lg p-1.5 text-pink-300 nt-param-ref-female text-[10px]">
                         <input type="text" placeholder="Ch Ref" class="w-full bg-slate-950 border border-green-800/40 rounded-lg p-1.5 text-green-300 nt-param-ref-child text-[10px]">
@@ -3795,15 +3787,12 @@ Log in using your Patient ID and Password to view and download your pathology te
             const sampleType = document.getElementById('nt-sample').value.trim();
             const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
             const instruments = document.getElementById('nt-instruments').value.trim();
-            const defaultMethod = document.getElementById('nt-default-method') ? document.getElementById('nt-default-method').value.trim() : '';
 
             const paramRows = document.querySelectorAll('#nt-params-container .nt-param-row');
             const params = [];
             const genderRanges = [];
             paramRows.forEach(row => {
                 const paramName = row.querySelector('.nt-param-name').value.trim();
-                const paramSub = row.querySelector('.nt-param-sub') ? row.querySelector('.nt-param-sub').value.trim() : '';
-                const finalSub = paramSub || defaultMethod;
                 const refMale = row.querySelector('.nt-param-ref-male') ? row.querySelector('.nt-param-ref-male').value.trim() : '';
                 const refFemale = row.querySelector('.nt-param-ref-female') ? row.querySelector('.nt-param-ref-female').value.trim() : '';
                 const refChild = row.querySelector('.nt-param-ref-child') ? row.querySelector('.nt-param-ref-child').value.trim() : '';
@@ -3811,10 +3800,9 @@ Log in using your Patient ID and Password to view and download your pathology te
                 const paramUnit = row.querySelector('.nt-param-unit').value.trim();
                 
                 if (paramName) {
-                    // Store the male ref as default ref (most commonly used)
                     params.push({ 
                         inv: paramName, 
-                        sub: finalSub, 
+                        sub: '', 
                         res: '', 
                         flag: 'Normal', 
                         ref: refMale || refFemale || refChild || refNeo || '', 
