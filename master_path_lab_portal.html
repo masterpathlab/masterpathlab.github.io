@@ -301,7 +301,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Sample Collected At (Location)</label>
-                                <input type="text" id="rep-location" value="" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="e.g. HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001 (Optional)">
+                                <input type="text" id="rep-location" value="" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="e.g. Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh (Optional)">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Primary Sample Type & Volume</label>
@@ -886,7 +886,7 @@
                 </div>
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">Admin WhatsApp Mobile Number *</label>
-                    <input type="tel" id="change-admin-mobile" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-amber-500 font-semibold" placeholder="e.g. 9455097721">
+                    <input type="tel" id="change-admin-mobile" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-amber-500 font-semibold" placeholder="e.g. 9235747517">
                 </div>
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">Secret Security Recovery PIN * (Default: 1234)</label>
@@ -2029,7 +2029,7 @@ EMERGENCY BACKUP CODES:
             textContent += 
 `--------------------------------------------------
 Portal Link: ${portalUrl}
-Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
+Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
 ==================================================
 `;
 
@@ -2362,7 +2362,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const pinInput = document.getElementById('change-admin-pin');
             if (uInput) uInput.value = creds.username;
             if (pInput) pInput.value = creds.password;
-            if (mInput) mInput.value = creds.mobile || '9455097721';
+            if (mInput) mInput.value = creds.mobile || '9235747517';
             if (pinInput) pinInput.value = creds.pin || '1234';
             const modal = document.getElementById('modal-change-admin');
             if (modal) modal.classList.remove('hidden');
@@ -2381,7 +2381,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const pinInput = document.getElementById('change-admin-pin');
             const newUsername = uInput ? uInput.value.trim() : '';
             const newPassword = pInput ? pInput.value.trim() : '';
-            const newMobile = mInput ? mInput.value.trim() : '9455097721';
+            const newMobile = mInput ? mInput.value.trim() : '9235747517';
             const newPin = pinInput ? pinInput.value.trim() : '1234';
 
             if (!newUsername || !newPassword || !newMobile || !newPin) {
@@ -2460,7 +2460,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
         }
 
         // Patient Registration & Auto Dispatch
-        const SENDER_EMAIL = 'sultanromeo655@gmail.com';
+        const SENDER_EMAIL = 'mahtabanwar.ma@gmail.com';
         let lastCreatedCreds = null;
 
         function handleRegisterPatient(event) {
@@ -3024,8 +3024,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.text('Accurate  |  Caring  |  Instant', 33, 24);
 
             // --- TOP RIGHT CONTACT DETAILS ---
-            const phoneStr = '+91 9455097721';
-            const emailStr = 'sultanromeo655@gmail.com';
+            const phoneStr = '+91 9235747517';
+            const emailStr = 'mahtabanwar.ma@gmail.com';
             const logoSize = 5.2;
             const gap = 1.2;
 
@@ -3051,7 +3051,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             // Centered Address Line
             doc.setFontSize(6.8);
             doc.setTextColor(71, 85, 105);
-            doc.text('HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001', 105, 28, { align: 'center' });
+            doc.text('Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh', 105, 28, { align: 'center' });
 
             // --- 2. BLUE STRIPE ACCENT BAR ---
             doc.setFillColor(...lightStripeBlue);
@@ -3328,7 +3328,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(255, 255, 255);
-            doc.text('+91 9455097721', 196, 290.5, { align: 'right' });
+            doc.text('+91 9235747517', 196, 290.5, { align: 'right' });
         }
 
         function generateMasterPathLabPDFReport(patient, reportObj) {
@@ -3445,17 +3445,16 @@ Log in using your Patient ID and Password to view and download your pathology te
                         </div>
                         <div class="text-right text-[11px] font-bold text-slate-800">
                             <div class="flex items-center justify-end gap-1 mb-0.5">
-                                
-                                <span>+91 9455097721</span>
+                                <span>+91 9235747517</span>
                             </div>
                             <div class="flex items-center justify-end gap-1">
                                 <img src="${typeof GMAIL_LOGO_B64 !== 'undefined' ? GMAIL_LOGO_B64 : ''}" class="h-3.5 object-contain">
-                                <span class="font-normal">sultanromeo655@gmail.com</span>
+                                <span class="font-normal">mahtabanwar.ma@gmail.com</span>
                             </div>
                         </div>
                     </div>
                     <div class="text-center text-[10px] text-slate-600 mb-2">
-                        HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001
+                        Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
                     </div>
 
                     <!-- 2. BLUE STRIPE ACCENT BAR -->
@@ -3567,7 +3566,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                         </div>
                         <div class="flex items-center gap-1">
                             
-                            <span>+91 9455097721</span>
+                            <span>+91 9235747517</span>
                         </div>
                     </div>
                 </div>
@@ -3647,12 +3646,12 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 </div>
                             </div>
                             <div class="text-right text-[11px] font-bold text-slate-800">
-                                <div class="mb-0.5">+91 9455097721</div>
-                                <div class="font-normal text-slate-600">sultanromeo655@gmail.com</div>
+                                <div class="mb-0.5">+91 9235747517</div>
+                                <div class="font-normal text-slate-600">mahtabanwar.ma@gmail.com</div>
                             </div>
                         </div>
                         <div class="text-center text-[10px] text-slate-600 mb-2">
-                            HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001
+                            Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
                         </div>
                         <div class="flex h-5 mb-4 font-bold text-[10px]">
                             <div class="bg-[#82b1ff] w-3/5 h-full"></div>
@@ -4006,15 +4005,15 @@ Log in using your Patient ID and Password to view and download your pathology te
                         </div>
                         <div class="text-right text-[11px] font-bold text-slate-800">
                             <div class="flex items-center justify-end gap-1 mb-0.5">
-                                <span>+91 9455097721</span>
+                                <span>+91 9235747517</span>
                             </div>
                             <div class="flex items-center justify-end gap-1">
-                                <span class="font-normal">sultanromeo655@gmail.com</span>
+                                <span class="font-normal">mahtabanwar.ma@gmail.com</span>
                             </div>
                         </div>
                     </div>
                     <div class="text-center text-[10px] text-slate-600 mb-2">
-                        HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001
+                        Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
                     </div>
 
                     <!-- 2. BLUE STRIPE ACCENT BAR -->
