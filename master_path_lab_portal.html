@@ -3026,19 +3026,21 @@ Log in using your Patient ID and Password to view and download your pathology te
             // --- TOP RIGHT CONTACT DETAILS ---
             const phoneStr = '+91 9235747517';
             const emailStr = 'mahtabanwar.ma@gmail.com';
-            const logoSize = 5.2;
-            const gap = 1.2;
+            const logoSize = 3.6;
+            const gap = 1.0;
 
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(30, 41, 59);
-            doc.text(phoneStr, 196, 16.2, { align: 'right' });
+            doc.text(phoneStr, 196, 16.0, { align: 'right' });
 
             doc.setFont('helvetica', 'normal');
+            doc.setFontSize(6.8);
+            doc.setTextColor(71, 85, 105);
             const emailWidth = doc.getTextWidth(emailStr);
             const gmailLogoX = 196 - emailWidth - logoSize - gap;
-            const gmailIconY = 18.5;
-            const gmailTextY = 22.5;
+            const gmailIconY = 18.2;
+            const gmailTextY = 21.2;
 
             if (typeof GMAIL_LOGO_B64 !== 'undefined' && GMAIL_LOGO_B64) {
                 try { doc.addImage(GMAIL_LOGO_B64, 'PNG', gmailLogoX, gmailIconY, logoSize, logoSize); } catch(e){}
