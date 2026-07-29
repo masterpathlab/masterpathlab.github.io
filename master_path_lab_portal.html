@@ -3930,7 +3930,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 pid: dummyPatient.pid,
                 patientName: dummyPatient.name,
                 doctor: 'DR. SELF / DEMO',
-                location: 'MAIN LABORATORY AZAMGARH',
+                location: test.location || '',
                 testTitle: test.title || 'NEW PATHOLOGY TEST PANEL',
                 sampleType: test.sampleType || '',
                 tat: test.tat || '',
@@ -4033,9 +4033,11 @@ Log in using your Patient ID and Password to view and download your pathology te
                             <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
                         </div>
                         <div class="col-span-4">
-                            <p class="font-bold text-slate-900">Sample Collected At:</p>
-                            <p class="text-slate-700 font-normal leading-tight">${reportObj.location || 'MAIN LAB'}</p>
-                            <p class="font-bold text-slate-900 mt-2">Ref. By: ${reportObj.doctor || 'DR. SELF'}</p>
+                            ${reportObj.location && reportObj.location.trim() ? `
+                                <p class="font-bold text-slate-900">Sample Collected At:</p>
+                                <p class="text-slate-700 font-normal leading-tight">${reportObj.location.trim()}</p>
+                            ` : ''}
+                            <p class="font-bold text-slate-900 ${reportObj.location && reportObj.location.trim() ? 'mt-2' : ''}">Ref. By: ${reportObj.doctor || 'DR. SELF'}</p>
                         </div>
                         <div class="col-span-3 text-right">
                             <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
