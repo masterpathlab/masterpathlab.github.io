@@ -1853,32 +1853,34 @@
 
                 // Listen for real-time changes
                 dbInstance.collection('appData').doc('mpl_patients').onSnapshot((doc) => {
-                    if (doc.exists && doc.data().value) {
-                        const newPats = doc.data().value;
+                    if (doc.exists && doc.data()) {
+                        const newPats = doc.data().value || [];
                         if (JSON.stringify(newPats) !== JSON.stringify(appState.patients)) {
                             appState.patients = newPats;
                             localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
                             if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
                             if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
                             if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                            if(typeof renderPatientReports === 'function') renderPatientReports();
                         }
                     }
                 });
                 
                 dbInstance.collection('appData').doc('mpl_reports').onSnapshot((doc) => {
-                    if (doc.exists && doc.data().value) {
-                        const newReps = doc.data().value;
+                    if (doc.exists && doc.data()) {
+                        const newReps = doc.data().value || [];
                         if (JSON.stringify(newReps) !== JSON.stringify(appState.reports)) {
                             appState.reports = newReps;
                             localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                             if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                            if(typeof renderPatientReports === 'function') renderPatientReports();
                         }
                     }
                 });
                 
                 dbInstance.collection('appData').doc('mpl_test_db').onSnapshot((doc) => {
-                    if (doc.exists && doc.data().value) {
-                        const newTestDB = doc.data().value;
+                    if (doc.exists && doc.data()) {
+                        const newTestDB = doc.data().value || [];
                         if (JSON.stringify(newTestDB) !== JSON.stringify(appState.testDB)) {
                             appState.testDB = newTestDB;
                             localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
