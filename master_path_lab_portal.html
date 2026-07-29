@@ -199,7 +199,7 @@
                     👥 Registered Patients
                 </button>
                 <button type="button" onclick="switchAdminTab('backup')" id="tab-btn-backup" class="admin-tab-btn px-5 py-3 rounded-xl text-xs font-black whitespace-nowrap transition btn-3d-inactive">
-                    💾 Backup & Cloud Sync
+                    💾 Database Backup
                 </button>
             </div>
 
@@ -528,11 +528,11 @@
                 </div>
             </div>
 
-            <!-- Tab 6: Database Backup & Cloud Sync -->
+            <!-- Tab 6: Database Backup -->
             <div id="admin-tab-backup" class="admin-tab-content hidden glass-panel p-6 rounded-2xl max-w-4xl mx-auto shadow-2xl">
                 <div class="mb-6 border-b border-slate-800 pb-4">
-                    <h3 class="text-lg font-bold text-white mb-1">💾 Permanent Database & Cloud Sync Control</h3>
-                    <p class="text-xs text-slate-400">Multi-Layer Permanent Storage: LocalStorage + Permanent IndexedDB + 1-Click JSON File Backup + Live Cloud Sync.</p>
+                    <h3 class="text-lg font-bold text-white mb-1">💾 Permanent Database Control</h3>
+                    <p class="text-xs text-slate-400">Multi-Layer Permanent Storage: LocalStorage + Permanent IndexedDB + 1-Click JSON File Backup.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -571,28 +571,6 @@
                                 <input type="file" accept=".json" onchange="importDatabaseJSON(event)" class="hidden">
                             </label>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Cloud Sync Config Card -->
-                <div class="bg-slate-950 border border-cyan-500/30 p-5 rounded-2xl space-y-4">
-                    <div class="flex justify-between items-center flex-wrap gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">🌐</span>
-                            <h4 class="text-sm font-bold text-white">Optional Live Cloud Database Sync (Firebase / REST API)</h4>
-                        </div>
-                        <span id="cloud-status-badge" class="bg-slate-800 text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full">
-                            Offline Mode
-                        </span>
-                    </div>
-                    <p class="text-xs text-slate-400">
-                        Paste your free Firebase Realtime Database URL (or custom REST endpoint) to sync all patient records live across smartphones, laptops, and tablets automatically.
-                    </p>
-                    <div class="flex gap-2 flex-wrap">
-                        <input type="url" id="cloud-sync-url" placeholder="https://your-lab-name-default-rtdb.firebaseio.com" class="flex-grow bg-slate-900 border border-slate-800 rounded-xl p-3 text-white text-xs outline-none focus:border-cyan-500 font-mono">
-                        <button type="button" onclick="saveCloudSyncSettings()" class="btn-3d-active font-black px-5 py-3 rounded-xl text-xs transition shadow-md">
-                            Save Cloud Sync Settings
-                        </button>
                     </div>
                 </div>
             </div>
