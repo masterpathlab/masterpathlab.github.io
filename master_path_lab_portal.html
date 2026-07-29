@@ -3023,32 +3023,33 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setTextColor(51, 65, 85);
             doc.text('Accurate  |  Caring  |  Instant', 33, 24);
 
-            // --- TOP RIGHT CONTACT DETAILS ---
+            // --- TOP RIGHT CONTACT DETAILS (SINGLE LINE) ---
             const phoneStr = '+91 9235747517';
             const emailStr = 'mahtabanwar.ma@gmail.com';
-            const logoSize = 3.6;
-            const gap = 1.0;
+            const logoSize = 3.2;
 
-            doc.setFontSize(7.5);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(30, 41, 59);
-            doc.text(phoneStr, 196, 16.0, { align: 'right' });
-
+            doc.setFontSize(7.2);
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(6.8);
             doc.setTextColor(71, 85, 105);
             const emailWidth = doc.getTextWidth(emailStr);
-            const gmailLogoX = 196 - emailWidth - logoSize - gap;
-            const gmailIconY = 18.2;
-            const gmailTextY = 21.2;
 
+            // Print Email text right-aligned at 196
+            doc.text(emailStr, 196, 18.0, { align: 'right' });
+
+            // Print Gmail Icon right before email
+            const gmailLogoX = 196 - emailWidth - logoSize - 1.0;
             if (typeof GMAIL_LOGO_B64 !== 'undefined' && GMAIL_LOGO_B64) {
-                try { doc.addImage(GMAIL_LOGO_B64, 'PNG', gmailLogoX, gmailIconY, logoSize, logoSize); } catch(e){}
+                try { doc.addImage(GMAIL_LOGO_B64, 'PNG', gmailLogoX, 15.4, logoSize, logoSize); } catch(e){}
             } else {
                 doc.setFillColor(234, 67, 53);
-                doc.rect(gmailLogoX, gmailIconY, logoSize, logoSize, 'F');
+                doc.rect(gmailLogoX, 15.4, logoSize, logoSize, 'F');
             }
-            doc.text(emailStr, 196, gmailTextY, { align: 'right' });
+
+            // Print Separator '|' and Phone Number before Gmail icon
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 41, 59);
+            const phoneText = `${phoneStr}  |  `;
+            doc.text(phoneText, gmailLogoX - 1.0, 18.0, { align: 'right' });
 
             // Centered Address Line
             doc.setFontSize(6.8);
@@ -3445,13 +3446,12 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
                             </div>
                         </div>
-                        <div class="text-right text-[11px] font-bold text-slate-800">
-                            <div class="flex items-center justify-end gap-1 mb-0.5">
-                                <span>+91 9235747517</span>
-                            </div>
-                            <div class="flex items-center justify-end gap-1">
+                        <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                            <span>+91 9235747517</span>
+                            <span class="text-slate-400 font-normal">|</span>
+                            <div class="flex items-center gap-1">
                                 <img src="${typeof GMAIL_LOGO_B64 !== 'undefined' ? GMAIL_LOGO_B64 : ''}" class="h-3.5 object-contain">
-                                <span class="font-normal">mahtabanwar.ma@gmail.com</span>
+                                <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
                             </div>
                         </div>
                     </div>
@@ -3647,9 +3647,10 @@ Log in using your Patient ID and Password to view and download your pathology te
                                     <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
                                 </div>
                             </div>
-                            <div class="text-right text-[11px] font-bold text-slate-800">
-                                <div class="mb-0.5">+91 9235747517</div>
-                                <div class="font-normal text-slate-600">mahtabanwar.ma@gmail.com</div>
+                            <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                                <span>+91 9235747517</span>
+                                <span class="text-slate-400 font-normal">|</span>
+                                <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
                             </div>
                         </div>
                         <div class="text-center text-[10px] text-slate-600 mb-2">
@@ -4005,13 +4006,10 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
                             </div>
                         </div>
-                        <div class="text-right text-[11px] font-bold text-slate-800">
-                            <div class="flex items-center justify-end gap-1 mb-0.5">
-                                <span>+91 9235747517</span>
-                            </div>
-                            <div class="flex items-center justify-end gap-1">
-                                <span class="font-normal">mahtabanwar.ma@gmail.com</span>
-                            </div>
+                        <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                            <span>+91 9235747517</span>
+                            <span class="text-slate-400 font-normal">|</span>
+                            <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
                         </div>
                     </div>
                     <div class="text-center text-[10px] text-slate-600 mb-2">
