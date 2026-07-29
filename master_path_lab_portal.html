@@ -747,10 +747,10 @@
 
     <!-- New Test Definition Modal -->
     <div id="modal-new-test" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-lg w-full shadow-2xl relative">
+        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-2xl w-full shadow-2xl relative">
             <button type="button" onclick="closeNewTestModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 class="text-lg font-bold text-white mb-1">Add New Pathology Test Definition</h3>
-            <p class="text-xs text-slate-400 mb-4">Define a reusable test panel template for your master database.</p>
+            <p class="text-xs text-slate-400 mb-4">Define a reusable test panel template with group headers & parameter rows for your master database.</p>
 
             <form onsubmit="handleSaveNewTestDefinition(event)" class="space-y-3 text-xs">
                 <div>
@@ -789,15 +789,20 @@
                     </div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="block text-slate-300 font-semibold">Test Parameters (Items)</label>
-                        <button type="button" onclick="addNTParamRow()" class="text-cyan-400 hover:text-cyan-300 text-xs font-bold">+ Add Row</button>
-                    </div>
-                    <div id="nt-params-container" class="space-y-2 max-h-52 overflow-y-auto custom-scrollbar pr-1">
-                        <div class="flex gap-2 items-center nt-param-row">
-                            <input type="text" placeholder="Parameter Name (e.g. Hemoglobin)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-xs">
-                            <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-2 py-1 hover:text-red-300 text-sm">&times;</button>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-slate-300 font-semibold">Test Panel Structure (Headers & Parameters)</label>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="addNTGroupHeaderRow()" class="bg-slate-800 text-amber-400 text-xs px-2.5 py-1 rounded-lg border border-amber-500/30 hover:bg-slate-700 font-bold transition">
+                                + Add Group Header
+                            </button>
+                            <button type="button" onclick="addNTParamRow()" class="bg-slate-800 text-cyan-400 text-xs px-2.5 py-1 rounded-lg border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 font-bold transition">
+                                + Add Parameter Row
+                            </button>
                         </div>
+                    </div>
+
+                    <div id="nt-params-container" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
+                        <!-- Dynamic Group Header & Parameter rows populated here -->
                     </div>
                 </div>
                 <button type="submit" class="w-full btn-3d-active font-black p-3 rounded-xl transition shadow-lg mt-2 text-xs">
@@ -3734,6 +3739,37 @@ Log in using your Patient ID and Password to view and download your pathology te
             container.scrollTop = container.scrollHeight;
         }
 
+        // Test Master Database Modal Controls
+        function addNTGroupHeaderRow(groupName = '') {
+            const container = document.getElementById('nt-params-container');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'nt-row nt-group-row bg-slate-900 border border-amber-500/30 p-2 rounded-xl flex items-center gap-2';
+            div.innerHTML = `
+                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider min-w-[90px]">Group Header:</span>
+                <input type="text" value="${groupName}" placeholder="e.g. PHYSICAL EXAMINATION or DIFFERENTIAL COUNT" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white text-xs font-bold uppercase nt-group-name">
+                <button type="button" onclick="this.closest('.nt-row').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-sm">&times;</button>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addNTParamRow(inv = '', sub = '', ref = '', unit = '') {
+            const container = document.getElementById('nt-params-container');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'nt-row nt-param-row bg-slate-950 border border-slate-800 p-2 rounded-xl grid grid-cols-[1.5fr_1fr_1fr_0.8fr_auto] gap-2 items-center';
+            div.innerHTML = `
+                <input type="text" value="${inv}" placeholder="Investigation Name (e.g. Hemoglobin)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs nt-param-name font-semibold">
+                <input type="text" value="${sub}" placeholder="Method / Sub-label (e.g. Photometry)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-slate-300 text-xs nt-param-sub">
+                <input type="text" value="${ref}" placeholder="Ref Range (e.g. 13.0 - 17.0)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-slate-300 text-xs nt-param-ref">
+                <input type="text" value="${unit}" placeholder="Unit (e.g. g/dL)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-slate-300 text-xs nt-param-unit">
+                <button type="button" onclick="this.closest('.nt-row').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-sm">&times;</button>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
         function openNewTestModal() {
             // Reset form fields
             const form = document.querySelector('#modal-new-test form');
@@ -3741,12 +3777,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             
             const container = document.getElementById('nt-params-container');
             if (container) {
-                container.innerHTML = `
-                    <div class="flex gap-2 items-center nt-param-row">
-                        <input type="text" placeholder="Parameter Name (e.g. Hemoglobin)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-xs">
-                        <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-2 py-1 hover:text-red-300 text-sm">&times;</button>
-                    </div>
-                `;
+                container.innerHTML = '';
+                addNTParamRow();
             }
             document.getElementById('modal-new-test').classList.remove('hidden');
         }
@@ -3763,19 +3795,31 @@ Log in using your Patient ID and Password to view and download your pathology te
             const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
             const instruments = document.getElementById('nt-instruments').value.trim();
 
-            const paramRows = document.querySelectorAll('#nt-params-container .nt-param-row');
+            const container = document.getElementById('nt-params-container');
+            const rows = container ? container.querySelectorAll('.nt-row') : [];
             const params = [];
-            paramRows.forEach(row => {
-                const paramName = row.querySelector('.nt-param-name').value.trim();
-                if (paramName) {
-                    params.push({ 
-                        inv: paramName, 
-                        sub: '', 
-                        res: '', 
-                        flag: 'Normal', 
-                        ref: '', 
-                        unit: ''
-                    });
+            rows.forEach(row => {
+                if (row.classList.contains('nt-group-row')) {
+                    const groupName = row.querySelector('.nt-group-name').value.trim();
+                    if (groupName) {
+                        params.push({ isGroup: true, groupName });
+                    }
+                } else if (row.classList.contains('nt-param-row')) {
+                    const paramName = row.querySelector('.nt-param-name').value.trim();
+                    const paramSub = row.querySelector('.nt-param-sub').value.trim();
+                    const paramRef = row.querySelector('.nt-param-ref').value.trim();
+                    const paramUnit = row.querySelector('.nt-param-unit').value.trim();
+                    
+                    if (paramName) {
+                        params.push({ 
+                            inv: paramName, 
+                            sub: paramSub, 
+                            res: '', 
+                            flag: 'Normal', 
+                            ref: paramRef, 
+                            unit: paramUnit
+                        });
+                    }
                 }
             });
 
