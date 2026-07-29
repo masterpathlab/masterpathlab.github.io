@@ -291,7 +291,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Ref. By Doctor</label>
-                                <input type="text" id="rep-doctor" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Dr. Hiren Shah">
+                                <input type="text" id="rep-doctor" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Self (e.g. Dr. Hiren Shah)">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Sample Collected By</label>
@@ -1552,7 +1552,7 @@
                 pid: '1001',
                 patientName: 'khan bhai',
                 date: '21 OCT 2026 04:35 PM',
-                doctor: 'Dr. Hiren Shah',
+                doctor: 'Self',
                 collector: 'Mr Suresh',
                 location: '',
                 testTitle: 'THYROID PROFILE (TOTAL T3, T4, TSH)',
@@ -1573,7 +1573,7 @@
                 pid: '556',
                 patientName: 'SK MOHD SUHAIL',
                 date: '21 OCT 2026 12:00 PM',
-                doctor: 'Dr. Hiren Shah',
+                doctor: 'Self',
                 collector: 'Mr Suresh',
                 location: '',
                 testTitle: 'Complete Blood Count (CBC)',
@@ -1593,7 +1593,7 @@
                 pid: '555',
                 patientName: 'Yash M. Patel',
                 date: '02 DEC 2026 04:35 PM',
-                doctor: 'Dr. Hiren Shah',
+                doctor: 'Self',
                 collector: 'Mr Suresh',
                 location: '',
                 testTitle: 'Mean Corpuscular Hemoglobin Concentration (MCHC)',
@@ -1616,7 +1616,7 @@
                 pid: '554',
                 patientName: 'Yashvi M. Patel',
                 date: '02 DEC 2026 05:00 PM',
-                doctor: 'Dr. Hiren Shah',
+                doctor: 'Self',
                 collector: 'Mr Suresh',
                 location: '',
                 testTitle: 'HEMOGLOBIN (HB)',
@@ -2886,7 +2886,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 return;
             }
 
-            const doctor = document.getElementById('rep-doctor').value || 'Dr. Hiren Shah';
+            const doctor = document.getElementById('rep-doctor').value.trim() || 'Self';
             const collector = document.getElementById('rep-collector').value || 'Mr Suresh';
             const location = document.getElementById('rep-location') ? document.getElementById('rep-location').value.trim() : '';
             const testTitle = document.getElementById('rep-test-title').value.trim() || 'Complete Blood Count (CBC)';
@@ -3108,7 +3108,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setFontSize(8.5);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(...textDark);
-            doc.text(`Ref. By: ${reportObj.doctor || 'Dr. Hiren Shah'}`, 76, docYOffset);
+            doc.text(`Ref. By: ${reportObj.doctor || 'Self'}`, 76, docYOffset);
 
             // Vector Barcode & Dynamic Timestamps
             doc.setFillColor(30, 41, 59);
@@ -3479,7 +3479,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 <p class="font-bold text-slate-900">Sample Collected At:</p>
                                 <p class="text-slate-700 font-normal leading-tight">${rep.location.trim()}</p>
                             ` : ''}
-                            <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Dr. Hiren Shah'}</p>
+                            <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Self'}</p>
                         </div>
                         <div class="col-span-3 text-right">
                             <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
@@ -3670,7 +3670,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                                     <p class="font-bold text-slate-900">Sample Collected At:</p>
                                     <p class="text-slate-700 font-normal leading-tight">${rep.location.trim()}</p>
                                 ` : ''}
-                                <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Dr. Hiren Shah'}</p>
+                                <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Self'}</p>
                             </div>
                             <div class="col-span-3 text-right">
                                 <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
@@ -3930,7 +3930,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 id: 'SAMPLE-' + (test.id || Date.now()),
                 pid: dummyPatient.pid,
                 patientName: dummyPatient.name,
-                doctor: 'DR. SELF / DEMO',
+                doctor: test.doctor || 'Self',
                 location: test.location || '',
                 testTitle: test.title || 'NEW PATHOLOGY TEST PANEL',
                 sampleType: test.sampleType || '',
@@ -4038,7 +4038,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 <p class="font-bold text-slate-900">Sample Collected At:</p>
                                 <p class="text-slate-700 font-normal leading-tight">${reportObj.location.trim()}</p>
                             ` : ''}
-                            <p class="font-bold text-slate-900 ${reportObj.location && reportObj.location.trim() ? 'mt-2' : ''}">Ref. By: ${reportObj.doctor || 'DR. SELF'}</p>
+                            <p class="font-bold text-slate-900 ${reportObj.location && reportObj.location.trim() ? 'mt-2' : ''}">Ref. By: ${reportObj.doctor || 'Self'}</p>
                         </div>
                         <div class="col-span-3 text-right">
                             <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
