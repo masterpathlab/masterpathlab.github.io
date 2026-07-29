@@ -2415,7 +2415,7 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
             const portalUrl = window.location.href.split('#')[0];
 
             const newPatient = { pid, name, age, sex, mobile, email, password, registeredAt: new Date().toLocaleString() };
-            appState.patients.push(newPatient);
+            appState.patients.unshift(newPatient);
             saveState();
 
             document.getElementById('form-register').reset();
