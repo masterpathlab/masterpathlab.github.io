@@ -1683,10 +1683,13 @@
         let dbInstance = null;
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDytk0aOaMnkxLJ6Q7W7vPUxGR9iqN2lFs",
-            authDomain: "master-path-lab.firebaseapp.com",
-            projectId: "master-path-lab",
-            storageBucket: "master-path-lab.firebasestorage.app"
+            apiKey: "AIzaSyAKd7NrVHKqwD9I7DtCTfTvwhARGfKTiio",
+            authDomain: "master-path-lab-99f7c.firebaseapp.com",
+            projectId: "master-path-lab-99f7c",
+            storageBucket: "master-path-lab-99f7c.firebasestorage.app",
+            messagingSenderId: "215822521628",
+            appId: "1:215822521628:web:fb4a97db4cb559ade396d9",
+            measurementId: "G-JLV963XGVC"
         };
         
         // Initialize Firebase
@@ -1796,8 +1799,79 @@
             }
         }
 
-        saveState();
+        async function initAppFromFirestore() {
+            if (!dbInstance) { saveState(); return; }
+            try {
+                const badge = document.getElementById('idb-status-badge');
+                if (badge) badge.innerText = 'Firebase Syncing... ⏳';
 
+                const pDoc = await dbInstance.collection('appData').doc('mpl_patients').get();
+                const rDoc = await dbInstance.collection('appData').doc('mpl_reports').get();
+                const cDoc = await dbInstance.collection('appData').doc('mpl_admin_creds').get();
+                
+                let remotePatients = pDoc.exists ? pDoc.data().value : null;
+                let remoteReports = rDoc.exists ? rDoc.data().value : null;
+                let remoteCreds = cDoc.exists ? cDoc.data().value : null;
+
+                let needsLocalUpdate = false;
+                if (remotePatients && Array.isArray(remotePatients) && remotePatients.length > 0) {
+                    appState.patients = remotePatients;
+                    needsLocalUpdate = true;
+                }
+                if (remoteReports && Array.isArray(remoteReports) && remoteReports.length > 0) {
+                    appState.reports = remoteReports;
+                    needsLocalUpdate = true;
+                }
+                if (remoteCreds) {
+                    appState.adminCreds = remoteCreds;
+                    needsLocalUpdate = true;
+                }
+
+                if (needsLocalUpdate) {
+                    localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
+                    localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
+                    localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
+                    if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                    if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                    if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                } else {
+                    saveState();
+                }
+
+                if (badge) {
+                    badge.innerText = 'Firebase Active 🟢';
+                }
+
+                // Listen for real-time changes
+                dbInstance.collection('appData').doc('mpl_patients').onSnapshot((doc) => {
+                    if (doc.exists && doc.data().value) {
+                        const newPats = doc.data().value;
+                        if (JSON.stringify(newPats) !== JSON.stringify(appState.patients)) {
+                            appState.patients = newPats;
+                            localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
+                            if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                            if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                            if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                        }
+                    }
+                });
+                
+                dbInstance.collection('appData').doc('mpl_reports').onSnapshot((doc) => {
+                    if (doc.exists && doc.data().value) {
+                        const newReps = doc.data().value;
+                        if (JSON.stringify(newReps) !== JSON.stringify(appState.reports)) {
+                            appState.reports = newReps;
+                            localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
+                            if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error("Firestore Init Error:", e);
+                saveState();
+            }
+        }
+        initAppFromFirestore();
         function saveState() {
             try {
                 localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
