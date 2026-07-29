@@ -367,8 +367,14 @@
                     <!-- Instruments Used & General Notes -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Instruments Used (Optional)</label>
-                            <input type="text" id="rep-instruments" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-xs" placeholder="Fully automated cell counter - Mindray 300">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between cursor-pointer select-none">
+                                <span>Instruments Used (Optional)</span>
+                                <span class="flex items-center gap-1.5 text-[11px] text-cyan-400 font-medium">
+                                    <input type="checkbox" id="rep-toggle-instruments" class="w-3.5 h-3.5 rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 cursor-pointer">
+                                    <span>Include in PDF Report</span>
+                                </span>
+                            </label>
+                            <input type="text" id="rep-instruments" oninput="document.getElementById('rep-toggle-instruments').checked = !!this.value.trim()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-xs" placeholder="Fully automated cell counter - Mindray 300">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Interpretation Note (Optional)</label>
@@ -2731,6 +2737,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (sampleInput) sampleInput.value = test.sampleType;
             if (tatInput) tatInput.value = '';
             if (instInput) instInput.value = test.instruments || '';
+            const instToggle = document.getElementById('rep-toggle-instruments');
+            if (instToggle) instToggle.checked = false;
             if (interpInput) interpInput.value = test.interpNote || '';
             if (commInput) commInput.value = test.bulletComments || '';
             if (lowCausesInput) lowCausesInput.value = test.bulletLowCauses || '';
@@ -2782,6 +2790,8 @@ Log in using your Patient ID and Password to view and download your pathology te
                 if (tat) tat.value = '';
                 const inst = document.getElementById('rep-instruments');
                 if (inst) inst.value = '';
+                const instCheck = document.getElementById('rep-toggle-instruments');
+                if (instCheck) instCheck.checked = false;
                 const interp = document.getElementById('rep-interp-note');
                 if (interp) interp.value = '';
                 const comm = document.getElementById('rep-bullet-comments');
@@ -2892,7 +2902,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             const testTitle = document.getElementById('rep-test-title').value.trim() || 'Complete Blood Count (CBC)';
             const sampleType = document.getElementById('rep-sample-type') ? document.getElementById('rep-sample-type').value.trim() : '';
             const tat = document.getElementById('rep-tat').value.trim() || '';
-            const instruments = document.getElementById('rep-instruments').value.trim() || '';
+            const showInst = document.getElementById('rep-toggle-instruments') ? document.getElementById('rep-toggle-instruments').checked : false;
+            const instruments = showInst ? (document.getElementById('rep-instruments').value.trim()) : '';
             const interpNote = document.getElementById('rep-interp-note').value.trim() || '';
             const bulletComments = document.getElementById('rep-bullet-comments').value.trim() || '';
             const bulletLowCauses = document.getElementById('rep-bullet-low-causes').value.trim() || '';
@@ -4240,6 +4251,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (document.getElementById('rep-sample-type')) document.getElementById('rep-sample-type').value = rep.sampleType || '';
             if (document.getElementById('rep-tat')) document.getElementById('rep-tat').value = rep.tat || '';
             if (document.getElementById('rep-instruments')) document.getElementById('rep-instruments').value = rep.instruments || '';
+            if (document.getElementById('rep-toggle-instruments')) document.getElementById('rep-toggle-instruments').checked = !!(rep.instruments && rep.instruments.trim());
             if (document.getElementById('rep-doctor')) document.getElementById('rep-doctor').value = rep.doctor || '';
             if (document.getElementById('rep-collector')) document.getElementById('rep-collector').value = rep.collector || '';
             if (document.getElementById('rep-location')) document.getElementById('rep-location').value = rep.location || '';
