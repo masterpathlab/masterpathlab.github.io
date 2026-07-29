@@ -2890,7 +2890,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             const collector = document.getElementById('rep-collector').value || 'Mr Suresh';
             const location = document.getElementById('rep-location') ? document.getElementById('rep-location').value.trim() : '';
             const testTitle = document.getElementById('rep-test-title').value.trim() || 'Complete Blood Count (CBC)';
-            const sampleType = document.getElementById('rep-sample-type').value.trim() || 'Blood';
+            const sampleType = document.getElementById('rep-sample-type') ? document.getElementById('rep-sample-type').value.trim() : '';
             const tat = document.getElementById('rep-tat').value.trim() || '';
             const instruments = document.getElementById('rep-instruments').value.trim() || '';
             const interpNote = document.getElementById('rep-interp-note').value.trim() || '';
@@ -3504,11 +3504,12 @@ Log in using your Patient ID and Password to view and download your pathology te
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
-                                <td>Primary Sample Type :</td>
-                                <td class="font-bold text-slate-900">${rep.sampleType || 'Blood'}</td>
-                                <td colspan="2" class="text-slate-500">${rep.tat ? (rep.tat.startsWith('TAT') ? rep.tat : 'TAT : ' + rep.tat) : ''}</td>
-                            </tr>
+                            ${(rep.sampleType && rep.sampleType.trim()) || (rep.tat && rep.tat.trim()) ? `
+                                <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
+                                    ${rep.sampleType && rep.sampleType.trim() ? `<td>Primary Sample Type :</td><td class="font-bold text-slate-900">${rep.sampleType.trim()}</td>` : `<td colspan="2"></td>`}
+                                    <td colspan="2" class="text-slate-500">${rep.tat ? (rep.tat.startsWith('TAT') ? rep.tat : 'TAT : ' + rep.tat) : ''}</td>
+                                </tr>
+                            ` : ''}
                             ${paramsHtml}
                         </tbody>
                     </table>
