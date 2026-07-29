@@ -808,9 +808,17 @@
                         <!-- Dynamic Group Header & Parameter rows populated here -->
                     </div>
                 </div>
-                <button type="submit" class="w-full btn-3d-active font-black p-3 rounded-xl transition shadow-lg mt-2 text-xs">
-                    Save Test Template to Database
-                </button>
+                <div class="grid grid-cols-3 gap-2 mt-4">
+                    <button type="button" onclick="previewCurrentModalTest()" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-bold p-2.5 rounded-xl hover:bg-indigo-500 hover:text-white transition text-xs flex items-center justify-center gap-1">
+                        👁️ Preview PDF
+                    </button>
+                    <button type="button" onclick="downloadCurrentModalTestPDF()" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold p-2.5 rounded-xl hover:bg-emerald-500 hover:text-slate-950 transition text-xs flex items-center justify-center gap-1">
+                        📥 Download PDF
+                    </button>
+                    <button type="submit" class="btn-3d-active font-black p-2.5 rounded-xl transition shadow-lg text-xs flex items-center justify-center gap-1">
+                        💾 Save to Database
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -3871,8 +3879,14 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <td class="p-3 text-xs text-slate-300">${test.sampleType}</td>
                     <td class="p-3 text-xs text-slate-400">${test.tat || 'N/A'}</td>
                     <td class="p-3 text-xs text-slate-300 font-mono">${test.params ? test.params.length : 0} Items</td>
-                    <td class="p-3 text-right flex justify-end gap-2">
-                        <button type="button" onclick="loadTestFromDB('${test.id}'); switchAdminTab('report');" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition">
+                    <td class="p-3 text-right flex justify-end gap-1.5 flex-wrap">
+                        <button type="button" onclick="previewTestDBTemplate('${test.id}')" title="Preview Test Report" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-500 hover:text-white transition flex items-center gap-1">
+                            👁️ Preview
+                        </button>
+                        <button type="button" onclick="downloadTestDBTemplatePDF('${test.id}')" title="Download Sample PDF" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-emerald-500 hover:text-slate-950 transition flex items-center gap-1">
+                            📥 Sample PDF
+                        </button>
+                        <button type="button" onclick="loadTestFromDB('${test.id}'); switchAdminTab('report');" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition">
                             Use in Report
                         </button>
                         <button type="button" onclick="deleteTestFromDB('${test.id}')" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
@@ -3882,6 +3896,271 @@ Log in using your Patient ID and Password to view and download your pathology te
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function getSampleReportObjectForTest(test) {
+            const dummyPatient = {
+                pid: 'DEMO-101',
+                name: 'SAMPLE PATIENT',
+                age: '30',
+                sex: 'Male',
+                uhid: 'MPL-SAMPLE-01',
+                registeredAt: new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            const dummyParams = (test.params || []).map((p, idx) => {
+                if (p.isGroup) return { isGroup: true, groupName: p.groupName };
+                return {
+                    inv: p.inv || `Parameter ${idx + 1}`,
+                    sub: p.sub || '',
+                    res: p.res || '14.5',
+                    flag: p.flag || 'Normal',
+                    ref: p.ref || 'Normal Range',
+                    unit: p.unit || ''
+                };
+            });
+
+            const sampleReport = {
+                id: 'SAMPLE-' + (test.id || Date.now()),
+                pid: dummyPatient.pid,
+                patientName: dummyPatient.name,
+                doctor: 'DR. SELF / DEMO',
+                location: 'MAIN LABORATORY AZAMGARH',
+                testTitle: test.title || 'NEW PATHOLOGY TEST PANEL',
+                sampleType: test.sampleType || 'Serum',
+                tat: test.tat || '2 hrs',
+                instruments: test.instruments || 'Automated Laboratory Analyzer',
+                interpNote: test.interpNote || '',
+                bulletComments: test.bulletComments || '',
+                bulletLowCauses: test.bulletLowCauses || '',
+                bulletHighCauses: test.bulletHighCauses || '',
+                params: dummyParams,
+                genderRanges: test.genderRanges || [],
+                date: new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            return { patient: dummyPatient, reportObj: sampleReport };
+        }
+
+        function renderTestReportInViewModal(patient, reportObj) {
+            const content = document.getElementById('report-modal-content');
+            if (!content) return;
+
+            let paramsHtml = '';
+            let isFirstRow = true;
+            (reportObj.params || []).forEach(p => {
+                if (p.isGroup) {
+                    paramsHtml += `
+                        <tr class="border-b border-slate-300">
+                            <td colspan="4" class="py-1.5 font-extrabold text-slate-900 uppercase text-xs">${p.groupName}</td>
+                        </tr>
+                    `;
+                } else {
+                    let flagText = '';
+                    let colorClass = 'text-slate-900';
+                    if (p.flag === 'Low') {
+                        flagText = 'Low';
+                        colorClass = 'text-[#1b6cac] font-extrabold';
+                    } else if (p.flag === 'High') {
+                        flagText = 'High';
+                        colorClass = 'text-[#dc2626] font-extrabold';
+                    } else if (p.flag === 'Borderline') {
+                        flagText = 'Borderline';
+                        colorClass = 'text-[#d97706] font-extrabold';
+                    } else if (p.flag === 'Critical') {
+                        flagText = 'Critical';
+                        colorClass = 'text-[#dc2626] font-black uppercase';
+                    }
+
+                    const borderStyle = isFirstRow ? 'border-b-2 border-slate-300' : 'border-b border-slate-150';
+                    isFirstRow = false;
+
+                    paramsHtml += `
+                        <tr class="${borderStyle}">
+                            <td class="py-1.5 font-bold text-slate-800">${p.inv} ${p.sub ? `<div class="text-[10px] text-slate-500 font-normal">${p.sub}</div>` : ''}</td>
+                            <td class="py-1.5 ${colorClass}">${p.res} ${flagText ? `<span class="ml-4 font-extrabold">${flagText}</span>` : ''}</td>
+                            <td class="py-1.5 font-bold text-slate-700">${p.ref}</td>
+                            <td class="py-1.5 font-bold text-slate-700">${p.unit}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            content.innerHTML = `
+                <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl mx-auto">
+                    <!-- 1. HEADER SECTION -->
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-[#0f4c81] rounded-full flex items-center justify-center text-white font-black text-xl shadow">
+                                🔬
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-extrabold text-[#0f4c81] tracking-wide">MASTER PATH LAB</h1>
+                                <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[11px] font-bold text-slate-800">
+                            <div class="flex items-center justify-end gap-1 mb-0.5">
+                                <span>+91 9455097721</span>
+                            </div>
+                            <div class="flex items-center justify-end gap-1">
+                                <span class="font-normal">sultanromeo655@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center text-[10px] text-slate-600 mb-2">
+                        HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001
+                    </div>
+
+                    <!-- 2. BLUE STRIPE ACCENT BAR -->
+                    <div class="flex h-5 mb-4 font-bold text-[10px]">
+                        <div class="bg-[#82b1ff] w-3/5 h-full"></div>
+                        <div class="bg-[#0f4c81] w-2/5 h-full text-white text-right pr-4 flex items-center justify-end">
+                            Master Path Lab
+                        </div>
+                    </div>
+
+                    <!-- 3. PATIENT METADATA BLOCK -->
+                    <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
+                        <div class="col-span-5">
+                            <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name}</h2>
+                            <p class="font-bold text-slate-700 mt-1">Age : ${patient.age} Years</p>
+                            <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
+                        </div>
+                        <div class="col-span-4">
+                            <p class="font-bold text-slate-900">Sample Collected At:</p>
+                            <p class="text-slate-700 font-normal leading-tight">${reportObj.location || 'MAIN LAB'}</p>
+                            <p class="font-bold text-slate-900 mt-2">Ref. By: ${reportObj.doctor || 'DR. SELF'}</p>
+                        </div>
+                        <div class="col-span-3 text-right">
+                            <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
+                            <p class="text-[10px] text-slate-500 font-mono">UHID:${patient.pid}</p>
+                            <p class="text-[10px] text-slate-600">Registered: ${patient.registeredAt}</p>
+                            <p class="text-[10px] text-slate-600">Reported: ${reportObj.date}</p>
+                        </div>
+                    </div>
+
+                    <!-- 4. TEST HEADER TITLE -->
+                    <div class="border-y border-slate-800 py-1 text-center font-extrabold text-xs text-slate-900 uppercase tracking-wide mb-3">
+                        ${reportObj.testTitle}
+                    </div>
+
+                    <!-- 5. INVESTIGATION PARAMETERS TABLE -->
+                    <table class="w-full text-left border-collapse mb-4 text-xs font-bold">
+                        <thead>
+                            <tr class="text-slate-900 border-b border-slate-300">
+                                <th class="py-1.5 w-2/5">Investigation</th>
+                                <th class="py-1.5 w-1/4">Result</th>
+                                <th class="py-1.5 w-1/4">Reference Value</th>
+                                <th class="py-1.5 w-1/12">Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
+                                <td>Primary Sample Type :</td>
+                                <td class="font-bold text-slate-900">${reportObj.sampleType || 'Blood'}</td>
+                                <td colspan="2" class="text-slate-500">${reportObj.tat ? (reportObj.tat.startsWith('TAT') ? reportObj.tat : 'TAT : ' + reportObj.tat) : ''}</td>
+                            </tr>
+                            ${paramsHtml}
+                        </tbody>
+                    </table>
+
+                    ${reportObj.instruments ? `<p class="text-[11px] font-bold text-slate-900 mb-1">Instruments: <span class="font-normal text-slate-800">${reportObj.instruments}</span></p>` : ''}
+                    ${reportObj.interpNote ? `<p class="text-[11px] font-bold text-slate-900 mb-2">Interpretation: <span class="font-normal text-slate-800">${reportObj.interpNote}</span></p>` : ''}
+
+                    <div class="text-center my-4 text-[10px] text-slate-500">
+                        <p>Thanks for Reference</p>
+                        <p class="font-bold">****End of Report****</p>
+                    </div>
+
+                    <!-- 6. DIGITAL SIGNATURE FOOTER -->
+                    <div class="flex justify-end pt-6 border-t border-slate-200 text-right">
+                        <div class="text-center min-w-[220px]">
+                            <div class="text-[10px] font-bold text-emerald-600 mb-2 flex items-center justify-center gap-1">
+                                <span class="text-xs">✔</span> <span>Digitally Electronically Generated Signature</span>
+                            </div>
+                            <p class="font-extrabold text-slate-900 text-xs">Mahtab Anwar</p>
+                            <p class="text-[10px] font-bold text-slate-600">(BMLT)</p>
+                        </div>
+                    </div>
+
+                    <!-- 7. BOTTOM FOOTER STRIPE -->
+                    <div class="mt-6 border-t border-slate-300 pt-1 flex justify-between text-[9px] text-slate-500">
+                        <span>Generated on : ${reportObj.date}</span>
+                        <span>Page 1 of 1</span>
+                    </div>
+                    <div class="bg-[#0f4c81] text-white px-4 py-2 flex justify-between items-center text-[10px] font-bold mt-1">
+                        <span>Master Path Lab</span>
+                        <span>Quality Pathology Reports</span>
+                    </div>
+                </div>
+            `;
+
+            const btnDownload = document.getElementById('btn-download-preview-pdf');
+            if (btnDownload) {
+                btnDownload.onclick = () => generateMasterPathLabPDFReport(patient, reportObj);
+                btnDownload.innerText = '📥 Download Sample PDF';
+            }
+
+            document.getElementById('report-view-modal').classList.remove('hidden');
+        }
+
+        function previewTestDBTemplate(testId) {
+            const test = appState.testDB.find(t => t.id === testId);
+            if (!test) return;
+            const { patient, reportObj } = getSampleReportObjectForTest(test);
+            renderTestReportInViewModal(patient, reportObj);
+        }
+
+        function downloadTestDBTemplatePDF(testId) {
+            const test = appState.testDB.find(t => t.id === testId);
+            if (!test) return;
+            const { patient, reportObj } = getSampleReportObjectForTest(test);
+            generateMasterPathLabPDFReport(patient, reportObj);
+        }
+
+        function getModalTestDefinitionData() {
+            const title = document.getElementById('nt-title').value.trim() || 'NEW PATHOLOGY TEST PANEL';
+            const category = document.getElementById('nt-category').value;
+            const sampleType = document.getElementById('nt-sample').value.trim() || 'Serum';
+            const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
+            const instruments = document.getElementById('nt-instruments').value.trim() || 'Automated Analyzer';
+
+            const container = document.getElementById('nt-params-container');
+            const rows = container ? container.querySelectorAll('.nt-row') : [];
+            const params = [];
+            rows.forEach(row => {
+                if (row.classList.contains('nt-group-row')) {
+                    const groupName = row.querySelector('.nt-group-name').value.trim();
+                    if (groupName) params.push({ isGroup: true, groupName });
+                } else if (row.classList.contains('nt-param-row')) {
+                    const paramName = row.querySelector('.nt-param-name').value.trim();
+                    const paramSub = row.querySelector('.nt-param-sub') ? row.querySelector('.nt-param-sub').value.trim() : '';
+                    const paramRef = row.querySelector('.nt-param-ref') ? row.querySelector('.nt-param-ref').value.trim() : '';
+                    const paramUnit = row.querySelector('.nt-param-unit') ? row.querySelector('.nt-param-unit').value.trim() : '';
+                    if (paramName) {
+                        params.push({ inv: paramName, sub: paramSub, res: 'NORMAL', flag: 'Normal', ref: paramRef || 'Normal Range', unit: paramUnit });
+                    }
+                }
+            });
+
+            if (params.length === 0) {
+                params.push({ inv: 'Sample Parameter 1', sub: '', res: 'NORMAL', flag: 'Normal', ref: 'Normal Range', unit: '' });
+            }
+
+            return { title, category, sampleType, tat, instruments, params, genderRanges: [] };
+        }
+
+        function previewCurrentModalTest() {
+            const testData = getModalTestDefinitionData();
+            const { patient, reportObj } = getSampleReportObjectForTest(testData);
+            renderTestReportInViewModal(patient, reportObj);
+        }
+
+        function downloadCurrentModalTestPDF() {
+            const testData = getModalTestDefinitionData();
+            const { patient, reportObj } = getSampleReportObjectForTest(testData);
+            generateMasterPathLabPDFReport(patient, reportObj);
         }
 
         // Ledger & Directory Rendering with Search Filtering
