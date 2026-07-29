@@ -793,6 +793,10 @@
                         <label class="block text-slate-300 font-semibold">Test Parameters</label>
                         <button type="button" onclick="addNTParamRow()" class="text-cyan-400 hover:text-cyan-300 text-xs font-bold">+ Add Row</button>
                     </div>
+                    <div class="mb-2">
+                        <label class="block text-slate-400 mb-1 text-[10px] font-semibold">Default Method / Sub-label (applies to all parameters)</label>
+                        <input type="text" id="nt-default-method" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white outline-none focus:border-cyan-500 text-xs" placeholder="e.g. CLIA, Photometry, Calculated, Enzymatic">
+                    </div>
                     <!-- Column headers -->
                     <div class="grid grid-cols-[1fr_80px_70px_70px_70px_70px_50px_20px] gap-1 mb-1 px-1">
                         <span class="text-[9px] text-slate-500 uppercase">Name</span>
@@ -3791,6 +3795,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             const sampleType = document.getElementById('nt-sample').value.trim();
             const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
             const instruments = document.getElementById('nt-instruments').value.trim();
+            const defaultMethod = document.getElementById('nt-default-method') ? document.getElementById('nt-default-method').value.trim() : '';
 
             const paramRows = document.querySelectorAll('#nt-params-container .nt-param-row');
             const params = [];
@@ -3798,6 +3803,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             paramRows.forEach(row => {
                 const paramName = row.querySelector('.nt-param-name').value.trim();
                 const paramSub = row.querySelector('.nt-param-sub') ? row.querySelector('.nt-param-sub').value.trim() : '';
+                const finalSub = paramSub || defaultMethod;
                 const refMale = row.querySelector('.nt-param-ref-male') ? row.querySelector('.nt-param-ref-male').value.trim() : '';
                 const refFemale = row.querySelector('.nt-param-ref-female') ? row.querySelector('.nt-param-ref-female').value.trim() : '';
                 const refChild = row.querySelector('.nt-param-ref-child') ? row.querySelector('.nt-param-ref-child').value.trim() : '';
@@ -3808,7 +3814,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     // Store the male ref as default ref (most commonly used)
                     params.push({ 
                         inv: paramName, 
-                        sub: paramSub, 
+                        sub: finalSub, 
                         res: '', 
                         flag: 'Normal', 
                         ref: refMale || refFemale || refChild || refNeo || '', 
