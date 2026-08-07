@@ -545,7 +545,7 @@
             </div>
 
             <!-- Tab 6: Database Backup & Cloud Sync -->
-            <div id="admin-tab-backup" class="admin-tab-content hidden glass-panel p-6 rounded-2xl max-w-4xl mx-auto shadow-2xl">
+            <div id="admin-tab-backup" class="admin-tab-content hidden glass-panel p-6 rounded-2xl max-w-4xl shadow-2xl">
                 <div class="mb-6 border-b border-slate-800 pb-4">
                     <h3 class="text-lg font-bold text-white mb-1">☁️ Automatic Realtime Cloud Database</h3>
                     <p class="text-xs text-slate-400">All lab records are automatically saved and synced with Google Firebase Cloud in real-time. Zero manual backups needed.</p>
@@ -4028,7 +4028,7 @@ Log in using your Patient ID and Password to view and download your pathology te
 
                 const htmlString = `
                     <div style="width: 800px; padding: 20px; background: white; box-sizing: border-box;">
-                        <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none text-xs leading-relaxed max-w-4xl mx-auto">
+                        <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none text-xs leading-relaxed max-w-4xl">
                             <!-- 1. HEADER SECTION -->
                             <div class="flex justify-between items-start mb-2">
                                 <div class="flex items-center gap-3">
@@ -4170,8 +4170,10 @@ Log in using your Patient ID and Password to view and download your pathology te
                 tempDiv.innerHTML = htmlString;
                 
                 // html2pdf usually needs the element in DOM to apply CSS rules from global stylesheets correctly
-                tempDiv.style.position = 'absolute';
-                tempDiv.style.left = '-9999px';
+                tempDiv.style.position = 'fixed';
+                tempDiv.style.left = '0px';
+                tempDiv.style.top = '0px';
+                tempDiv.style.zIndex = '-9999';
                 document.body.appendChild(tempDiv);
                 
                 const pName = (patient && patient.name) ? patient.name : (reportObj.patientName || 'Patient');
@@ -4179,7 +4181,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     margin:       [0, 0, 0, 0],
                     filename:     `${pName.replace(/\s+/g, '_')}_BMLT_Exact_Lab_Report.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800, scrollX: 0, scrollY: 0 },
                     jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
                 };
                 
@@ -4254,7 +4256,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     const pageBreakClass = idx > 0 ? 'html2pdf__page-break ' : '';
 
                     combinedHtml += `
-                        <div class="${pageBreakClass}bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none text-xs leading-relaxed max-w-4xl mx-auto mb-8">
+                        <div class="${pageBreakClass}bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none text-xs leading-relaxed max-w-4xl mb-8">
                             <!-- 1. HEADER SECTION -->
                             <div class="flex justify-between items-start mb-2">
                                 <div class="flex items-center gap-3">
@@ -4396,8 +4398,10 @@ Log in using your Patient ID and Password to view and download your pathology te
                 
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = combinedHtml;
-                tempDiv.style.position = 'absolute';
-                tempDiv.style.left = '-9999px';
+                tempDiv.style.position = 'fixed';
+                tempDiv.style.left = '0px';
+                tempDiv.style.top = '0px';
+                tempDiv.style.zIndex = '-9999';
                 document.body.appendChild(tempDiv);
                 
                 const pName = (patient && patient.name) ? patient.name : 'Patient';
@@ -4405,7 +4409,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     margin:       [0, 0, 0, 0],
                     filename:     `${pName.replace(/\s+/g, '_')}_UHID_${pid}_Combined_${patientReports.length}_Reports.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800, scrollX: 0, scrollY: 0 },
                     jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
                 };
                 
@@ -4470,7 +4474,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
 
             content.innerHTML = `
-                <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl mx-auto">
+                <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl">
                     <!-- 1. HEADER SECTION -->
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-3">
@@ -4672,7 +4676,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 });
 
                 combinedHtml += `
-                    <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl mx-auto">
+                    <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl">
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex items-center gap-3">
                                 <img src="logo.jpg" class="w-12 h-12 rounded-full object-cover shadow border border-slate-700 bg-white">
@@ -5039,7 +5043,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
 
             content.innerHTML = `
-                <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl mx-auto">
+                <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl">
                     <!-- 1. HEADER SECTION -->
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-3">
