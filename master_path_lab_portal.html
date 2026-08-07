@@ -2182,6 +2182,10 @@
 
                 if (remoteCreds) {
                     appState.adminCreds = Object.assign({}, appState.adminCreds, remoteCreds);
+                    // Force sanitize old firebase cache
+                    if (appState.adminCreds && appState.adminCreds.mobile === '9455097721') {
+                        appState.adminCreds.mobile = '9235747517';
+                    }
                     needsLocalUpdate = true;
                 }
                 if (remoteTestDB && Array.isArray(remoteTestDB) && remoteTestDB.length > 0) {
