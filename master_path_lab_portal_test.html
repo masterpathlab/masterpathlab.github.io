@@ -3645,7 +3645,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 try {
                     let imgProps = doc.getImageProperties(MAIN_LOGO_B64);
                     let ratio = imgProps.width / imgProps.height;
-                    let drawWidth = 20; // Fit before x=32
+                    let drawWidth = 16; // Fit perfectly before text at x=28
                     let drawHeight = drawWidth / ratio;
                     let yPos = 16 - (drawHeight / 2); // Center vertically with text
                     doc.addImage(MAIN_LOGO_B64, 'JPEG', 10, yPos, drawWidth, drawHeight);
