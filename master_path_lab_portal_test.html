@@ -7,7 +7,10 @@
     <meta name="keywords" content="masterpathlabgithub, masterpath lab, master path lab portal, pathology reports">
     <meta name="author" content="Master Path Lab">
     <meta name="robots" content="index, follow">
-    <title>Master Path Lab - Pathology Report & Database Portal</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Master Path Lab</title>
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -84,6 +87,9 @@
             background: #06b6d4;
         }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
 
@@ -101,7 +107,7 @@
                     <h1 class="font-black text-lg tracking-wider text-white flex items-center gap-2">
                         MASTER PATH LAB
                     </h1>
-                    <p class="text-xs text-slate-400">Pathology Lab Reports & 30+ Master Test Database</p>
+                    <p class="text-xs text-slate-400">Pathology Lab Reports & Master Test Database</p>
                 </div>
             </div>
             <div id="header-auth-section" class="flex items-center">
@@ -116,10 +122,10 @@
         <!-- Landing View -->
         <div id="view-landing" class="py-12 md:py-20 text-center">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold mb-6 shadow-md">
-                ✨ Official Master Path Lab Diagnostic Processing Portal (30+ Master Tests)
+                ✨ Official Master Path Lab Diagnostic Processing Portal
             </div>
             <h2 class="text-3xl md:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-                Master Path Lab Suite & <br class="hidden sm:inline"><span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">30+ Pathology Test Reports</span>
+                Master Path Lab Suite & <br class="hidden sm:inline"><span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">Pathology Test Reports</span>
             </h2>
             <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto mb-10 leading-relaxed">
                 Complete pathology suite: CBC, Widal, Dengue, Thyroid, Lipid, LFT, KFT, Diabetic, Urine, Stool, Semen, Serology, Iron, Vitamins, Coagulation & Cardiac Markers.
@@ -184,7 +190,7 @@
                     🔬 Create Diagnostic Report
                 </button>
                 <button type="button" onclick="switchAdminTab('testdb')" id="tab-btn-testdb" class="admin-tab-btn px-5 py-3 rounded-xl text-xs font-black whitespace-nowrap transition btn-3d-inactive">
-                    🗄️ Test Master Database (30 Tests)
+                    🗄️ Test Master Database
                 </button>
                 <button type="button" onclick="switchAdminTab('manage')" id="tab-btn-manage" class="admin-tab-btn px-5 py-3 rounded-xl text-xs font-black whitespace-nowrap transition btn-3d-inactive">
                     📂 All Reports Ledger
@@ -244,11 +250,11 @@
                     <div class="flex justify-between items-center flex-wrap gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-lg">🧪</span>
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Master Pathology Test Database (30 Tests)</h4>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Master Pathology Test Database</h4>
                         </div>
                         <div class="flex gap-2">
                             <input type="text" id="preset-search-input" onkeyup="filterPresetCards()" placeholder="🔍 Search test (e.g. Widal, Dengue, CRP)..." class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64 shadow-sm">
-                            <button type="button" onclick="clearReportFormRows()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white text-xs px-3 py-1.5 rounded-lg transition font-semibold">
+                            <button type="button" onclick="clearEntireReportForm()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white text-xs px-3 py-1.5 rounded-lg transition font-semibold">
                                 Clear Form
                             </button>
                         </div>
@@ -256,7 +262,7 @@
 
                     <!-- Category Pills -->
                     <div class="flex gap-1.5 flex-wrap overflow-x-auto pb-1 custom-scrollbar text-[11px]" id="preset-category-pills">
-                        <button type="button" onclick="filterPresetCategory('All', this)" class="category-pill px-3 py-1 rounded-lg font-bold bg-cyan-500 text-slate-950 transition">All (30)</button>
+                        <button type="button" onclick="filterPresetCategory('All', this)" class="category-pill px-3 py-1 rounded-lg font-bold bg-cyan-500 text-slate-950 transition">All</button>
                         <button type="button" onclick="filterPresetCategory('Hematology', this)" class="category-pill px-3 py-1 rounded-lg font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">🩸 Hematology</button>
                         <button type="button" onclick="filterPresetCategory('Serology', this)" class="category-pill px-3 py-1 rounded-lg font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">🧫 Serology</button>
                         <button type="button" onclick="filterPresetCategory('Biochemistry', this)" class="category-pill px-3 py-1 rounded-lg font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">🧪 Biochemistry</button>
@@ -285,7 +291,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Ref. By Doctor</label>
-                                <input type="text" id="rep-doctor" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Dr. Hiren Shah">
+                                <input type="text" id="rep-doctor" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="Self (e.g. Dr. Hiren Shah)">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Sample Collected By</label>
@@ -295,7 +301,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Sample Collected At (Location)</label>
-                                <input type="text" id="rep-location" value="" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="e.g. HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001 (Optional)">
+                                <input type="text" id="rep-location" value="" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-sm" placeholder="e.g. Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh (Optional)">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 mb-1">Primary Sample Type & Volume</label>
@@ -361,8 +367,14 @@
                     <!-- Instruments Used & General Notes -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Instruments Used (Optional)</label>
-                            <input type="text" id="rep-instruments" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-xs" placeholder="Fully automated cell counter - Mindray 300">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between cursor-pointer select-none">
+                                <span>Instruments Used (Optional)</span>
+                                <span class="flex items-center gap-1.5 text-[11px] text-cyan-400 font-medium">
+                                    <input type="checkbox" id="rep-toggle-instruments" class="w-3.5 h-3.5 rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 cursor-pointer">
+                                    <span>Include in PDF Report</span>
+                                </span>
+                            </label>
+                            <input type="text" id="rep-instruments" oninput="document.getElementById('rep-toggle-instruments').checked = !!this.value.trim()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:border-cyan-500 outline-none text-xs" placeholder="Fully automated cell counter - Mindray 300">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Interpretation Note (Optional)</label>
@@ -428,11 +440,11 @@
                 </form>
             </div>
 
-            <!-- Tab 3: Test Master Database (30 Tests) -->
+            <!-- Tab 3: Test Master Database -->
             <div id="admin-tab-testdb" class="admin-tab-content hidden glass-panel p-6 rounded-2xl max-w-5xl mx-auto shadow-2xl">
                 <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
                     <div>
-                        <h3 class="text-lg font-bold text-white">Pathology Test Master Database (30 Standard Panels)</h3>
+                        <h3 class="text-lg font-bold text-white">Pathology Test Master Database</h3>
                         <p class="text-xs text-slate-400">Add, edit, or remove test templates in your lab database to use when creating reports.</p>
                     </div>
                     <button type="button" onclick="openNewTestModal()" class="btn-3d-active font-bold px-4 py-2 rounded-xl text-xs transition shadow-md">
@@ -466,6 +478,9 @@
                         <p class="text-xs text-slate-400">Historical log of issued Master Path Lab diagnostic reports.</p>
                     </div>
                     <div class="flex gap-2 items-center flex-wrap">
+                        <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                            🔄 Restore All Patients & Reports
+                        </button>
                         <input type="text" id="ledger-search-input" onkeyup="renderAdminLedger()" placeholder="🔍 Search by patient, test, or ID..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
                     </div>
                 </div>
@@ -495,7 +510,12 @@
                         <h3 class="text-lg font-bold text-white mb-1">Registered Patients Directory</h3>
                         <p class="text-xs text-slate-400">Manage active patient profiles and access credentials.</p>
                     </div>
-                    <input type="text" id="patients-search-input" onkeyup="renderPatientsDirectory()" placeholder="🔍 Search patients by name, UHID, or phone..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                            🔄 Restore All Patients & Reports
+                        </button>
+                        <input type="text" id="patients-search-input" onkeyup="renderPatientsDirectory()" placeholder="🔍 Search patients by name, UHID, or phone..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
+                    </div>
                 </div>
                 <div class="overflow-x-auto border border-slate-800 rounded-xl custom-scrollbar">
                     <table class="w-full text-left text-sm text-slate-300 min-w-[650px]">
@@ -519,71 +539,42 @@
             <!-- Tab 6: Database Backup & Cloud Sync -->
             <div id="admin-tab-backup" class="admin-tab-content hidden glass-panel p-6 rounded-2xl max-w-4xl mx-auto shadow-2xl">
                 <div class="mb-6 border-b border-slate-800 pb-4">
-                    <h3 class="text-lg font-bold text-white mb-1">💾 Permanent Database & Cloud Sync Control</h3>
-                    <p class="text-xs text-slate-400">Multi-Layer Permanent Storage: LocalStorage + Permanent IndexedDB + 1-Click JSON File Backup + Live Cloud Sync.</p>
+                    <h3 class="text-lg font-bold text-white mb-1">☁️ Automatic Realtime Cloud Database</h3>
+                    <p class="text-xs text-slate-400">All lab records are automatically saved and synced with Google Firebase Cloud in real-time. Zero manual backups needed.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- IndexedDB Permanent Status Card -->
-                    <div class="bg-slate-950 border border-slate-800 p-5 rounded-2xl space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl">🛡️</span>
-                            <span id="idb-status-badge" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">
-                                IndexedDB Permanent Active
-                            </span>
-                        </div>
-                        <h4 class="text-sm font-bold text-white">Browser Database Protection</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Your patients and reports are saved inside a high-durability <b>IndexedDB browser database</b>. Even if browser cache or history is cleared, IndexedDB automatically guards and restores all patient data!
-                        </p>
-                    </div>
-
-                    <!-- 1-Click Export & Import Card -->
-                    <div class="bg-slate-950 border border-slate-800 p-5 rounded-2xl space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl">💾</span>
-                            <span class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">
-                                Offline JSON Backup
-                            </span>
-                        </div>
-                        <h4 class="text-sm font-bold text-white">Full Lab JSON Backup</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Save a copy of all patients, test templates, and reports to your computer or Google Drive with 1 click.
-                        </p>
-                        <div class="flex gap-2 pt-1">
-                            <button type="button" onclick="exportDatabaseJSON()" class="flex-1 btn-3d-active font-black py-2 rounded-xl text-xs transition flex items-center justify-center gap-1 shadow-md">
-                                💾 Export Backup (.json)
-                            </button>
-                            <label class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer shadow-md">
-                                📥 Import Backup (.json)
-                                <input type="file" accept=".json" onchange="importDatabaseJSON(event)" class="hidden">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cloud Sync Config Card -->
-                <div class="bg-slate-950 border border-cyan-500/30 p-5 rounded-2xl space-y-4">
+                <!-- Automatic Realtime Cloud Sync Status Card -->
+                <div class="bg-slate-950 border border-emerald-500/30 p-6 rounded-2xl space-y-4 shadow-xl">
                     <div class="flex justify-between items-center flex-wrap gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">🌐</span>
-                            <h4 class="text-sm font-bold text-white">Optional Live Cloud Database Sync (Firebase / REST API)</h4>
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">⚡</span>
+                            <div>
+                                <h4 class="text-base font-bold text-white">100% Automatic Cloud Sync Active</h4>
+                                <p class="text-xs text-slate-400">Google Firebase Cloud Database Protection</p>
+                            </div>
                         </div>
-                        <span id="cloud-status-badge" class="bg-slate-800 text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full">
-                            Offline Mode
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-extrabold px-3.5 py-1.5 rounded-full uppercase flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Live Online Sync Active 🟢
                         </span>
                     </div>
-                    <p class="text-xs text-slate-400">
-                        Paste your free Firebase Realtime Database URL (or custom REST endpoint) to sync all patient records live across smartphones, laptops, and tablets automatically.
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <b>No manual exports or files required!</b> Every registered patient, generated pathology report, or modified test parameter is <b>automatically saved to Google Firebase Cloud in real-time</b>. Your data is protected forever and instantly available across all laptops, tablets, and smartphones.
                     </p>
-                    <div class="flex gap-2 flex-wrap">
-                        <input type="url" id="cloud-sync-url" placeholder="https://your-lab-name-default-rtdb.firebaseio.com" class="flex-grow bg-slate-900 border border-slate-800 rounded-xl p-3 text-white text-xs outline-none focus:border-cyan-500 font-mono">
-                        <button type="button" onclick="saveCloudSyncSettings()" class="btn-3d-active font-black px-5 py-3 rounded-xl text-xs transition shadow-md">
-                            Save Cloud Sync Settings
-                        </button>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center gap-2 text-emerald-400 font-medium">
+                            <span>✅</span> Instant Real-time Cloud Save
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center gap-2 text-emerald-400 font-medium">
+                            <span>✅</span> Multi-Device Live Syncing
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center gap-2 text-emerald-400 font-medium">
+                            <span>✅</span> Zero Manual Export Needed
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- Patient Dashboard View -->
@@ -744,10 +735,10 @@
 
     <!-- New Test Definition Modal -->
     <div id="modal-new-test" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-lg w-full shadow-2xl relative">
+        <div class="bg-slate-900 border border-cyan-500/40 p-6 rounded-2xl max-w-2xl w-full shadow-2xl relative">
             <button type="button" onclick="closeNewTestModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 class="text-lg font-bold text-white mb-1">Add New Pathology Test Definition</h3>
-            <p class="text-xs text-slate-400 mb-4">Define a reusable test panel template for your master database.</p>
+            <p class="text-xs text-slate-400 mb-4">Define a reusable test panel template with group headers & parameter rows for your master database.</p>
 
             <form onsubmit="handleSaveNewTestDefinition(event)" class="space-y-3 text-xs">
                 <div>
@@ -771,8 +762,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-300 mb-1 font-semibold">Sample Type</label>
-                        <input type="text" id="nt-sample" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500" placeholder="Serum (2 ml)">
+                        <label class="block text-slate-300 mb-1 font-semibold">Sample Type (Optional)</label>
+                        <input type="text" id="nt-sample" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500" placeholder="e.g. Serum (2 ml)">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -786,16 +777,33 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Default Parameter</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <input type="text" id="nt-param-name" placeholder="Parameter Name" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
-                        <input type="text" id="nt-param-ref" placeholder="0 - 100" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
-                        <input type="text" id="nt-param-unit" placeholder="unit" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-slate-300 font-semibold">Test Panel Structure (Headers & Parameters)</label>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="addNTGroupHeaderRow()" class="bg-slate-800 text-amber-400 text-xs px-2.5 py-1 rounded-lg border border-amber-500/30 hover:bg-slate-700 font-bold transition">
+                                + Add Group Header
+                            </button>
+                            <button type="button" onclick="addNTParamRow()" class="bg-slate-800 text-cyan-400 text-xs px-2.5 py-1 rounded-lg border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 font-bold transition">
+                                + Add Parameter Row
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="nt-params-container" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
+                        <!-- Dynamic Group Header & Parameter rows populated here -->
                     </div>
                 </div>
-                <button type="submit" class="w-full btn-3d-active font-black p-3 rounded-xl transition shadow-lg mt-2 text-xs">
-                    Save Test Template to Database
-                </button>
+                <div class="grid grid-cols-3 gap-2 mt-4">
+                    <button type="button" onclick="previewCurrentModalTest()" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-bold p-2.5 rounded-xl hover:bg-indigo-500 hover:text-white transition text-xs flex items-center justify-center gap-1">
+                        👁️ Preview PDF
+                    </button>
+                    <button type="button" onclick="downloadCurrentModalTestPDF()" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold p-2.5 rounded-xl hover:bg-emerald-500 hover:text-slate-950 transition text-xs flex items-center justify-center gap-1">
+                        📥 Download PDF
+                    </button>
+                    <button type="submit" class="btn-3d-active font-black p-2.5 rounded-xl transition shadow-lg text-xs flex items-center justify-center gap-1">
+                        💾 Save to Database
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -863,7 +871,7 @@
                 </div>
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">Admin WhatsApp Mobile Number *</label>
-                    <input type="tel" id="change-admin-mobile" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-amber-500 font-semibold" placeholder="e.g. 9455097721">
+                    <input type="tel" id="change-admin-mobile" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-amber-500 font-semibold" placeholder="e.g. 9235747517">
                 </div>
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">Secret Security Recovery PIN * (Default: 1234)</label>
@@ -1517,94 +1525,43 @@
         const defaultReports = [];
 
         const sampleDemoPatients = [
-            { pid: '1001', name: 'khan bhai', age: 16, sex: 'Male', mobile: '9898989898', email: 'khan@example.com', password: 'pass1001', registeredAt: '2026-07-27 02:40 PM' },
-            { pid: '556', name: 'SK MOHD SUHAIL', age: 20, sex: 'Male', mobile: '9876543210', email: 'suhail@example.com', password: 'pass556', registeredAt: '2026-07-27 02:31 PM' },
-            { pid: '555', name: 'Yash M. Patel', age: 21, sex: 'Male', mobile: '9812345678', email: 'yash@example.com', password: 'pass555', registeredAt: '2026-07-27 02:35 PM' },
-            { pid: '554', name: 'Yashvi M. Patel', age: 18, sex: 'Female', mobile: '9855544433', email: 'yashvi@example.com', password: 'pass554', registeredAt: '2026-07-27 02:45 PM' }
+            { pid: '1001', name: 'FATIMA', age: 34, sex: 'Female', mobile: '09140969687', email: '', password: 'pass1001', registeredAt: '07/08/2026, 18:08:43' }
         ];
 
         const sampleDemoReports = [
             {
-                id: 'REP-1001',
+                id: 'REP-14632',
                 pid: '1001',
-                patientName: 'khan bhai',
-                date: '21 OCT 2026 04:35 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'THYROID PROFILE (TOTAL T3, T4, TSH)',
+                patientName: 'FATIMA',
+                date: '07 AUG 2026 06:19 PM',
+                doctor: 'Shazia Arshad Shah Bums',
+                collector: 'Arshad',
+                location: 'Rizwana Hospital',
+                testTitle: 'LIVER FUNCTION TEST (LFT)',
                 sampleType: 'Serum (2 ml)',
                 tat: '',
-                instruments: 'CLIA Chemiluminescence Immunoassay',
-                interpNote: 'Thyroid function evaluated via total hormone levels',
-                params: defaultTestDB[1].params,
-                bulletComments: defaultTestDB[1].bulletComments,
+                instruments: 'Microlab Rx - 50',
+                interpNote: 'Assess hepatic synthetic & excretory function',
+                bulletComments: '',
+                bulletLowCauses: '',
+                bulletHighCauses: '',
+                params: [
+                    { isGroup: true, groupName: 'BILIRUBIN PANEL' },
+                    { inv: 'Bilirubin Total', sub: 'DSA', res: '0.8', flag: 'Normal', ref: '0.2 - 1.2', unit: 'mg/dL' },
+                    { inv: 'Bilirubin Direct', sub: 'DSA', res: '0.5', flag: 'Normal', ref: '0.0 - 0.5', unit: 'mg/dL' },
+                    { inv: 'Bilirubin Indirect', sub: 'Calculated', res: '0.3', flag: 'Normal', ref: '0.1 - 1.0', unit: 'mg/dL' },
+                    { isGroup: true, groupName: 'HAEMOGLOBIN' },
+                    { inv: 'HEMOGLOBIN HB', sub: '', res: '9.8', flag: 'Low', ref: '11 - 14', unit: 'gm%' },
+                    { isGroup: true, groupName: 'BLOOD GROUP' },
+                    { inv: 'Blood Group Rh Factor', sub: 'Slide Method', res: '(O) Positive', flag: 'Normal', ref: '', unit: '' },
+                    { inv: 'Blood Sugar Random', sub: '', res: '89', flag: 'Normal', ref: '< 140', unit: 'mg/dl' },
+                    { isGroup: true, groupName: 'SEROLOGY TEST' },
+                    { inv: 'H.IV 1 & 2 Rapid Test', sub: 'Hiv 1 & 2', res: 'Negative', flag: 'Normal', ref: '', unit: '' },
+                    { inv: 'Australian Antigen HBsAg Rapid Test', sub: '', res: 'Negative', flag: 'Normal', ref: '', unit: '' },
+                    { inv: 'Syphilis VDRL Rapid Test', sub: '', res: 'Negative', flag: 'Normal', ref: '', unit: '' }
+                ],
                 signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55601',
-                pid: '556',
-                patientName: 'SK MOHD SUHAIL',
-                date: '21 OCT 2026 12:00 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'Complete Blood Count (CBC)',
-                sampleType: 'Blood',
-                tat: '',
-                instruments: 'Fully automated cell counter - Mindray 300',
-                interpNote: 'Further confirm for Anemia',
-                params: defaultTestDB[0].params,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55501',
-                pid: '555',
-                patientName: 'Yash M. Patel',
-                date: '02 DEC 2026 04:35 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'Mean Corpuscular Hemoglobin Concentration (MCHC)',
-                sampleType: 'Blood',
-                tat: '',
-                instruments: 'Fully Automated Cell Counter',
-                interpNote: '',
-                params: defaultTestDB[28].params,
-                bulletComments: defaultTestDB[28].bulletComments,
-                bulletLowCauses: defaultTestDB[28].bulletLowCauses,
-                bulletHighCauses: defaultTestDB[28].bulletHighCauses,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55401',
-                pid: '554',
-                patientName: 'Yashvi M. Patel',
-                date: '02 DEC 2026 05:00 PM',
-                doctor: 'Dr. Hiren Shah',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'HEMOGLOBIN (HB)',
-                sampleType: 'Blood (2 ml)',
-                tat: '',
-                instruments: 'Photometric Cyanmethemoglobin',
-                interpNote: '',
-                params: defaultTestDB[29].params,
-                genderRanges: defaultTestDB[29].genderRanges,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
+                    tech: 'Mahtab Anwar (BMLT)',
                     doc1: 'Dr. Payal Shah (MD, Pathologist)',
                     doc2: 'Dr. Vimal Shah (MD, Pathologist)'
                 }
@@ -1665,9 +1622,9 @@
                 pin: '1234',
                 backupCodes: defaultBackupCodes
             },
-            patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : [],
-            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : [],
-            testDB: (storedTestDB && Array.isArray(storedTestDB) && storedTestDB.length >= defaultTestDB.length) ? storedTestDB : defaultTestDB
+            patients: (storedPatients && Array.isArray(storedPatients) && storedPatients.length > 0) ? storedPatients : sampleDemoPatients,
+            reports: (storedReports && Array.isArray(storedReports) && storedReports.length > 0) ? storedReports : sampleDemoReports,
+            testDB: (storedTestDB && Array.isArray(storedTestDB)) ? storedTestDB : defaultTestDB
         };
 
         if (!appState.adminCreds.backupCodes || !Array.isArray(appState.adminCreds.backupCodes) || appState.adminCreds.backupCodes.length === 0) {
@@ -1679,51 +1636,51 @@
         const IDB_VERSION = 1;
         let dbInstance = null;
 
-        function initIndexedDB() {
-            return new Promise((resolve) => {
-                if (!window.indexedDB) {
-                    resolve(false);
-                    return;
-                }
-                const req = indexedDB.open(IDB_NAME, IDB_VERSION);
-                req.onupgradeneeded = function(e) {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains('appStore')) {
-                        db.createObjectStore('appStore', { keyPath: 'key' });
-                    }
-                };
-                req.onsuccess = function(e) {
-                    dbInstance = e.target.result;
-                    const badge = document.getElementById('idb-status-badge');
-                    if (badge) badge.innerText = 'IndexedDB Permanent Active';
-                    resolve(true);
-                };
-                req.onerror = function() { resolve(false); };
-            });
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKd7NrVHKqwD9I7DtCTfTvwhARGfKTiio",
+            authDomain: "master-path-lab-99f7c.firebaseapp.com",
+            projectId: "master-path-lab-99f7c",
+            storageBucket: "master-path-lab-99f7c.firebasestorage.app",
+            messagingSenderId: "215822521628",
+            appId: "1:215822521628:web:fb4a97db4cb559ade396d9",
+            measurementId: "G-JLV963XGVC"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        dbInstance = firebase.firestore();
+
+        async function initIndexedDB() {
+            const badge = document.getElementById('idb-status-badge');
+            if (badge) {
+                badge.innerText = 'Firebase Database Active 🟢';
+                badge.className = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
+            }
+            return true;
         }
 
-        function saveToIndexedDB(key, val) {
+        async function saveToIndexedDB(key, val) {
             if (!dbInstance) return;
             try {
-                const tx = dbInstance.transaction('appStore', 'readwrite');
-                const store = tx.objectStore('appStore');
-                store.put({ key: key, value: val });
-            } catch(e) {}
+                await dbInstance.collection('appData').doc(key).set({ value: val });
+            } catch(e) {
+                console.error("Firebase save error:", e);
+            }
         }
 
-        function loadFromIndexedDB(key) {
-            return new Promise((resolve) => {
-                if (!dbInstance) { resolve(null); return; }
-                try {
-                    const tx = dbInstance.transaction('appStore', 'readonly');
-                    const store = tx.objectStore('appStore');
-                    const req = store.get(key);
-                    req.onsuccess = function() {
-                        resolve(req.result ? req.result.value : null);
-                    };
-                    req.onerror = function() { resolve(null); };
-                } catch(e) { resolve(null); }
-            });
+        async function loadFromIndexedDB(key) {
+            if (!dbInstance) return null;
+            try {
+                const doc = await dbInstance.collection('appData').doc(key).get();
+                if (doc.exists) {
+                    return doc.data().value;
+                }
+            } catch(e) {
+                console.error("Firebase load error:", e);
+            }
+            return null;
         }
 
         // --- OPTIONAL REALTIME CLOUD SYNC ENGINE ---
@@ -1752,43 +1709,83 @@
             }
         }
 
+        function mergeById(localArr, remoteArr, idGetter) {
+            if (!Array.isArray(localArr)) localArr = [];
+            if (!Array.isArray(remoteArr)) remoteArr = [];
+            const map = new Map();
+            localArr.forEach(item => {
+                const key = idGetter(item);
+                if (key) map.set(key, item);
+            });
+            remoteArr.forEach(item => {
+                const key = idGetter(item);
+                if (key) {
+                    const existing = map.get(key);
+                    map.set(key, existing ? Object.assign({}, existing, item) : item);
+                }
+            });
+            return Array.from(map.values());
+        }
+
         async function syncToCloud() {
             if (!storedCloudUrl) return;
             try {
+                let targetUrl = storedCloudUrl.trim().replace(/\/+$/, '');
+                if (!targetUrl.endsWith('.json')) targetUrl += '/master_path_lab_data.json';
                 const payload = {
                     patients: appState.patients,
                     reports: appState.reports,
                     testDB: appState.testDB,
                     updatedAt: new Date().toISOString()
                 };
-                let targetUrl = storedCloudUrl;
-                if (!targetUrl.endsWith('.json')) targetUrl += '/master_path_lab_data.json';
-                await fetch(targetUrl, {
+                const resp = await fetch(targetUrl, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                const badge = document.getElementById('cloud-status-badge');
+                if (resp.ok && badge) {
+                    badge.innerText = 'Cloud Sync Active 🟢';
+                    badge.className = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
+                }
             } catch(e) {
                 console.warn('Cloud sync error:', e);
+                const badge = document.getElementById('cloud-status-badge');
+                if (badge) {
+                    badge.innerText = 'Cloud Sync Offline ⚠️';
+                    badge.className = 'bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
+                }
             }
         }
 
         async function syncFromCloud() {
             if (!storedCloudUrl) return;
             try {
-                let targetUrl = storedCloudUrl;
+                let targetUrl = storedCloudUrl.trim().replace(/\/+$/, '');
                 if (!targetUrl.endsWith('.json')) targetUrl += '/master_path_lab_data.json';
                 const resp = await fetch(targetUrl);
                 if (resp.ok) {
                     const data = await resp.json();
-                    if (data && (data.patients || data.reports)) {
-                        if (Array.isArray(data.patients) && data.patients.length > 0) appState.patients = data.patients;
-                        if (Array.isArray(data.reports) && data.reports.length > 0) appState.reports = data.reports;
-                        if (Array.isArray(data.testDB) && data.testDB.length >= defaultTestDB.length) appState.testDB = data.testDB;
-                        saveState();
-                        populatePatientDropdown();
-                        renderPatientsDirectory();
-                        renderAdminLedger();
+                    if (data) {
+                        let updated = false;
+                        if (Array.isArray(data.patients) && data.patients.length > 0) {
+                            appState.patients = mergeById(appState.patients, data.patients, p => p && p.pid ? String(p.pid).trim() : null);
+                            updated = true;
+                        }
+                        if (Array.isArray(data.reports) && data.reports.length > 0) {
+                            appState.reports = mergeById(appState.reports, data.reports, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
+                            updated = true;
+                        }
+                        if (Array.isArray(data.testDB) && data.testDB.length > 0) {
+                            appState.testDB = mergeById(appState.testDB, data.testDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
+                            updated = true;
+                        }
+                        if (updated) {
+                            saveState();
+                            if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                            if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                            if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                        }
                     }
                 }
             } catch(e) {
@@ -1796,8 +1793,311 @@
             }
         }
 
-        saveState();
+        async function forceCloudSyncNow() {
+            showToast('🔄 Syncing with Cloud Database...');
+            await syncToCloud();
+            await syncFromCloud();
+            if (dbInstance) {
+                await initAppFromFirestore();
+            }
+            showToast('✅ Live Data Cloud Sync Completed!');
+        }
 
+        // --- IN-BROWSER SQL DATABASE ENGINE & QUERY CONSOLE ---
+        function executeUserSQL(queryOverride) {
+            const sqlInput = document.getElementById('sql-query-input');
+            const query = (queryOverride || (sqlInput ? sqlInput.value : '') || '').trim();
+            if (!query) {
+                alert('Please enter an SQL query to execute!');
+                return;
+            }
+
+            const startTime = performance.now();
+            const resultWrapper = document.getElementById('sql-result-wrapper');
+            const resultStatus = document.getElementById('sql-result-status');
+            const resultCount = document.getElementById('sql-result-count');
+            const execTimeSpan = document.getElementById('sql-exec-time');
+            const tableHead = document.getElementById('sql-table-head');
+            const tableBody = document.getElementById('sql-table-body');
+
+            try {
+                const tables = {
+                    patients: appState.patients || [],
+                    reports: appState.reports || [],
+                    test_master: (appState.testDB || []).map(t => ({
+                        id: t.id,
+                        title: t.title,
+                        category: t.category,
+                        sampleType: t.sampleType,
+                        instruments: t.instruments
+                    })),
+                    admin_creds: [appState.adminCreds || {}]
+                };
+
+                const lowerQuery = query.toLowerCase();
+
+                if (lowerQuery.startsWith('select')) {
+                    let tableName = 'patients';
+                    if (lowerQuery.includes('from reports')) tableName = 'reports';
+                    else if (lowerQuery.includes('from test_master')) tableName = 'test_master';
+                    else if (lowerQuery.includes('from admin_creds')) tableName = 'admin_creds';
+
+                    let records = [...(tables[tableName] || [])];
+
+                    if (lowerQuery.includes('where')) {
+                        const whereClause = query.substring(query.toLowerCase().indexOf('where') + 5).split(/order by|limit/i)[0].trim();
+                        records = records.filter(r => {
+                            try {
+                                if (whereClause.includes('=')) {
+                                    const [col, val] = whereClause.split('=').map(s => s.trim().replace(/['"]/g, ''));
+                                    return String(r[col] || '').toLowerCase() === val.toLowerCase();
+                                } else if (whereClause.toLowerCase().includes('like')) {
+                                    const [col, val] = whereClause.split(/like/i).map(s => s.trim().replace(/['"%]/g, ''));
+                                    return String(r[col] || '').toLowerCase().includes(val.toLowerCase());
+                                } else if (whereClause.includes('>=')) {
+                                    const [col, val] = whereClause.split('>=').map(s => s.trim());
+                                    return Number(r[col]) >= Number(val);
+                                } else if (whereClause.includes('>')) {
+                                    const [col, val] = whereClause.split('>').map(s => s.trim());
+                                    return Number(r[col]) > Number(val);
+                                }
+                            } catch(e) {}
+                            return true;
+                        });
+                    }
+
+                    const endTime = performance.now();
+                    if (execTimeSpan) execTimeSpan.innerText = `Execution time: ${(endTime - startTime).toFixed(1)}ms`;
+                    if (resultStatus) {
+                        resultStatus.innerText = `SQL Query Executed Successfully on [${tableName}]`;
+                        resultStatus.className = 'font-semibold text-emerald-400';
+                    }
+                    if (resultCount) resultCount.innerText = `${records.length} Rows Returned`;
+                    if (resultWrapper) resultWrapper.classList.remove('hidden');
+
+                    if (records.length === 0) {
+                        if (tableHead) tableHead.innerHTML = '<tr><th class="p-3">Result</th></tr>';
+                        if (tableBody) tableBody.innerHTML = '<tr><td class="p-3 text-slate-500">No matching records found.</td></tr>';
+                        return;
+                    }
+
+                    const keys = Object.keys(records[0]).filter(k => typeof records[0][k] !== 'object' || records[0][k] === null);
+                    if (tableHead) tableHead.innerHTML = '<tr>' + keys.map(k => `<th class="p-3 text-cyan-400 font-bold border-b border-slate-700 uppercase text-[10px]">${k}</th>`).join('') + '</tr>';
+                    if (tableBody) {
+                        tableBody.innerHTML = records.map(r => {
+                            return '<tr class="hover:bg-slate-800/50 transition">' + keys.map(k => `<td class="p-3 border-b border-slate-800 text-xs font-mono">${r[k] !== undefined ? r[k] : ''}</td>`).join('') + '</tr>';
+                        }).join('');
+                    }
+                } else {
+                    const endTime = performance.now();
+                    if (execTimeSpan) execTimeSpan.innerText = `Execution time: ${(endTime - startTime).toFixed(1)}ms`;
+                    if (resultStatus) {
+                        resultStatus.innerText = `SQL Query Command processed.`;
+                        resultStatus.className = 'font-semibold text-cyan-400';
+                    }
+                    if (resultCount) resultCount.innerText = `1 Statement Processed`;
+                    if (resultWrapper) resultWrapper.classList.remove('hidden');
+                    if (tableHead) tableHead.innerHTML = '<tr><th class="p-3">Status</th></tr>';
+                    if (tableBody) tableBody.innerHTML = '<tr><td class="p-3 text-emerald-400 font-bold">✅ SQL Command Executed Successfully.</td></tr>';
+                }
+            } catch(err) {
+                const endTime = performance.now();
+                if (execTimeSpan) execTimeSpan.innerText = `Execution time: ${(endTime - startTime).toFixed(1)}ms`;
+                if (resultStatus) {
+                    resultStatus.innerText = `SQL Query Error: ${err.message}`;
+                    resultStatus.className = 'font-semibold text-red-400';
+                }
+                if (resultCount) resultCount.innerText = `0 Rows Returned`;
+                if (resultWrapper) resultWrapper.classList.remove('hidden');
+                if (tableHead) tableHead.innerHTML = '<tr><th class="p-3 text-red-400">Error</th></tr>';
+                if (tableBody) tableBody.innerHTML = `<tr><td class="p-3 text-red-300 font-mono">${err.message}</td></tr>`;
+            }
+        }
+
+        function presetSQLQuery(query) {
+            const sqlInput = document.getElementById('sql-query-input');
+            if (sqlInput) {
+                sqlInput.value = query;
+                executeUserSQL(query);
+            }
+        }
+
+        function exportSQLDump() {
+            let sqlContent = `-- Master Path Lab - Full Relational SQL Database Dump\n`;
+            sqlContent += `-- Generated: ${new Date().toISOString()}\n\n`;
+
+            sqlContent += `CREATE TABLE IF NOT EXISTS patients (\n`;
+            sqlContent += `  pid VARCHAR(50) PRIMARY KEY,\n`;
+            sqlContent += `  name VARCHAR(100) NOT NULL,\n`;
+            sqlContent += `  age INT,\n`;
+            sqlContent += `  sex VARCHAR(20),\n`;
+            sqlContent += `  mobile VARCHAR(20),\n`;
+            sqlContent += `  email VARCHAR(100),\n`;
+            sqlContent += `  registeredAt VARCHAR(50)\n`;
+            sqlContent += `);\n\n`;
+
+            (appState.patients || []).forEach(p => {
+                sqlContent += `INSERT INTO patients (pid, name, age, sex, mobile, email, registeredAt) VALUES ('${p.pid}', '${(p.name||'').replace(/'/g, "''")}', ${p.age || 'NULL'}, '${p.sex||''}', '${p.mobile||''}', '${p.email||''}', '${p.registeredAt||''}');\n`;
+            });
+
+            sqlContent += `\n-- Reports Table SQL\n`;
+            sqlContent += `CREATE TABLE IF NOT EXISTS reports (\n`;
+            sqlContent += `  id VARCHAR(50) PRIMARY KEY,\n`;
+            sqlContent += `  pid VARCHAR(50),\n`;
+            sqlContent += `  patientName VARCHAR(100),\n`;
+            sqlContent += `  date VARCHAR(50),\n`;
+            sqlContent += `  doctor VARCHAR(100),\n`;
+            sqlContent += `  testTitle VARCHAR(200)\n`;
+            sqlContent += `);\n\n`;
+
+            (appState.reports || []).forEach(r => {
+                sqlContent += `INSERT INTO reports (id, pid, patientName, date, doctor, testTitle) VALUES ('${r.id}', '${r.pid}', '${(r.patientName||'').replace(/'/g, "''")}', '${r.date||''}', '${(r.doctor||'').replace(/'/g, "''")}', '${(r.testTitle||'').replace(/'/g, "''")}');\n`;
+            });
+
+            const blob = new Blob([sqlContent], { type: 'application/sql' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `master_path_lab_database_${new Date().toISOString().slice(0,10)}.sql`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('💾 SQL Database Dump (.sql) Downloaded!');
+        }
+
+        function importSQLDump(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                showToast('📥 SQL File loaded! Processing queries...');
+                presetSQLQuery('SELECT * FROM patients');
+            };
+            reader.readAsText(file);
+        }
+
+        async function initAppFromFirestore() {
+            if (navigator.storage && navigator.storage.persist) {
+                try { navigator.storage.persist(); } catch(e) {}
+            }
+            if (!dbInstance) { saveState(); return; }
+            try {
+                const badge = document.getElementById('idb-status-badge');
+                if (badge) badge.innerText = 'Firebase Syncing... ⏳';
+
+                const pDoc = await dbInstance.collection('appData').doc('mpl_patients').get();
+                const rDoc = await dbInstance.collection('appData').doc('mpl_reports').get();
+                const cDoc = await dbInstance.collection('appData').doc('mpl_admin_creds').get();
+                const tDoc = await dbInstance.collection('appData').doc('mpl_test_db').get();
+                
+                let remotePatients = pDoc.exists ? pDoc.data().value : null;
+                let remoteReports = rDoc.exists ? rDoc.data().value : null;
+                let remoteCreds = cDoc.exists ? cDoc.data().value : null;
+                let remoteTestDB = tDoc.exists ? tDoc.data().value : null;
+
+                let needsLocalUpdate = false;
+                if (remotePatients && Array.isArray(remotePatients) && remotePatients.length > 0) {
+                    appState.patients = mergeById(appState.patients, remotePatients, p => p && p.pid ? String(p.pid).trim() : null);
+                    needsLocalUpdate = true;
+                } else if (!appState.patients || appState.patients.length === 0) {
+                    appState.patients = JSON.parse(JSON.stringify(sampleDemoPatients));
+                    needsLocalUpdate = true;
+                }
+
+                if (remoteReports && Array.isArray(remoteReports) && remoteReports.length > 0) {
+                    appState.reports = mergeById(appState.reports, remoteReports, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
+                    needsLocalUpdate = true;
+                } else if (!appState.reports || appState.reports.length === 0) {
+                    appState.reports = JSON.parse(JSON.stringify(sampleDemoReports));
+                    needsLocalUpdate = true;
+                }
+
+                if (remoteCreds) {
+                    appState.adminCreds = Object.assign({}, appState.adminCreds, remoteCreds);
+                    needsLocalUpdate = true;
+                }
+                if (remoteTestDB && Array.isArray(remoteTestDB) && remoteTestDB.length > 0) {
+                    appState.testDB = mergeById(appState.testDB, remoteTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
+                    needsLocalUpdate = true;
+                }
+
+                if (needsLocalUpdate) {
+                    localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
+                    localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
+                    localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
+                    localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
+                    if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                    if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                    if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                    if(typeof renderTestDBTable === 'function') renderTestDBTable();
+                    if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
+                    // Sync merged dataset back to cloud
+                    saveToIndexedDB('mpl_patients', appState.patients);
+                    saveToIndexedDB('mpl_reports', appState.reports);
+                    saveToIndexedDB('mpl_test_db', appState.testDB);
+                    saveToIndexedDB('mpl_admin_creds', appState.adminCreds);
+                } else {
+                    saveState();
+                }
+
+                if (badge) {
+                    badge.innerText = 'Firebase Active 🟢';
+                }
+
+                // Listen for real-time changes
+                dbInstance.collection('appData').doc('mpl_patients').onSnapshot((doc) => {
+                    if (doc.exists && doc.data()) {
+                        const newPats = doc.data().value || [];
+                        if (Array.isArray(newPats) && newPats.length > 0) {
+                            const merged = mergeById(appState.patients, newPats, p => p && p.pid ? String(p.pid).trim() : null);
+                            if (JSON.stringify(merged) !== JSON.stringify(appState.patients)) {
+                                appState.patients = merged;
+                                localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
+                                if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                                if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                                if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                                if(typeof renderPatientReports === 'function') renderPatientReports();
+                            }
+                        }
+                    }
+                });
+                
+                dbInstance.collection('appData').doc('mpl_reports').onSnapshot((doc) => {
+                    if (doc.exists && doc.data()) {
+                        const newReps = doc.data().value || [];
+                        if (Array.isArray(newReps) && newReps.length > 0) {
+                            const merged = mergeById(appState.reports, newReps, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
+                            if (JSON.stringify(merged) !== JSON.stringify(appState.reports)) {
+                                appState.reports = merged;
+                                localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
+                                if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                                if(typeof renderPatientReports === 'function') renderPatientReports();
+                            }
+                        }
+                    }
+                });
+                
+                dbInstance.collection('appData').doc('mpl_test_db').onSnapshot((doc) => {
+                    if (doc.exists && doc.data()) {
+                        const newTestDB = doc.data().value || [];
+                        if (Array.isArray(newTestDB) && newTestDB.length > 0) {
+                            const merged = mergeById(appState.testDB, newTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
+                            if (JSON.stringify(merged) !== JSON.stringify(appState.testDB)) {
+                                appState.testDB = merged;
+                                localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
+                                if(typeof renderTestDBTable === 'function') renderTestDBTable();
+                                if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
+                            }
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error("Firestore Init Error:", e);
+                saveState();
+            }
+        }
+        initAppFromFirestore();
         function saveState() {
             try {
                 localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
@@ -1912,7 +2212,7 @@ EMERGENCY BACKUP CODES:
             textContent += 
 `--------------------------------------------------
 Portal Link: ${portalUrl}
-Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
+Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
 ==================================================
 `;
 
@@ -1941,56 +2241,6 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             } else {
                 fallbackCopyText(text);
             }
-        }
-
-        function exportDatabaseJSON() {
-            const data = {
-                patients: appState.patients,
-                reports: appState.reports,
-                testDB: appState.testDB,
-                adminCreds: appState.adminCreds,
-                exportedAt: new Date().toISOString(),
-                app: 'Master Path Lab'
-            };
-            const jsonStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Master_Path_Lab_Full_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('💾 Full Lab Database JSON Backup exported!');
-        }
-
-        function importDatabaseJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data && (data.patients || data.reports || data.testDB)) {
-                        if (Array.isArray(data.patients)) appState.patients = data.patients;
-                        if (Array.isArray(data.reports)) appState.reports = data.reports;
-                        if (Array.isArray(data.testDB) && data.testDB.length >= defaultTestDB.length) appState.testDB = data.testDB;
-                        if (data.adminCreds && data.adminCreds.username) appState.adminCreds = data.adminCreds;
-                        saveState();
-                        populatePatientDropdown();
-                        renderPatientsDirectory();
-                        renderAdminLedger();
-                        renderTestMasterDBTable();
-                        showToast('📥 Lab Database imported successfully!');
-                    } else {
-                        showToast('Invalid backup file format.', 'error');
-                    }
-                } catch(err) {
-                    showToast('Failed to parse backup JSON file.', 'error');
-                }
-            };
-            reader.readAsText(file);
         }
 
         function regenerateBackupCodes() {
@@ -2295,7 +2545,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const pinInput = document.getElementById('change-admin-pin');
             if (uInput) uInput.value = creds.username;
             if (pInput) pInput.value = creds.password;
-            if (mInput) mInput.value = creds.mobile || '9455097721';
+            if (mInput) mInput.value = creds.mobile || '9235747517';
             if (pinInput) pinInput.value = creds.pin || '1234';
             const modal = document.getElementById('modal-change-admin');
             if (modal) modal.classList.remove('hidden');
@@ -2314,7 +2564,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const pinInput = document.getElementById('change-admin-pin');
             const newUsername = uInput ? uInput.value.trim() : '';
             const newPassword = pInput ? pInput.value.trim() : '';
-            const newMobile = mInput ? mInput.value.trim() : '9455097721';
+            const newMobile = mInput ? mInput.value.trim() : '9235747517';
             const newPin = pinInput ? pinInput.value.trim() : '1234';
 
             if (!newUsername || !newPassword || !newMobile || !newPin) {
@@ -2393,7 +2643,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
         }
 
         // Patient Registration & Auto Dispatch
-        const SENDER_EMAIL = 'sultanromeo655@gmail.com';
+        const SENDER_EMAIL = 'mahtabanwar.ma@gmail.com';
         let lastCreatedCreds = null;
 
         function handleRegisterPatient(event) {
@@ -2411,7 +2661,7 @@ Contact / Support: +91 9455097721 (sultanromeo655@gmail.com)
             const portalUrl = window.location.href.split('#')[0];
 
             const newPatient = { pid, name, age, sex, mobile, email, password, registeredAt: new Date().toLocaleString() };
-            appState.patients.push(newPatient);
+            appState.patients.unshift(newPatient);
             saveState();
 
             document.getElementById('form-register').reset();
@@ -2664,6 +2914,8 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (sampleInput) sampleInput.value = test.sampleType;
             if (tatInput) tatInput.value = '';
             if (instInput) instInput.value = test.instruments || '';
+            const instToggle = document.getElementById('rep-toggle-instruments');
+            if (instToggle) instToggle.checked = false;
             if (interpInput) interpInput.value = test.interpNote || '';
             if (commInput) commInput.value = test.bulletComments || '';
             if (lowCausesInput) lowCausesInput.value = test.bulletLowCauses || '';
@@ -2690,6 +2942,56 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (rows1) rows1.innerHTML = '';
             if (rows2) rows2.innerHTML = '';
         }
+
+        function clearEntireReportForm() {
+            if (confirm('Clear the entire report form including patient selection?')) {
+                // Clear patient details
+                const patSelect = document.getElementById('rep-patient-select');
+                if (patSelect) {
+                    patSelect.value = '';
+                    if (typeof autofillPatientData === 'function') autofillPatientData();
+                }
+                const doctor = document.getElementById('rep-doctor');
+                if (doctor) doctor.value = '';
+                const collector = document.getElementById('rep-collector');
+                if (collector) collector.value = '';
+                const location = document.getElementById('rep-location');
+                if (location) location.value = '';
+                
+                // Clear test fields
+                const title = document.getElementById('rep-test-title');
+                if (title) title.value = '';
+                const sample = document.getElementById('rep-sample-type');
+                if (sample) sample.value = '';
+                const tat = document.getElementById('rep-tat');
+                if (tat) tat.value = '';
+                const inst = document.getElementById('rep-instruments');
+                if (inst) inst.value = '';
+                const instCheck = document.getElementById('rep-toggle-instruments');
+                if (instCheck) instCheck.checked = false;
+                const interp = document.getElementById('rep-interp-note');
+                if (interp) interp.value = '';
+                const comm = document.getElementById('rep-bullet-comments');
+                if (comm) comm.value = '';
+                const low = document.getElementById('rep-bullet-low-causes');
+                if (low) low.value = '';
+                const high = document.getElementById('rep-bullet-high-causes');
+                if (high) high.value = '';
+
+                // Clear search input
+                const search = document.getElementById('preset-search-input');
+                if (search) {
+                    search.value = '';
+                    if (typeof filterPresetCards === 'function') filterPresetCards();
+                }
+
+                // Clear dynamic rows
+                clearReportFormRows();
+                
+                showToast('Form cleared successfully.');
+            }
+        }
+
 
         // Dynamic Form Rows Management
         function addGroupRow(groupName = 'BLOOD INDICES') {
@@ -2750,54 +3052,23 @@ Log in using your Patient ID and Password to view and download your pathology te
             tbody.appendChild(tr);
         }
 
-        // Initialize default rows & IndexedDB / Cloud recovery on load
-        window.onload = async function() {
+        // Initialize default rows on load
+        window.onload = function() {
             loadTestFromDB('TDB-CBC');
+            updateUI();
 
             const urlInput = document.getElementById('cloud-sync-url');
-            if (urlInput && storedCloudUrl) urlInput.value = storedCloudUrl;
+            if (urlInput && storedCloudUrl) {
+                urlInput.value = storedCloudUrl;
+            }
             const cloudBadge = document.getElementById('cloud-status-badge');
-            if (storedCloudUrl && cloudBadge) {
+            if (cloudBadge && storedCloudUrl) {
                 cloudBadge.innerText = 'Cloud Sync Active 🟢';
                 cloudBadge.className = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
             }
-
-            // High-Durability IndexedDB Startup Sync
-            const idbReady = await initIndexedDB();
-            if (idbReady) {
-                const idbPatients = await loadFromIndexedDB('mpl_patients');
-                const idbReports = await loadFromIndexedDB('mpl_reports');
-                const idbTestDB = await loadFromIndexedDB('mpl_test_db');
-                const idbCreds = await loadFromIndexedDB('mpl_admin_creds');
-
-                let recovered = false;
-                if ((!appState.patients || appState.patients.length === 0) && idbPatients && Array.isArray(idbPatients) && idbPatients.length > 0) {
-                    appState.patients = idbPatients;
-                    recovered = true;
-                }
-                if ((!appState.reports || appState.reports.length === 0) && idbReports && Array.isArray(idbReports) && idbReports.length > 0) {
-                    appState.reports = idbReports;
-                    recovered = true;
-                }
-                if (idbTestDB && Array.isArray(idbTestDB) && idbTestDB.length > appState.testDB.length) {
-                    appState.testDB = idbTestDB;
-                    recovered = true;
-                }
-                if (idbCreds && idbCreds.username) {
-                    appState.adminCreds = idbCreds;
-                    recovered = true;
-                }
-
-                if (recovered) {
-                    saveState();
-                }
-            }
-
             if (storedCloudUrl) {
-                await syncFromCloud();
+                syncFromCloud();
             }
-
-            updateUI();
         };
 
         // 1:1 EXACT PATHOLOGY PDF GENERATOR ENGINE (DYNAMIC LOCATIONS, DOCTORS & TIMESTAMPS)
@@ -2815,13 +3086,14 @@ Log in using your Patient ID and Password to view and download your pathology te
                 return;
             }
 
-            const doctor = document.getElementById('rep-doctor').value || 'Dr. Hiren Shah';
+            const doctor = document.getElementById('rep-doctor').value.trim() || 'Self';
             const collector = document.getElementById('rep-collector').value || 'Mr Suresh';
             const location = document.getElementById('rep-location') ? document.getElementById('rep-location').value.trim() : '';
             const testTitle = document.getElementById('rep-test-title').value.trim() || 'Complete Blood Count (CBC)';
-            const sampleType = document.getElementById('rep-sample-type').value.trim() || 'Blood';
+            const sampleType = document.getElementById('rep-sample-type') ? document.getElementById('rep-sample-type').value.trim() : '';
             const tat = document.getElementById('rep-tat').value.trim() || '';
-            const instruments = document.getElementById('rep-instruments').value.trim() || '';
+            const showInst = document.getElementById('rep-toggle-instruments') ? document.getElementById('rep-toggle-instruments').checked : false;
+            const instruments = showInst ? (document.getElementById('rep-instruments').value.trim()) : '';
             const interpNote = document.getElementById('rep-interp-note').value.trim() || '';
             const bulletComments = document.getElementById('rep-bullet-comments').value.trim() || '';
             const bulletLowCauses = document.getElementById('rep-bullet-low-causes').value.trim() || '';
@@ -2952,35 +3224,38 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setTextColor(51, 65, 85);
             doc.text('Accurate  |  Caring  |  Instant', 33, 24);
 
-            // --- TOP RIGHT CONTACT DETAILS ---
-            const phoneStr = '+91 9455097721';
-            const emailStr = 'sultanromeo655@gmail.com';
-            const logoSize = 5.2;
-            const gap = 1.2;
+            // --- TOP RIGHT CONTACT DETAILS (SINGLE LINE) ---
+            const phoneStr = '+91 9235747517';
+            const emailStr = 'mahtabanwar.ma@gmail.com';
+            const logoSize = 3.2;
 
-            doc.setFontSize(7.5);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(30, 41, 59);
-            doc.text(phoneStr, 196, 16.2, { align: 'right' });
-
+            doc.setFontSize(7.2);
             doc.setFont('helvetica', 'normal');
+            doc.setTextColor(71, 85, 105);
             const emailWidth = doc.getTextWidth(emailStr);
-            const gmailLogoX = 196 - emailWidth - logoSize - gap;
-            const gmailIconY = 18.5;
-            const gmailTextY = 22.5;
 
+            // Print Email text right-aligned at 196
+            doc.text(emailStr, 196, 18.0, { align: 'right' });
+
+            // Print Gmail Icon right before email
+            const gmailLogoX = 196 - emailWidth - logoSize - 1.0;
             if (typeof GMAIL_LOGO_B64 !== 'undefined' && GMAIL_LOGO_B64) {
-                try { doc.addImage(GMAIL_LOGO_B64, 'PNG', gmailLogoX, gmailIconY, logoSize, logoSize); } catch(e){}
+                try { doc.addImage(GMAIL_LOGO_B64, 'PNG', gmailLogoX, 15.4, logoSize, logoSize); } catch(e){}
             } else {
                 doc.setFillColor(234, 67, 53);
-                doc.rect(gmailLogoX, gmailIconY, logoSize, logoSize, 'F');
+                doc.rect(gmailLogoX, 15.4, logoSize, logoSize, 'F');
             }
-            doc.text(emailStr, 196, gmailTextY, { align: 'right' });
+
+            // Print Separator '|' and Phone Number before Gmail icon
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 41, 59);
+            const phoneText = `${phoneStr}  |  `;
+            doc.text(phoneText, gmailLogoX - 1.0, 18.0, { align: 'right' });
 
             // Centered Address Line
             doc.setFontSize(6.8);
             doc.setTextColor(71, 85, 105);
-            doc.text('HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001', 105, 28, { align: 'center' });
+            doc.text('Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh', 105, 28, { align: 'center' });
 
             // --- 2. BLUE STRIPE ACCENT BAR ---
             doc.setFillColor(...lightStripeBlue);
@@ -3035,7 +3310,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setFontSize(8.5);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(...textDark);
-            doc.text(`Ref. By: ${reportObj.doctor || 'Dr. Hiren Shah'}`, 76, docYOffset);
+            doc.text(`Ref. By: ${reportObj.doctor || 'Self'}`, 76, docYOffset);
 
             // Vector Barcode & Dynamic Timestamps
             doc.setFillColor(30, 41, 59);
@@ -3069,8 +3344,12 @@ Log in using your Patient ID and Password to view and download your pathology te
 
             // --- 5. INVESTIGATION PARAMETERS TABLE ---
             const tableBody = [];
-            let tatText = reportObj.tat ? (reportObj.tat.startsWith('TAT') ? reportObj.tat : `TAT : ${reportObj.tat}`) : '';
-            tableBody.push(['Primary Sample Type :', reportObj.sampleType || 'Blood', tatText, '']);
+            let tatText = (reportObj.tat && reportObj.tat.trim()) ? (reportObj.tat.startsWith('TAT') ? reportObj.tat.trim() : `TAT : ${reportObj.tat.trim()}`) : '';
+            if (reportObj.sampleType && reportObj.sampleType.trim()) {
+                tableBody.push(['Primary Sample Type :', reportObj.sampleType.trim(), tatText, '']);
+            } else if (tatText) {
+                tableBody.push(['', '', tatText, '']);
+            }
 
             (reportObj.params || []).forEach(p => {
                 if (p.isGroup) {
@@ -3253,7 +3532,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setFontSize(7.5);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(255, 255, 255);
-            doc.text('+91 9455097721', 196, 290.5, { align: 'right' });
+            doc.text('+91 9235747517', 196, 290.5, { align: 'right' });
         }
 
         function generateMasterPathLabPDFReport(patient, reportObj) {
@@ -3368,19 +3647,17 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
                             </div>
                         </div>
-                        <div class="text-right text-[11px] font-bold text-slate-800">
-                            <div class="flex items-center justify-end gap-1 mb-0.5">
-                                
-                                <span>+91 9455097721</span>
-                            </div>
-                            <div class="flex items-center justify-end gap-1">
+                        <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                            <span>+91 9235747517</span>
+                            <span class="text-slate-400 font-normal">|</span>
+                            <div class="flex items-center gap-1">
                                 <img src="${typeof GMAIL_LOGO_B64 !== 'undefined' ? GMAIL_LOGO_B64 : ''}" class="h-3.5 object-contain">
-                                <span class="font-normal">sultanromeo655@gmail.com</span>
+                                <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
                             </div>
                         </div>
                     </div>
                     <div class="text-center text-[10px] text-slate-600 mb-2">
-                        HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001
+                        Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
                     </div>
 
                     <!-- 2. BLUE STRIPE ACCENT BAR -->
@@ -3403,7 +3680,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                                 <p class="font-bold text-slate-900">Sample Collected At:</p>
                                 <p class="text-slate-700 font-normal leading-tight">${rep.location.trim()}</p>
                             ` : ''}
-                            <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Dr. Hiren Shah'}</p>
+                            <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Self'}</p>
                         </div>
                         <div class="col-span-3 text-right">
                             <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
@@ -3429,11 +3706,12 @@ Log in using your Patient ID and Password to view and download your pathology te
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
-                                <td>Primary Sample Type :</td>
-                                <td class="font-bold text-slate-900">${rep.sampleType || 'Blood'}</td>
-                                <td colspan="2" class="text-slate-500">${rep.tat ? (rep.tat.startsWith('TAT') ? rep.tat : 'TAT : ' + rep.tat) : ''}</td>
-                            </tr>
+                            ${(rep.sampleType && rep.sampleType.trim()) || (rep.tat && rep.tat.trim()) ? `
+                                <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
+                                    ${rep.sampleType && rep.sampleType.trim() ? `<td>Primary Sample Type :</td><td class="font-bold text-slate-900">${rep.sampleType.trim()}</td>` : `<td colspan="2"></td>`}
+                                    <td colspan="2" class="text-slate-500">${rep.tat ? (rep.tat.startsWith('TAT') ? rep.tat : 'TAT : ' + rep.tat) : ''}</td>
+                                </tr>
+                            ` : ''}
                             ${paramsHtml}
                         </tbody>
                     </table>
@@ -3491,7 +3769,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                         </div>
                         <div class="flex items-center gap-1">
                             
-                            <span>+91 9455097721</span>
+                            <span>+91 9235747517</span>
                         </div>
                     </div>
                 </div>
@@ -3570,13 +3848,14 @@ Log in using your Patient ID and Password to view and download your pathology te
                                     <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
                                 </div>
                             </div>
-                            <div class="text-right text-[11px] font-bold text-slate-800">
-                                <div class="mb-0.5">+91 9455097721</div>
-                                <div class="font-normal text-slate-600">sultanromeo655@gmail.com</div>
+                            <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                                <span>+91 9235747517</span>
+                                <span class="text-slate-400 font-normal">|</span>
+                                <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
                             </div>
                         </div>
                         <div class="text-center text-[10px] text-slate-600 mb-2">
-                            HUDA COLONY RAHMAT NAGAR POST SADAR AZAMGARH U.P 276001
+                            Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
                         </div>
                         <div class="flex h-5 mb-4 font-bold text-[10px]">
                             <div class="bg-[#82b1ff] w-3/5 h-full"></div>
@@ -3593,7 +3872,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                                     <p class="font-bold text-slate-900">Sample Collected At:</p>
                                     <p class="text-slate-700 font-normal leading-tight">${rep.location.trim()}</p>
                                 ` : ''}
-                                <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Dr. Hiren Shah'}</p>
+                                <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Self'}</p>
                             </div>
                             <div class="col-span-3 text-right">
                                 <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
@@ -3666,7 +3945,60 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         // Test Master Database Modal Controls
+        function addNTParamRow() {
+            const container = document.getElementById('nt-params-container');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center nt-param-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Parameter Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white nt-param-name text-xs">
+                <button type="button" onclick="this.closest('.nt-param-row').remove()" class="text-red-400 font-bold px-2 py-1 hover:text-red-300 text-sm">&times;</button>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Test Master Database Modal Controls
+        function addNTGroupHeaderRow(groupName = '') {
+            const container = document.getElementById('nt-params-container');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'nt-row nt-group-row bg-slate-900 border border-amber-500/30 p-2 rounded-xl flex items-center gap-2';
+            div.innerHTML = `
+                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider min-w-[90px]">Group Header:</span>
+                <input type="text" value="${groupName}" placeholder="e.g. PHYSICAL EXAMINATION or DIFFERENTIAL COUNT" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white text-xs font-bold uppercase nt-group-name">
+                <button type="button" onclick="this.closest('.nt-row').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-sm">&times;</button>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addNTParamRow(inv = '', sub = '', ref = '', unit = '') {
+            const container = document.getElementById('nt-params-container');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'nt-row nt-param-row bg-slate-950 border border-slate-800 p-2 rounded-xl grid grid-cols-[1.5fr_1fr_1fr_0.8fr_auto] gap-2 items-center';
+            div.innerHTML = `
+                <input type="text" value="${inv}" placeholder="Investigation Name (e.g. Hemoglobin)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs nt-param-name font-semibold">
+                <input type="text" value="${sub}" placeholder="Method / Sub-label (e.g. Photometry)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-slate-300 text-xs nt-param-sub">
+                <input type="text" value="${ref}" placeholder="Ref Range (e.g. 13.0 - 17.0)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-slate-300 text-xs nt-param-ref">
+                <input type="text" value="${unit}" placeholder="Unit (e.g. g/dL)" class="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-slate-300 text-xs nt-param-unit">
+                <button type="button" onclick="this.closest('.nt-row').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-sm">&times;</button>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
         function openNewTestModal() {
+            // Reset form fields
+            const form = document.querySelector('#modal-new-test form');
+            if (form) form.reset();
+            
+            const container = document.getElementById('nt-params-container');
+            if (container) {
+                container.innerHTML = '';
+                addNTParamRow();
+            }
             document.getElementById('modal-new-test').classList.remove('hidden');
         }
 
@@ -3679,17 +4011,39 @@ Log in using your Patient ID and Password to view and download your pathology te
             const title = document.getElementById('nt-title').value.trim();
             const category = document.getElementById('nt-category').value;
             const sampleType = document.getElementById('nt-sample').value.trim();
-            const tat = document.getElementById('nt-tat').value.trim() || '2 hrs';
+            const tat = document.getElementById('nt-tat').value.trim();
             const instruments = document.getElementById('nt-instruments').value.trim();
-            const paramName = document.getElementById('nt-param-name').value.trim();
-            const paramRef = document.getElementById('nt-param-ref').value.trim();
-            const paramUnit = document.getElementById('nt-param-unit').value.trim();
 
+            const container = document.getElementById('nt-params-container');
+            const rows = container ? container.querySelectorAll('.nt-row') : [];
             const params = [];
-            if (paramName) {
-                params.push({ inv: paramName, sub: '', res: 'Normal', flag: 'Normal', ref: paramRef || '0 - 100', unit: paramUnit || 'unit' });
-            } else {
-                params.push({ inv: 'Parameter 1', sub: '', res: 'Normal', flag: 'Normal', ref: '0 - 100', unit: 'unit' });
+            rows.forEach(row => {
+                if (row.classList.contains('nt-group-row')) {
+                    const groupName = row.querySelector('.nt-group-name').value.trim();
+                    if (groupName) {
+                        params.push({ isGroup: true, groupName });
+                    }
+                } else if (row.classList.contains('nt-param-row')) {
+                    const paramName = row.querySelector('.nt-param-name').value.trim();
+                    const paramSub = row.querySelector('.nt-param-sub').value.trim();
+                    const paramRef = row.querySelector('.nt-param-ref').value.trim();
+                    const paramUnit = row.querySelector('.nt-param-unit').value.trim();
+                    
+                    if (paramName) {
+                        params.push({ 
+                            inv: paramName, 
+                            sub: paramSub, 
+                            res: '', 
+                            flag: 'Normal', 
+                            ref: paramRef, 
+                            unit: paramUnit
+                        });
+                    }
+                }
+            });
+
+            if (params.length === 0) {
+                params.push({ inv: 'Parameter 1', sub: '', res: '', flag: 'Normal', ref: '', unit: '' });
             }
 
             const newTest = {
@@ -3733,8 +4087,14 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <td class="p-3 text-xs text-slate-300">${test.sampleType}</td>
                     <td class="p-3 text-xs text-slate-400">${test.tat || 'N/A'}</td>
                     <td class="p-3 text-xs text-slate-300 font-mono">${test.params ? test.params.length : 0} Items</td>
-                    <td class="p-3 text-right flex justify-end gap-2">
-                        <button type="button" onclick="loadTestFromDB('${test.id}'); switchAdminTab('report');" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition">
+                    <td class="p-3 text-right flex justify-end gap-1.5 flex-wrap">
+                        <button type="button" onclick="previewTestDBTemplate('${test.id}')" title="Preview Test Report" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-500 hover:text-white transition flex items-center gap-1">
+                            👁️ Preview
+                        </button>
+                        <button type="button" onclick="downloadTestDBTemplatePDF('${test.id}')" title="Download Sample PDF" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-emerald-500 hover:text-slate-950 transition flex items-center gap-1">
+                            📥 Sample PDF
+                        </button>
+                        <button type="button" onclick="loadTestFromDB('${test.id}'); switchAdminTab('report');" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition">
                             Use in Report
                         </button>
                         <button type="button" onclick="deleteTestFromDB('${test.id}')" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
@@ -3744,6 +4104,271 @@ Log in using your Patient ID and Password to view and download your pathology te
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function getSampleReportObjectForTest(test) {
+            const dummyPatient = {
+                pid: 'DEMO-101',
+                name: 'SAMPLE PATIENT',
+                age: '30',
+                sex: 'Male',
+                uhid: 'MPL-SAMPLE-01',
+                registeredAt: new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            const dummyParams = (test.params || []).map((p, idx) => {
+                if (p.isGroup) return { isGroup: true, groupName: p.groupName };
+                return {
+                    inv: p.inv || `Parameter ${idx + 1}`,
+                    sub: p.sub || '',
+                    res: p.res || '14.5',
+                    flag: p.flag || 'Normal',
+                    ref: p.ref || 'Normal Range',
+                    unit: p.unit || ''
+                };
+            });
+
+            const sampleReport = {
+                id: 'SAMPLE-' + (test.id || Date.now()),
+                pid: dummyPatient.pid,
+                patientName: dummyPatient.name,
+                doctor: test.doctor || 'Self',
+                location: test.location || '',
+                testTitle: test.title || 'NEW PATHOLOGY TEST PANEL',
+                sampleType: test.sampleType || '',
+                tat: test.tat || '',
+                instruments: test.instruments || 'Automated Laboratory Analyzer',
+                interpNote: test.interpNote || '',
+                bulletComments: test.bulletComments || '',
+                bulletLowCauses: test.bulletLowCauses || '',
+                bulletHighCauses: test.bulletHighCauses || '',
+                params: dummyParams,
+                genderRanges: test.genderRanges || [],
+                date: new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            return { patient: dummyPatient, reportObj: sampleReport };
+        }
+
+        function renderTestReportInViewModal(patient, reportObj) {
+            const content = document.getElementById('report-modal-content');
+            if (!content) return;
+
+            let paramsHtml = '';
+            let isFirstRow = true;
+            (reportObj.params || []).forEach(p => {
+                if (p.isGroup) {
+                    paramsHtml += `
+                        <tr class="border-b border-slate-300">
+                            <td colspan="4" class="py-1.5 font-extrabold text-slate-900 uppercase text-xs">${p.groupName}</td>
+                        </tr>
+                    `;
+                } else {
+                    let flagText = '';
+                    let colorClass = 'text-slate-900';
+                    if (p.flag === 'Low') {
+                        flagText = 'Low';
+                        colorClass = 'text-[#1b6cac] font-extrabold';
+                    } else if (p.flag === 'High') {
+                        flagText = 'High';
+                        colorClass = 'text-[#dc2626] font-extrabold';
+                    } else if (p.flag === 'Borderline') {
+                        flagText = 'Borderline';
+                        colorClass = 'text-[#d97706] font-extrabold';
+                    } else if (p.flag === 'Critical') {
+                        flagText = 'Critical';
+                        colorClass = 'text-[#dc2626] font-black uppercase';
+                    }
+
+                    const borderStyle = isFirstRow ? 'border-b-2 border-slate-300' : 'border-b border-slate-150';
+                    isFirstRow = false;
+
+                    paramsHtml += `
+                        <tr class="${borderStyle}">
+                            <td class="py-1.5 font-bold text-slate-800">${p.inv} ${p.sub ? `<div class="text-[10px] text-slate-500 font-normal">${p.sub}</div>` : ''}</td>
+                            <td class="py-1.5 ${colorClass}">${p.res} ${flagText ? `<span class="ml-4 font-extrabold">${flagText}</span>` : ''}</td>
+                            <td class="py-1.5 font-bold text-slate-700">${p.ref}</td>
+                            <td class="py-1.5 font-bold text-slate-700">${p.unit}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            content.innerHTML = `
+                <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl mx-auto">
+                    <!-- 1. HEADER SECTION -->
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-[#0f4c81] rounded-full flex items-center justify-center text-white font-black text-xl shadow">
+                                🔬
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-extrabold text-[#0f4c81] tracking-wide">MASTER PATH LAB</h1>
+                                <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                            <span>+91 9235747517</span>
+                            <span class="text-slate-400 font-normal">|</span>
+                            <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
+                        </div>
+                    </div>
+                    <div class="text-center text-[10px] text-slate-600 mb-2">
+                        Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
+                    </div>
+
+                    <!-- 2. BLUE STRIPE ACCENT BAR -->
+                    <div class="flex h-5 mb-4 font-bold text-[10px]">
+                        <div class="bg-[#82b1ff] w-3/5 h-full"></div>
+                        <div class="bg-[#0f4c81] w-2/5 h-full text-white text-right pr-4 flex items-center justify-end">
+                            Master Path Lab
+                        </div>
+                    </div>
+
+                    <!-- 3. PATIENT METADATA BLOCK -->
+                    <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
+                        <div class="col-span-5">
+                            <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name}</h2>
+                            <p class="font-bold text-slate-700 mt-1">Age : ${patient.age} Years</p>
+                            <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
+                        </div>
+                        <div class="col-span-4">
+                            ${reportObj.location && reportObj.location.trim() ? `
+                                <p class="font-bold text-slate-900">Sample Collected At:</p>
+                                <p class="text-slate-700 font-normal leading-tight">${reportObj.location.trim()}</p>
+                            ` : ''}
+                            <p class="font-bold text-slate-900 ${reportObj.location && reportObj.location.trim() ? 'mt-2' : ''}">Ref. By: ${reportObj.doctor || 'Self'}</p>
+                        </div>
+                        <div class="col-span-3 text-right">
+                            <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
+                            <p class="text-[10px] text-slate-500 font-mono">UHID:${patient.pid}</p>
+                            <p class="text-[10px] text-slate-600">Registered: ${patient.registeredAt}</p>
+                            <p class="text-[10px] text-slate-600">Reported: ${reportObj.date}</p>
+                        </div>
+                    </div>
+
+                    <!-- 4. TEST HEADER TITLE -->
+                    <div class="border-y border-slate-800 py-1 text-center font-extrabold text-xs text-slate-900 uppercase tracking-wide mb-3">
+                        ${reportObj.testTitle}
+                    </div>
+
+                    <!-- 5. INVESTIGATION PARAMETERS TABLE -->
+                    <table class="w-full text-left border-collapse mb-4 text-xs font-bold">
+                        <thead>
+                            <tr class="text-slate-900 border-b border-slate-300">
+                                <th class="py-1.5 w-2/5">Investigation</th>
+                                <th class="py-1.5 w-1/4">Result</th>
+                                <th class="py-1.5 w-1/4">Reference Value</th>
+                                <th class="py-1.5 w-1/12">Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(reportObj.sampleType && reportObj.sampleType.trim()) || (reportObj.tat && reportObj.tat.trim()) ? `
+                                <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
+                                    ${reportObj.sampleType && reportObj.sampleType.trim() ? `<td>Primary Sample Type :</td><td class="font-bold text-slate-900">${reportObj.sampleType.trim()}</td>` : `<td colspan="2"></td>`}
+                                    <td colspan="2" class="text-slate-500">${reportObj.tat ? (reportObj.tat.startsWith('TAT') ? reportObj.tat : 'TAT : ' + reportObj.tat) : ''}</td>
+                                </tr>
+                            ` : ''}
+                            ${paramsHtml}
+                        </tbody>
+                    </table>
+
+                    ${reportObj.instruments ? `<p class="text-[11px] font-bold text-slate-900 mb-1">Instruments: <span class="font-normal text-slate-800">${reportObj.instruments}</span></p>` : ''}
+                    ${reportObj.interpNote ? `<p class="text-[11px] font-bold text-slate-900 mb-2">Interpretation: <span class="font-normal text-slate-800">${reportObj.interpNote}</span></p>` : ''}
+
+                    <div class="text-center my-4 text-[10px] text-slate-500">
+                        <p>Thanks for Reference</p>
+                        <p class="font-bold">****End of Report****</p>
+                    </div>
+
+                    <!-- 6. DIGITAL SIGNATURE FOOTER -->
+                    <div class="flex justify-end pt-6 border-t border-slate-200 text-right">
+                        <div class="text-center min-w-[220px]">
+                            <div class="text-[10px] font-bold text-emerald-600 mb-2 flex items-center justify-center gap-1">
+                                <span class="text-xs">✔</span> <span>Digitally Electronically Generated Signature</span>
+                            </div>
+                            <p class="font-extrabold text-slate-900 text-xs">Mahtab Anwar</p>
+                            <p class="text-[10px] font-bold text-slate-600">(BMLT)</p>
+                        </div>
+                    </div>
+
+                    <!-- 7. BOTTOM FOOTER STRIPE -->
+                    <div class="mt-6 border-t border-slate-300 pt-1 flex justify-between text-[9px] text-slate-500">
+                        <span>Generated on : ${reportObj.date}</span>
+                        <span>Page 1 of 1</span>
+                    </div>
+                    <div class="bg-[#0f4c81] text-white px-4 py-2 flex justify-between items-center text-[10px] font-bold mt-1">
+                        <span>Master Path Lab</span>
+                        <span>Quality Pathology Reports</span>
+                    </div>
+                </div>
+            `;
+
+            const btnDownload = document.getElementById('btn-download-preview-pdf');
+            if (btnDownload) {
+                btnDownload.onclick = () => generateMasterPathLabPDFReport(patient, reportObj);
+                btnDownload.innerText = '📥 Download Sample PDF';
+            }
+
+            document.getElementById('report-view-modal').classList.remove('hidden');
+        }
+
+        function previewTestDBTemplate(testId) {
+            const test = appState.testDB.find(t => t.id === testId);
+            if (!test) return;
+            const { patient, reportObj } = getSampleReportObjectForTest(test);
+            renderTestReportInViewModal(patient, reportObj);
+        }
+
+        function downloadTestDBTemplatePDF(testId) {
+            const test = appState.testDB.find(t => t.id === testId);
+            if (!test) return;
+            const { patient, reportObj } = getSampleReportObjectForTest(test);
+            generateMasterPathLabPDFReport(patient, reportObj);
+        }
+
+        function getModalTestDefinitionData() {
+            const title = document.getElementById('nt-title').value.trim() || 'NEW PATHOLOGY TEST PANEL';
+            const category = document.getElementById('nt-category').value;
+            const sampleType = document.getElementById('nt-sample').value.trim();
+            const tat = document.getElementById('nt-tat').value.trim();
+            const instruments = document.getElementById('nt-instruments').value.trim() || 'Automated Analyzer';
+
+            const container = document.getElementById('nt-params-container');
+            const rows = container ? container.querySelectorAll('.nt-row') : [];
+            const params = [];
+            rows.forEach(row => {
+                if (row.classList.contains('nt-group-row')) {
+                    const groupName = row.querySelector('.nt-group-name').value.trim();
+                    if (groupName) params.push({ isGroup: true, groupName });
+                } else if (row.classList.contains('nt-param-row')) {
+                    const paramName = row.querySelector('.nt-param-name').value.trim();
+                    const paramSub = row.querySelector('.nt-param-sub') ? row.querySelector('.nt-param-sub').value.trim() : '';
+                    const paramRef = row.querySelector('.nt-param-ref') ? row.querySelector('.nt-param-ref').value.trim() : '';
+                    const paramUnit = row.querySelector('.nt-param-unit') ? row.querySelector('.nt-param-unit').value.trim() : '';
+                    if (paramName) {
+                        params.push({ inv: paramName, sub: paramSub, res: 'NORMAL', flag: 'Normal', ref: paramRef || 'Normal Range', unit: paramUnit });
+                    }
+                }
+            });
+
+            if (params.length === 0) {
+                params.push({ inv: 'Sample Parameter 1', sub: '', res: 'NORMAL', flag: 'Normal', ref: 'Normal Range', unit: '' });
+            }
+
+            return { title, category, sampleType, tat, instruments, params, genderRanges: [] };
+        }
+
+        function previewCurrentModalTest() {
+            const testData = getModalTestDefinitionData();
+            const { patient, reportObj } = getSampleReportObjectForTest(testData);
+            renderTestReportInViewModal(patient, reportObj);
+        }
+
+        function downloadCurrentModalTestPDF() {
+            const testData = getModalTestDefinitionData();
+            const { patient, reportObj } = getSampleReportObjectForTest(testData);
+            generateMasterPathLabPDFReport(patient, reportObj);
         }
 
         // Ledger & Directory Rendering with Search Filtering
@@ -3763,7 +4388,12 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
 
             if (filteredReports.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No diagnostic reports found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">
+                    <p class="mb-3 text-sm text-slate-400 font-medium">No diagnostic reports found.</p>
+                    <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                        🔄 Click Here to Restore All Demo Patients & Reports
+                    </button>
+                </td></tr>`;
                 return;
             }
             filteredReports.forEach(rep => {
@@ -3816,6 +4446,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (document.getElementById('rep-sample-type')) document.getElementById('rep-sample-type').value = rep.sampleType || '';
             if (document.getElementById('rep-tat')) document.getElementById('rep-tat').value = rep.tat || '';
             if (document.getElementById('rep-instruments')) document.getElementById('rep-instruments').value = rep.instruments || '';
+            if (document.getElementById('rep-toggle-instruments')) document.getElementById('rep-toggle-instruments').checked = !!(rep.instruments && rep.instruments.trim());
             if (document.getElementById('rep-doctor')) document.getElementById('rep-doctor').value = rep.doctor || '';
             if (document.getElementById('rep-collector')) document.getElementById('rep-collector').value = rep.collector || '';
             if (document.getElementById('rep-location')) document.getElementById('rep-location').value = rep.location || '';
@@ -3873,7 +4504,12 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
 
             if (filteredPatients.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No registered patients found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">
+                    <p class="mb-3 text-sm text-slate-400 font-medium">No registered patients found.</p>
+                    <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                        🔄 Click Here to Restore All Demo Patients & Reports
+                    </button>
+                </td></tr>`;
                 return;
             }
             filteredPatients.forEach(p => {

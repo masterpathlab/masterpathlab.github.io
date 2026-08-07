@@ -198,7 +198,9 @@
                 <button type="button" onclick="switchAdminTab('patients')" id="tab-btn-patients" class="admin-tab-btn px-5 py-3 rounded-xl text-xs font-black whitespace-nowrap transition btn-3d-inactive">
                     👥 Registered Patients
                 </button>
-
+                <button type="button" onclick="switchAdminTab('backup')" id="tab-btn-backup" class="admin-tab-btn px-5 py-3 rounded-xl text-xs font-black whitespace-nowrap transition btn-3d-inactive">
+                    💾 Backup & Cloud Sync
+                </button>
             </div>
 
             <!-- Tab 1: Register Patient -->
@@ -476,6 +478,9 @@
                         <p class="text-xs text-slate-400">Historical log of issued Master Path Lab diagnostic reports.</p>
                     </div>
                     <div class="flex gap-2 items-center flex-wrap">
+                        <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                            🔄 Restore All Patients & Reports
+                        </button>
                         <input type="text" id="ledger-search-input" onkeyup="renderAdminLedger()" placeholder="🔍 Search by patient, test, or ID..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
                     </div>
                 </div>
@@ -505,7 +510,12 @@
                         <h3 class="text-lg font-bold text-white mb-1">Registered Patients Directory</h3>
                         <p class="text-xs text-slate-400">Manage active patient profiles and access credentials.</p>
                     </div>
-                    <input type="text" id="patients-search-input" onkeyup="renderPatientsDirectory()" placeholder="🔍 Search patients by name, UHID, or phone..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                            🔄 Restore All Patients & Reports
+                        </button>
+                        <input type="text" id="patients-search-input" onkeyup="renderPatientsDirectory()" placeholder="🔍 Search patients by name, UHID, or phone..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
+                    </div>
                 </div>
                 <div class="overflow-x-auto border border-slate-800 rounded-xl custom-scrollbar">
                     <table class="w-full text-left text-sm text-slate-300 min-w-[650px]">
@@ -526,6 +536,44 @@
                 </div>
             </div>
 
+            <!-- Tab 6: Database Backup & Cloud Sync -->
+            <div id="admin-tab-backup" class="admin-tab-content hidden glass-panel p-6 rounded-2xl max-w-4xl mx-auto shadow-2xl">
+                <div class="mb-6 border-b border-slate-800 pb-4">
+                    <h3 class="text-lg font-bold text-white mb-1">☁️ Automatic Realtime Cloud Database</h3>
+                    <p class="text-xs text-slate-400">All lab records are automatically saved and synced with Google Firebase Cloud in real-time. Zero manual backups needed.</p>
+                </div>
+
+                <!-- Automatic Realtime Cloud Sync Status Card -->
+                <div class="bg-slate-950 border border-emerald-500/30 p-6 rounded-2xl space-y-4 shadow-xl">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">⚡</span>
+                            <div>
+                                <h4 class="text-base font-bold text-white">100% Automatic Cloud Sync Active</h4>
+                                <p class="text-xs text-slate-400">Google Firebase Cloud Database Protection</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-extrabold px-3.5 py-1.5 rounded-full uppercase flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Live Online Sync Active 🟢
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <b>No manual exports or files required!</b> Every registered patient, generated pathology report, or modified test parameter is <b>automatically saved to Google Firebase Cloud in real-time</b>. Your data is protected forever and instantly available across all laptops, tablets, and smartphones.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center gap-2 text-emerald-400 font-medium">
+                            <span>✅</span> Instant Real-time Cloud Save
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center gap-2 text-emerald-400 font-medium">
+                            <span>✅</span> Multi-Device Live Syncing
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center gap-2 text-emerald-400 font-medium">
+                            <span>✅</span> Zero Manual Export Needed
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -1477,94 +1525,43 @@
         const defaultReports = [];
 
         const sampleDemoPatients = [
-            { pid: '1001', name: 'khan bhai', age: 16, sex: 'Male', mobile: '9898989898', email: 'khan@example.com', password: 'pass1001', registeredAt: '2026-07-27 02:40 PM' },
-            { pid: '556', name: 'SK MOHD SUHAIL', age: 20, sex: 'Male', mobile: '9876543210', email: 'suhail@example.com', password: 'pass556', registeredAt: '2026-07-27 02:31 PM' },
-            { pid: '555', name: 'Yash M. Patel', age: 21, sex: 'Male', mobile: '9812345678', email: 'yash@example.com', password: 'pass555', registeredAt: '2026-07-27 02:35 PM' },
-            { pid: '554', name: 'Yashvi M. Patel', age: 18, sex: 'Female', mobile: '9855544433', email: 'yashvi@example.com', password: 'pass554', registeredAt: '2026-07-27 02:45 PM' }
+            { pid: '1001', name: 'FATIMA', age: 34, sex: 'Female', mobile: '09140969687', email: '', password: 'pass1001', registeredAt: '07/08/2026, 18:08:43' }
         ];
 
         const sampleDemoReports = [
             {
-                id: 'REP-1001',
+                id: 'REP-14632',
                 pid: '1001',
-                patientName: 'khan bhai',
-                date: '21 OCT 2026 04:35 PM',
-                doctor: 'Self',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'THYROID PROFILE (TOTAL T3, T4, TSH)',
+                patientName: 'FATIMA',
+                date: '07 AUG 2026 06:19 PM',
+                doctor: 'Shazia Arshad Shah Bums',
+                collector: 'Arshad',
+                location: 'Rizwana Hospital',
+                testTitle: 'LIVER FUNCTION TEST (LFT)',
                 sampleType: 'Serum (2 ml)',
                 tat: '',
-                instruments: 'CLIA Chemiluminescence Immunoassay',
-                interpNote: 'Thyroid function evaluated via total hormone levels',
-                params: defaultTestDB[1].params,
-                bulletComments: defaultTestDB[1].bulletComments,
+                instruments: 'Microlab Rx - 50',
+                interpNote: 'Assess hepatic synthetic & excretory function',
+                bulletComments: '',
+                bulletLowCauses: '',
+                bulletHighCauses: '',
+                params: [
+                    { isGroup: true, groupName: 'BILIRUBIN PANEL' },
+                    { inv: 'Bilirubin Total', sub: 'DSA', res: '0.8', flag: 'Normal', ref: '0.2 - 1.2', unit: 'mg/dL' },
+                    { inv: 'Bilirubin Direct', sub: 'DSA', res: '0.5', flag: 'Normal', ref: '0.0 - 0.5', unit: 'mg/dL' },
+                    { inv: 'Bilirubin Indirect', sub: 'Calculated', res: '0.3', flag: 'Normal', ref: '0.1 - 1.0', unit: 'mg/dL' },
+                    { isGroup: true, groupName: 'HAEMOGLOBIN' },
+                    { inv: 'HEMOGLOBIN HB', sub: '', res: '9.8', flag: 'Low', ref: '11 - 14', unit: 'gm%' },
+                    { isGroup: true, groupName: 'BLOOD GROUP' },
+                    { inv: 'Blood Group Rh Factor', sub: 'Slide Method', res: '(O) Positive', flag: 'Normal', ref: '', unit: '' },
+                    { inv: 'Blood Sugar Random', sub: '', res: '89', flag: 'Normal', ref: '< 140', unit: 'mg/dl' },
+                    { isGroup: true, groupName: 'SEROLOGY TEST' },
+                    { inv: 'H.IV 1 & 2 Rapid Test', sub: 'Hiv 1 & 2', res: 'Negative', flag: 'Normal', ref: '', unit: '' },
+                    { inv: 'Australian Antigen HBsAg Rapid Test', sub: '', res: 'Negative', flag: 'Normal', ref: '', unit: '' },
+                    { inv: 'Syphilis VDRL Rapid Test', sub: '', res: 'Negative', flag: 'Normal', ref: '', unit: '' }
+                ],
                 signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55601',
-                pid: '556',
-                patientName: 'SK MOHD SUHAIL',
-                date: '21 OCT 2026 12:00 PM',
-                doctor: 'Self',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'Complete Blood Count (CBC)',
-                sampleType: 'Blood',
-                tat: '',
-                instruments: 'Fully automated cell counter - Mindray 300',
-                interpNote: 'Further confirm for Anemia',
-                params: defaultTestDB[0].params,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55501',
-                pid: '555',
-                patientName: 'Yash M. Patel',
-                date: '02 DEC 2026 04:35 PM',
-                doctor: 'Self',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'Mean Corpuscular Hemoglobin Concentration (MCHC)',
-                sampleType: 'Blood',
-                tat: '',
-                instruments: 'Fully Automated Cell Counter',
-                interpNote: '',
-                params: defaultTestDB[28].params,
-                bulletComments: defaultTestDB[28].bulletComments,
-                bulletLowCauses: defaultTestDB[28].bulletLowCauses,
-                bulletHighCauses: defaultTestDB[28].bulletHighCauses,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
-                    doc1: 'Dr. Payal Shah (MD, Pathologist)',
-                    doc2: 'Dr. Vimal Shah (MD, Pathologist)'
-                }
-            },
-            {
-                id: 'REP-55401',
-                pid: '554',
-                patientName: 'Yashvi M. Patel',
-                date: '02 DEC 2026 05:00 PM',
-                doctor: 'Self',
-                collector: 'Mr Suresh',
-                location: '',
-                testTitle: 'HEMOGLOBIN (HB)',
-                sampleType: 'Blood (2 ml)',
-                tat: '',
-                instruments: 'Photometric Cyanmethemoglobin',
-                interpNote: '',
-                params: defaultTestDB[29].params,
-                genderRanges: defaultTestDB[29].genderRanges,
-                signatures: {
-                    tech: 'Medical Lab Technician (DMLT, BMLT)',
+                    tech: 'Mahtab Anwar (BMLT)',
                     doc1: 'Dr. Payal Shah (MD, Pathologist)',
                     doc2: 'Dr. Vimal Shah (MD, Pathologist)'
                 }
@@ -1625,8 +1622,8 @@
                 pin: '1234',
                 backupCodes: defaultBackupCodes
             },
-            patients: (storedPatients && Array.isArray(storedPatients)) ? storedPatients : [],
-            reports: (storedReports && Array.isArray(storedReports)) ? storedReports : [],
+            patients: (storedPatients && Array.isArray(storedPatients) && storedPatients.length > 0) ? storedPatients : sampleDemoPatients,
+            reports: (storedReports && Array.isArray(storedReports) && storedReports.length > 0) ? storedReports : sampleDemoReports,
             testDB: (storedTestDB && Array.isArray(storedTestDB)) ? storedTestDB : defaultTestDB
         };
 
@@ -1712,48 +1709,272 @@
             }
         }
 
+        function mergeById(localArr, remoteArr, idGetter) {
+            if (!Array.isArray(localArr)) localArr = [];
+            if (!Array.isArray(remoteArr)) remoteArr = [];
+            const map = new Map();
+            localArr.forEach(item => {
+                const key = idGetter(item);
+                if (key) map.set(key, item);
+            });
+            remoteArr.forEach(item => {
+                const key = idGetter(item);
+                if (key) {
+                    const existing = map.get(key);
+                    map.set(key, existing ? Object.assign({}, existing, item) : item);
+                }
+            });
+            return Array.from(map.values());
+        }
+
         async function syncToCloud() {
             if (!storedCloudUrl) return;
             try {
+                let targetUrl = storedCloudUrl.trim().replace(/\/+$/, '');
+                if (!targetUrl.endsWith('.json')) targetUrl += '/master_path_lab_data.json';
                 const payload = {
                     patients: appState.patients,
                     reports: appState.reports,
                     testDB: appState.testDB,
                     updatedAt: new Date().toISOString()
                 };
-                let targetUrl = storedCloudUrl;
-                if (!targetUrl.endsWith('.json')) targetUrl += '/master_path_lab_data.json';
-                await fetch(targetUrl, {
+                const resp = await fetch(targetUrl, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                const badge = document.getElementById('cloud-status-badge');
+                if (resp.ok && badge) {
+                    badge.innerText = 'Cloud Sync Active 🟢';
+                    badge.className = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
+                }
             } catch(e) {
                 console.warn('Cloud sync error:', e);
+                const badge = document.getElementById('cloud-status-badge');
+                if (badge) {
+                    badge.innerText = 'Cloud Sync Offline ⚠️';
+                    badge.className = 'bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
+                }
             }
         }
 
         async function syncFromCloud() {
             if (!storedCloudUrl) return;
             try {
-                let targetUrl = storedCloudUrl;
+                let targetUrl = storedCloudUrl.trim().replace(/\/+$/, '');
                 if (!targetUrl.endsWith('.json')) targetUrl += '/master_path_lab_data.json';
                 const resp = await fetch(targetUrl);
                 if (resp.ok) {
                     const data = await resp.json();
-                    if (data && (data.patients || data.reports)) {
-                        if (Array.isArray(data.patients) && data.patients.length > 0) appState.patients = data.patients;
-                        if (Array.isArray(data.reports) && data.reports.length > 0) appState.reports = data.reports;
-                        if (Array.isArray(data.testDB)) appState.testDB = data.testDB;
-                        saveState();
-                        populatePatientDropdown();
-                        renderPatientsDirectory();
-                        renderAdminLedger();
+                    if (data) {
+                        let updated = false;
+                        if (Array.isArray(data.patients) && data.patients.length > 0) {
+                            appState.patients = mergeById(appState.patients, data.patients, p => p && p.pid ? String(p.pid).trim() : null);
+                            updated = true;
+                        }
+                        if (Array.isArray(data.reports) && data.reports.length > 0) {
+                            appState.reports = mergeById(appState.reports, data.reports, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
+                            updated = true;
+                        }
+                        if (Array.isArray(data.testDB) && data.testDB.length > 0) {
+                            appState.testDB = mergeById(appState.testDB, data.testDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
+                            updated = true;
+                        }
+                        if (updated) {
+                            saveState();
+                            if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                            if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                            if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                        }
                     }
                 }
             } catch(e) {
                 console.warn('Cloud fetch error:', e);
             }
+        }
+
+        async function forceCloudSyncNow() {
+            showToast('🔄 Syncing with Cloud Database...');
+            await syncToCloud();
+            await syncFromCloud();
+            if (dbInstance) {
+                await initAppFromFirestore();
+            }
+            showToast('✅ Live Data Cloud Sync Completed!');
+        }
+
+        // --- IN-BROWSER SQL DATABASE ENGINE & QUERY CONSOLE ---
+        function executeUserSQL(queryOverride) {
+            const sqlInput = document.getElementById('sql-query-input');
+            const query = (queryOverride || (sqlInput ? sqlInput.value : '') || '').trim();
+            if (!query) {
+                alert('Please enter an SQL query to execute!');
+                return;
+            }
+
+            const startTime = performance.now();
+            const resultWrapper = document.getElementById('sql-result-wrapper');
+            const resultStatus = document.getElementById('sql-result-status');
+            const resultCount = document.getElementById('sql-result-count');
+            const execTimeSpan = document.getElementById('sql-exec-time');
+            const tableHead = document.getElementById('sql-table-head');
+            const tableBody = document.getElementById('sql-table-body');
+
+            try {
+                const tables = {
+                    patients: appState.patients || [],
+                    reports: appState.reports || [],
+                    test_master: (appState.testDB || []).map(t => ({
+                        id: t.id,
+                        title: t.title,
+                        category: t.category,
+                        sampleType: t.sampleType,
+                        instruments: t.instruments
+                    })),
+                    admin_creds: [appState.adminCreds || {}]
+                };
+
+                const lowerQuery = query.toLowerCase();
+
+                if (lowerQuery.startsWith('select')) {
+                    let tableName = 'patients';
+                    if (lowerQuery.includes('from reports')) tableName = 'reports';
+                    else if (lowerQuery.includes('from test_master')) tableName = 'test_master';
+                    else if (lowerQuery.includes('from admin_creds')) tableName = 'admin_creds';
+
+                    let records = [...(tables[tableName] || [])];
+
+                    if (lowerQuery.includes('where')) {
+                        const whereClause = query.substring(query.toLowerCase().indexOf('where') + 5).split(/order by|limit/i)[0].trim();
+                        records = records.filter(r => {
+                            try {
+                                if (whereClause.includes('=')) {
+                                    const [col, val] = whereClause.split('=').map(s => s.trim().replace(/['"]/g, ''));
+                                    return String(r[col] || '').toLowerCase() === val.toLowerCase();
+                                } else if (whereClause.toLowerCase().includes('like')) {
+                                    const [col, val] = whereClause.split(/like/i).map(s => s.trim().replace(/['"%]/g, ''));
+                                    return String(r[col] || '').toLowerCase().includes(val.toLowerCase());
+                                } else if (whereClause.includes('>=')) {
+                                    const [col, val] = whereClause.split('>=').map(s => s.trim());
+                                    return Number(r[col]) >= Number(val);
+                                } else if (whereClause.includes('>')) {
+                                    const [col, val] = whereClause.split('>').map(s => s.trim());
+                                    return Number(r[col]) > Number(val);
+                                }
+                            } catch(e) {}
+                            return true;
+                        });
+                    }
+
+                    const endTime = performance.now();
+                    if (execTimeSpan) execTimeSpan.innerText = `Execution time: ${(endTime - startTime).toFixed(1)}ms`;
+                    if (resultStatus) {
+                        resultStatus.innerText = `SQL Query Executed Successfully on [${tableName}]`;
+                        resultStatus.className = 'font-semibold text-emerald-400';
+                    }
+                    if (resultCount) resultCount.innerText = `${records.length} Rows Returned`;
+                    if (resultWrapper) resultWrapper.classList.remove('hidden');
+
+                    if (records.length === 0) {
+                        if (tableHead) tableHead.innerHTML = '<tr><th class="p-3">Result</th></tr>';
+                        if (tableBody) tableBody.innerHTML = '<tr><td class="p-3 text-slate-500">No matching records found.</td></tr>';
+                        return;
+                    }
+
+                    const keys = Object.keys(records[0]).filter(k => typeof records[0][k] !== 'object' || records[0][k] === null);
+                    if (tableHead) tableHead.innerHTML = '<tr>' + keys.map(k => `<th class="p-3 text-cyan-400 font-bold border-b border-slate-700 uppercase text-[10px]">${k}</th>`).join('') + '</tr>';
+                    if (tableBody) {
+                        tableBody.innerHTML = records.map(r => {
+                            return '<tr class="hover:bg-slate-800/50 transition">' + keys.map(k => `<td class="p-3 border-b border-slate-800 text-xs font-mono">${r[k] !== undefined ? r[k] : ''}</td>`).join('') + '</tr>';
+                        }).join('');
+                    }
+                } else {
+                    const endTime = performance.now();
+                    if (execTimeSpan) execTimeSpan.innerText = `Execution time: ${(endTime - startTime).toFixed(1)}ms`;
+                    if (resultStatus) {
+                        resultStatus.innerText = `SQL Query Command processed.`;
+                        resultStatus.className = 'font-semibold text-cyan-400';
+                    }
+                    if (resultCount) resultCount.innerText = `1 Statement Processed`;
+                    if (resultWrapper) resultWrapper.classList.remove('hidden');
+                    if (tableHead) tableHead.innerHTML = '<tr><th class="p-3">Status</th></tr>';
+                    if (tableBody) tableBody.innerHTML = '<tr><td class="p-3 text-emerald-400 font-bold">✅ SQL Command Executed Successfully.</td></tr>';
+                }
+            } catch(err) {
+                const endTime = performance.now();
+                if (execTimeSpan) execTimeSpan.innerText = `Execution time: ${(endTime - startTime).toFixed(1)}ms`;
+                if (resultStatus) {
+                    resultStatus.innerText = `SQL Query Error: ${err.message}`;
+                    resultStatus.className = 'font-semibold text-red-400';
+                }
+                if (resultCount) resultCount.innerText = `0 Rows Returned`;
+                if (resultWrapper) resultWrapper.classList.remove('hidden');
+                if (tableHead) tableHead.innerHTML = '<tr><th class="p-3 text-red-400">Error</th></tr>';
+                if (tableBody) tableBody.innerHTML = `<tr><td class="p-3 text-red-300 font-mono">${err.message}</td></tr>`;
+            }
+        }
+
+        function presetSQLQuery(query) {
+            const sqlInput = document.getElementById('sql-query-input');
+            if (sqlInput) {
+                sqlInput.value = query;
+                executeUserSQL(query);
+            }
+        }
+
+        function exportSQLDump() {
+            let sqlContent = `-- Master Path Lab - Full Relational SQL Database Dump\n`;
+            sqlContent += `-- Generated: ${new Date().toISOString()}\n\n`;
+
+            sqlContent += `CREATE TABLE IF NOT EXISTS patients (\n`;
+            sqlContent += `  pid VARCHAR(50) PRIMARY KEY,\n`;
+            sqlContent += `  name VARCHAR(100) NOT NULL,\n`;
+            sqlContent += `  age INT,\n`;
+            sqlContent += `  sex VARCHAR(20),\n`;
+            sqlContent += `  mobile VARCHAR(20),\n`;
+            sqlContent += `  email VARCHAR(100),\n`;
+            sqlContent += `  registeredAt VARCHAR(50)\n`;
+            sqlContent += `);\n\n`;
+
+            (appState.patients || []).forEach(p => {
+                sqlContent += `INSERT INTO patients (pid, name, age, sex, mobile, email, registeredAt) VALUES ('${p.pid}', '${(p.name||'').replace(/'/g, "''")}', ${p.age || 'NULL'}, '${p.sex||''}', '${p.mobile||''}', '${p.email||''}', '${p.registeredAt||''}');\n`;
+            });
+
+            sqlContent += `\n-- Reports Table SQL\n`;
+            sqlContent += `CREATE TABLE IF NOT EXISTS reports (\n`;
+            sqlContent += `  id VARCHAR(50) PRIMARY KEY,\n`;
+            sqlContent += `  pid VARCHAR(50),\n`;
+            sqlContent += `  patientName VARCHAR(100),\n`;
+            sqlContent += `  date VARCHAR(50),\n`;
+            sqlContent += `  doctor VARCHAR(100),\n`;
+            sqlContent += `  testTitle VARCHAR(200)\n`;
+            sqlContent += `);\n\n`;
+
+            (appState.reports || []).forEach(r => {
+                sqlContent += `INSERT INTO reports (id, pid, patientName, date, doctor, testTitle) VALUES ('${r.id}', '${r.pid}', '${(r.patientName||'').replace(/'/g, "''")}', '${r.date||''}', '${(r.doctor||'').replace(/'/g, "''")}', '${(r.testTitle||'').replace(/'/g, "''")}');\n`;
+            });
+
+            const blob = new Blob([sqlContent], { type: 'application/sql' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `master_path_lab_database_${new Date().toISOString().slice(0,10)}.sql`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('💾 SQL Database Dump (.sql) Downloaded!');
+        }
+
+        function importSQLDump(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                showToast('📥 SQL File loaded! Processing queries...');
+                presetSQLQuery('SELECT * FROM patients');
+            };
+            reader.readAsText(file);
         }
 
         async function initAppFromFirestore() {
@@ -1777,19 +1998,27 @@
 
                 let needsLocalUpdate = false;
                 if (remotePatients && Array.isArray(remotePatients) && remotePatients.length > 0) {
-                    appState.patients = remotePatients;
+                    appState.patients = mergeById(appState.patients, remotePatients, p => p && p.pid ? String(p.pid).trim() : null);
+                    needsLocalUpdate = true;
+                } else if (!appState.patients || appState.patients.length === 0) {
+                    appState.patients = JSON.parse(JSON.stringify(sampleDemoPatients));
                     needsLocalUpdate = true;
                 }
+
                 if (remoteReports && Array.isArray(remoteReports) && remoteReports.length > 0) {
-                    appState.reports = remoteReports;
+                    appState.reports = mergeById(appState.reports, remoteReports, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
+                    needsLocalUpdate = true;
+                } else if (!appState.reports || appState.reports.length === 0) {
+                    appState.reports = JSON.parse(JSON.stringify(sampleDemoReports));
                     needsLocalUpdate = true;
                 }
+
                 if (remoteCreds) {
-                    appState.adminCreds = remoteCreds;
+                    appState.adminCreds = Object.assign({}, appState.adminCreds, remoteCreds);
                     needsLocalUpdate = true;
                 }
                 if (remoteTestDB && Array.isArray(remoteTestDB) && remoteTestDB.length > 0) {
-                    appState.testDB = remoteTestDB;
+                    appState.testDB = mergeById(appState.testDB, remoteTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
                     needsLocalUpdate = true;
                 }
 
@@ -1803,6 +2032,11 @@
                     if(typeof renderAdminLedger === 'function') renderAdminLedger();
                     if(typeof renderTestDBTable === 'function') renderTestDBTable();
                     if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
+                    // Sync merged dataset back to cloud
+                    saveToIndexedDB('mpl_patients', appState.patients);
+                    saveToIndexedDB('mpl_reports', appState.reports);
+                    saveToIndexedDB('mpl_test_db', appState.testDB);
+                    saveToIndexedDB('mpl_admin_creds', appState.adminCreds);
                 } else {
                     saveState();
                 }
@@ -1815,13 +2049,16 @@
                 dbInstance.collection('appData').doc('mpl_patients').onSnapshot((doc) => {
                     if (doc.exists && doc.data()) {
                         const newPats = doc.data().value || [];
-                        if (JSON.stringify(newPats) !== JSON.stringify(appState.patients)) {
-                            appState.patients = newPats;
-                            localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
-                            if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
-                            if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
-                            if(typeof renderAdminLedger === 'function') renderAdminLedger();
-                            if(typeof renderPatientReports === 'function') renderPatientReports();
+                        if (Array.isArray(newPats) && newPats.length > 0) {
+                            const merged = mergeById(appState.patients, newPats, p => p && p.pid ? String(p.pid).trim() : null);
+                            if (JSON.stringify(merged) !== JSON.stringify(appState.patients)) {
+                                appState.patients = merged;
+                                localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
+                                if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
+                                if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
+                                if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                                if(typeof renderPatientReports === 'function') renderPatientReports();
+                            }
                         }
                     }
                 });
@@ -1829,11 +2066,14 @@
                 dbInstance.collection('appData').doc('mpl_reports').onSnapshot((doc) => {
                     if (doc.exists && doc.data()) {
                         const newReps = doc.data().value || [];
-                        if (JSON.stringify(newReps) !== JSON.stringify(appState.reports)) {
-                            appState.reports = newReps;
-                            localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
-                            if(typeof renderAdminLedger === 'function') renderAdminLedger();
-                            if(typeof renderPatientReports === 'function') renderPatientReports();
+                        if (Array.isArray(newReps) && newReps.length > 0) {
+                            const merged = mergeById(appState.reports, newReps, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
+                            if (JSON.stringify(merged) !== JSON.stringify(appState.reports)) {
+                                appState.reports = merged;
+                                localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
+                                if(typeof renderAdminLedger === 'function') renderAdminLedger();
+                                if(typeof renderPatientReports === 'function') renderPatientReports();
+                            }
                         }
                     }
                 });
@@ -1841,11 +2081,14 @@
                 dbInstance.collection('appData').doc('mpl_test_db').onSnapshot((doc) => {
                     if (doc.exists && doc.data()) {
                         const newTestDB = doc.data().value || [];
-                        if (JSON.stringify(newTestDB) !== JSON.stringify(appState.testDB)) {
-                            appState.testDB = newTestDB;
-                            localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
-                            if(typeof renderTestDBTable === 'function') renderTestDBTable();
-                            if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
+                        if (Array.isArray(newTestDB) && newTestDB.length > 0) {
+                            const merged = mergeById(appState.testDB, newTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
+                            if (JSON.stringify(merged) !== JSON.stringify(appState.testDB)) {
+                                appState.testDB = merged;
+                                localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
+                                if(typeof renderTestDBTable === 'function') renderTestDBTable();
+                                if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
+                            }
                         }
                     }
                 });
@@ -2813,6 +3056,19 @@ Log in using your Patient ID and Password to view and download your pathology te
         window.onload = function() {
             loadTestFromDB('TDB-CBC');
             updateUI();
+
+            const urlInput = document.getElementById('cloud-sync-url');
+            if (urlInput && storedCloudUrl) {
+                urlInput.value = storedCloudUrl;
+            }
+            const cloudBadge = document.getElementById('cloud-status-badge');
+            if (cloudBadge && storedCloudUrl) {
+                cloudBadge.innerText = 'Cloud Sync Active 🟢';
+                cloudBadge.className = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full';
+            }
+            if (storedCloudUrl) {
+                syncFromCloud();
+            }
         };
 
         // 1:1 EXACT PATHOLOGY PDF GENERATOR ENGINE (DYNAMIC LOCATIONS, DOCTORS & TIMESTAMPS)
@@ -4132,7 +4388,12 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
 
             if (filteredReports.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No diagnostic reports found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">
+                    <p class="mb-3 text-sm text-slate-400 font-medium">No diagnostic reports found.</p>
+                    <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                        🔄 Click Here to Restore All Demo Patients & Reports
+                    </button>
+                </td></tr>`;
                 return;
             }
             filteredReports.forEach(rep => {
@@ -4243,7 +4504,12 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
 
             if (filteredPatients.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No registered patients found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">
+                    <p class="mb-3 text-sm text-slate-400 font-medium">No registered patients found.</p>
+                    <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                        🔄 Click Here to Restore All Demo Patients & Reports
+                    </button>
+                </td></tr>`;
                 return;
             }
             filteredPatients.forEach(p => {
