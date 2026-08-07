@@ -2156,16 +2156,16 @@
                 let remoteTestDB = tDoc.exists ? tDoc.data().value : null;
 
                 let needsLocalUpdate = false;
-                if (remotePatients && Array.isArray(remotePatients) && remotePatients.length > 0) {
-                    appState.patients = mergeById(appState.patients, remotePatients, p => p && p.pid ? String(p.pid).trim() : null);
+                if (remotePatients && Array.isArray(remotePatients)) {
+                    appState.patients = remotePatients;
                     needsLocalUpdate = true;
                 } else if (!appState.patients || appState.patients.length === 0) {
                     appState.patients = JSON.parse(JSON.stringify(sampleDemoPatients));
                     needsLocalUpdate = true;
                 }
 
-                if (remoteReports && Array.isArray(remoteReports) && remoteReports.length > 0) {
-                    appState.reports = mergeById(appState.reports, remoteReports, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
+                if (remoteReports && Array.isArray(remoteReports)) {
+                    appState.reports = remoteReports;
                     needsLocalUpdate = true;
                 } else if (!appState.reports || appState.reports.length === 0) {
                     appState.reports = JSON.parse(JSON.stringify(sampleDemoReports));
@@ -2177,7 +2177,7 @@
                     needsLocalUpdate = true;
                 }
                 if (remoteTestDB && Array.isArray(remoteTestDB) && remoteTestDB.length > 0) {
-                    appState.testDB = mergeById(appState.testDB, remoteTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
+                    appState.testDB = remoteTestDB;
                     needsLocalUpdate = true;
                 } else if (appState.testDB && Array.isArray(appState.testDB) && appState.testDB.length > 0) {
                     // Push local customized testDB to cloud if cloud document was empty
@@ -2207,15 +2207,15 @@
                     badge.innerText = 'Firebase Active 🟢';
                 }
 
-                // Listen for real-time changes
+                // Listen for real-time changes from Cloud (Multi-Device Sync for Laptop, Mobile, Tablet)
                 dbInstance.collection('appData').doc('mpl_patients').onSnapshot((doc) => {
                     if (doc.exists && doc.data()) {
-                        const newPats = doc.data().value || [];
-                        if (Array.isArray(newPats) && newPats.length > 0) {
-                            const merged = mergeById(appState.patients, newPats, p => p && p.pid ? String(p.pid).trim() : null);
-                            if (JSON.stringify(merged) !== JSON.stringify(appState.patients)) {
-                                appState.patients = merged;
+                        const newPats = doc.data().value;
+                        if (Array.isArray(newPats)) {
+                            if (JSON.stringify(newPats) !== JSON.stringify(appState.patients)) {
+                                appState.patients = newPats;
                                 localStorage.setItem('mpl_patients', JSON.stringify(appState.patients));
+                                saveToIndexedDB('mpl_patients', appState.patients);
                                 if(typeof populatePatientDropdown === 'function') populatePatientDropdown();
                                 if(typeof renderPatientsDirectory === 'function') renderPatientsDirectory();
                                 if(typeof renderAdminLedger === 'function') renderAdminLedger();
@@ -2227,12 +2227,12 @@
                 
                 dbInstance.collection('appData').doc('mpl_reports').onSnapshot((doc) => {
                     if (doc.exists && doc.data()) {
-                        const newReps = doc.data().value || [];
-                        if (Array.isArray(newReps) && newReps.length > 0) {
-                            const merged = mergeById(appState.reports, newReps, r => r && (r.id || (r.pid + '_' + r.date)) ? String(r.id || (r.pid + '_' + r.date)).trim() : null);
-                            if (JSON.stringify(merged) !== JSON.stringify(appState.reports)) {
-                                appState.reports = merged;
+                        const newReps = doc.data().value;
+                        if (Array.isArray(newReps)) {
+                            if (JSON.stringify(newReps) !== JSON.stringify(appState.reports)) {
+                                appState.reports = newReps;
                                 localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
+                                saveToIndexedDB('mpl_reports', appState.reports);
                                 if(typeof renderAdminLedger === 'function') renderAdminLedger();
                                 if(typeof renderPatientReports === 'function') renderPatientReports();
                             }
@@ -2242,12 +2242,12 @@
                 
                 dbInstance.collection('appData').doc('mpl_test_db').onSnapshot((doc) => {
                     if (doc.exists && doc.data()) {
-                        const newTestDB = doc.data().value || [];
+                        const newTestDB = doc.data().value;
                         if (Array.isArray(newTestDB) && newTestDB.length > 0) {
-                            const merged = mergeById(appState.testDB, newTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
-                            if (JSON.stringify(merged) !== JSON.stringify(appState.testDB)) {
-                                appState.testDB = merged;
+                            if (JSON.stringify(newTestDB) !== JSON.stringify(appState.testDB)) {
+                                appState.testDB = newTestDB;
                                 localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
+                                saveToIndexedDB('mpl_test_db', appState.testDB);
                                 if(typeof renderTestDBTable === 'function') renderTestDBTable();
                                 if(typeof renderTestDBPresets === 'function') renderTestDBPresets();
                             }
