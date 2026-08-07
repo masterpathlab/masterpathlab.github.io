@@ -130,7 +130,7 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Header -->
-    <header class="bg-black/30/90 backdrop-blur-md border-b border-slate-800/80 p-4 sticky top-0 z-40 shadow-2xl">
+    <header class="bg-black/90  border-b border-slate-800/80 p-4 sticky top-0 z-40 shadow-2xl">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="updateUI()">
                 <img src="logo.jpg" alt="Master Path Lab" class="h-12 w-auto object-contain bg-white rounded-md p-0.5 transform hover:scale-105 transition shadow-md">
@@ -639,12 +639,12 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black/30/80 border-t border-slate-800/80 p-4 text-center text-xs text-slate-500 mt-8">
+    <footer class="bg-black/80 border-t border-slate-800/80 p-4 text-center text-xs text-slate-500 mt-8">
         Master Path Lab &copy; 2026. Certified Pathology Diagnostic Processing Portal.
     </footer>
 
     <!-- Login Modal -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-slate-800 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             
@@ -678,7 +678,7 @@
     </div>
 
     <!-- Registration Credential Modal -->
-    <div id="credential-modal" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="credential-modal" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-cyan-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl text-center relative">
             <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
                 ✓
@@ -727,7 +727,7 @@
     </div>
 
     <!-- Login Modal -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-cyan-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 id="modal-title" class="text-lg font-bold text-white mb-1">Portal Login</h3>
@@ -750,7 +750,7 @@
     </div>
 
     <!-- Web Report Viewer Modal -->
-    <div id="report-view-modal" class="hidden fixed inset-0 bg-black/30/90 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div id="report-view-modal" class="hidden fixed inset-0 bg-black/90  z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-black/20 border border-cyan-500/40 p-6 rounded-2xl max-w-4xl w-full shadow-2xl relative max-h-[92vh] flex flex-col">
             <div class="flex justify-between items-center pb-4 border-b border-slate-800">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
@@ -771,7 +771,7 @@
     </div>
 
     <!-- New Test Definition Modal -->
-    <div id="modal-new-test" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="modal-new-test" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-cyan-500/40 p-6 rounded-2xl max-w-2xl w-full shadow-2xl relative">
             <button type="button" onclick="closeNewTestModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 class="text-lg font-bold text-white mb-1">Add New Pathology Test Definition</h3>
@@ -846,7 +846,7 @@
     </div>
 
     <!-- Edit Patient Modal -->
-    <div id="modal-edit-patient" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="modal-edit-patient" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-cyan-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closeEditPatientModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 class="text-lg font-bold text-white mb-1">Edit Patient Details</h3>
@@ -898,7 +898,7 @@
     </div>
 
     <!-- Edit Pathology Test Template Modal -->
-    <div id="modal-edit-testdb" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div id="modal-edit-testdb" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-black/20 border border-amber-500/40 p-6 rounded-2xl max-w-3xl w-full shadow-2xl relative my-8 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
                 <div class="flex items-center gap-2">
@@ -1012,7 +1012,7 @@
     </div>
 
     <!-- Change Admin Credentials Modal -->
-    <div id="modal-change-admin" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="modal-change-admin" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-amber-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closeChangeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 class="text-lg font-bold text-white mb-1">🔑 Change Admin ID & Password</h3>
@@ -1049,7 +1049,7 @@
     </div>
 
     <!-- Admin Emergency Backup Codes Modal (Google Backup Codes) -->
-    <div id="modal-backup-codes" class="hidden fixed inset-0 bg-black/30/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="modal-backup-codes" class="hidden fixed inset-0 bg-black/85  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-indigo-500/40 p-6 rounded-2xl max-w-lg w-full shadow-2xl relative">
             <button type="button" onclick="closeBackupCodesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <div class="text-center mb-4">
@@ -1097,7 +1097,7 @@
     </div>
 
     <!-- Security Recovery PIN / Backup Code Modal -->
-    <div id="modal-pin-recovery" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="modal-pin-recovery" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-amber-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closePinRecoveryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <div class="text-center mb-4">
@@ -1121,7 +1121,7 @@
     </div>
 
     <!-- Reset Password & Username Modal -->
-    <div id="modal-reset-password" class="hidden fixed inset-0 bg-black/30/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="modal-reset-password" class="hidden fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
         <div class="bg-black/20 border border-emerald-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
             <button type="button" onclick="closeResetPasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
             <div class="text-center mb-4">
