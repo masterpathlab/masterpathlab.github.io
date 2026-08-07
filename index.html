@@ -89,12 +89,39 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #06b6d4;
         }
+        @keyframes float3d {
+            0% { transform: translateY(0px) rotateX(0deg) rotateY(0deg) scale(1); }
+            50% { transform: translateY(-20px) rotateX(8deg) rotateY(-8deg) scale(1.05); }
+            100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg) scale(1); }
+        }
+        .bg-3d-logo {
+            animation: float3d 18s ease-in-out infinite;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        .bg-glow-container {
+            perspective: 1200px;
+        }
     </style>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950 relative">
+
+<!-- Professional 3D Background Logo -->
+<div class="fixed inset-0 z-[-1] pointer-events-none flex items-center justify-center overflow-hidden bg-glow-container">
+    <!-- Radial gradient for a subtle studio light effect -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.06)_0%,rgba(3,7,18,1)_70%)]"></div>
+    
+    <!-- 3D Floating Logo Container -->
+    <div class="bg-3d-logo relative w-[90vw] max-w-[600px] flex items-center justify-center">
+        <!-- Logo image with soft edges (radial mask) and blending -->
+        <img src="logo.jpg" alt="Master Path Lab Background" 
+             style="-webkit-mask-image: radial-gradient(circle, black 40%, transparent 75%); mask-image: radial-gradient(circle, black 40%, transparent 75%);" 
+             class="w-full h-auto object-contain opacity-15 mix-blend-luminosity grayscale contrast-125 drop-shadow-[0_0_30px_rgba(6,182,212,0.3)]">
+    </div>
+</div>
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
