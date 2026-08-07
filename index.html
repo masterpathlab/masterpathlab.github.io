@@ -4446,25 +4446,36 @@ Log in using your Patient ID and Password to view and download your pathology te
             const tbody = document.getElementById('test-db-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
+            if (!appState.testDB || appState.testDB.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">No test definitions found in database.</td></tr>`;
+                return;
+            }
             appState.testDB.forEach(test => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-slate-800/80 hover:bg-slate-950/40 transition';
+                const itemsCount = test.params ? test.params.length : 0;
                 tr.innerHTML = `
-                    <td class="p-3 font-bold text-cyan-400 text-xs">${test.title} <span class="text-[10px] bg-cyan-500/10 text-cyan-300 px-1.5 py-0.5 rounded ml-1 font-mono">${test.category || 'General'}</span></td>
-                    <td class="p-3 text-xs text-slate-300">${test.sampleType}</td>
-                    <td class="p-3 text-xs text-slate-400">${test.tat || 'N/A'}</td>
-                    <td class="p-3 text-xs text-slate-300 font-mono">${test.params ? test.params.length : 0} Items</td>
+                    <td class="p-3">
+                        <div class="font-bold text-white text-xs">${test.title}</div>
+                        <div class="text-[10px] text-cyan-400 font-mono mt-0.5">${test.category || 'Biochemistry'}</div>
+                    </td>
+                    <td class="p-3 text-xs text-slate-300">${test.sampleType || 'N/A'}</td>
+                    <td class="p-3 text-xs text-slate-400 font-mono">${test.tat || 'N/A'}</td>
+                    <td class="p-3 text-xs text-slate-300 font-mono"><span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-bold">${itemsCount} Items</span></td>
                     <td class="p-3 text-right flex justify-end gap-1.5 flex-wrap">
+                        <button type="button" onclick="openEditTestDBModal('${test.id}')" title="Edit Test Title, Parameters & Items" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg text-xs font-extrabold hover:bg-amber-500 hover:text-slate-950 transition flex items-center gap-1 shadow-sm">
+                            ✏️ Edit
+                        </button>
                         <button type="button" onclick="previewTestDBTemplate('${test.id}')" title="Preview Test Report" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-500 hover:text-white transition flex items-center gap-1">
                             👁️ Preview
                         </button>
                         <button type="button" onclick="downloadTestDBTemplatePDF('${test.id}')" title="Download Sample PDF" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-emerald-500 hover:text-slate-950 transition flex items-center gap-1">
-                            📥 Sample PDF
+                            📄 Sample PDF
                         </button>
-                        <button type="button" onclick="loadTestFromDB('${test.id}'); switchAdminTab('report');" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition">
+                        <button type="button" onclick="loadTestFromDB('${test.id}'); switchAdminTab('report');" title="Load into Report Generator" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition">
                             Use in Report
                         </button>
-                        <button type="button" onclick="deleteTestFromDB('${test.id}')" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
+                        <button type="button" onclick="deleteTestFromDB('${test.id}')" title="Delete Test Template" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
                             ✕
                         </button>
                     </td>
