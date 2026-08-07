@@ -212,10 +212,17 @@
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name *</label>
                         <input type="text" id="reg-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="e.g. SK MOHD SUHAIL">
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Age (Years) *</label>
-                            <input type="number" id="reg-age" required min="1" max="120" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="20">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Age *</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="reg-age" required min="1" max="120" class="w-2/3 bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-sm" placeholder="e.g. 25 (or 6 for 6 Months)">
+                                <select id="reg-age-unit" class="w-1/3 bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none text-xs font-bold">
+                                    <option value="Years">Years (Y)</option>
+                                    <option value="Months">Months (M)</option>
+                                    <option value="Days">Days (D)</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Sex *</label>
@@ -824,10 +831,17 @@
                     <label class="block text-slate-300 mb-1 font-semibold">Full Name *</label>
                     <input type="text" id="edit-p-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-slate-300 mb-1 font-semibold">Age (Years) *</label>
-                        <input type="number" id="edit-p-age" required min="1" max="120" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="md:col-span-2">
+                        <label class="block text-slate-300 mb-1 font-semibold">Age *</label>
+                        <div class="flex gap-1.5">
+                            <input type="number" id="edit-p-age" required min="1" max="120" class="w-1/2 bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500">
+                            <select id="edit-p-age-unit" class="w-1/2 bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none focus:border-cyan-500 text-xs font-semibold">
+                                <option value="Years">Years (Y)</option>
+                                <option value="Months">Months (M)</option>
+                                <option value="Days">Days (D)</option>
+                            </select>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-slate-300 mb-1 font-semibold">Sex *</label>
@@ -1704,17 +1718,45 @@
             return list;
         }
 
-        // Fail-Safe State Management
+        // Fail-Safe State Management & Age Formatting Engine
+        function formatPatientAge(p) {
+            if (!p) return '';
+            let ageVal = (p.age !== undefined && p.age !== null) ? String(p.age).trim() : '';
+            if (!ageVal) return '';
+            if (/years?|months?|days?|y|m|d/i.test(ageVal)) {
+                return ageVal;
+            }
+            const unit = p.ageUnit || 'Years';
+            if (unit === 'Months') return `${ageVal} Months`;
+            if (unit === 'Days') return `${ageVal} Days`;
+            return `${ageVal} Years`;
+        }
+
+        function formatPatientAgeShort(p) {
+            if (!p) return '';
+            let ageVal = (p.age !== undefined && p.age !== null) ? String(p.age).trim() : '';
+            if (!ageVal) return '';
+            if (/years?|months?|days?|y|m|d/i.test(ageVal)) {
+                return ageVal;
+            }
+            const unit = p.ageUnit || 'Years';
+            if (unit === 'Months') return `${ageVal} M`;
+            if (unit === 'Days') return `${ageVal} D`;
+            return `${ageVal} Y`;
+        }
+
         let storedPatients = null;
         let storedReports = null;
         let storedTestDB = null;
         let storedAdminCreds = null;
+        let storedSessionUser = null;
 
         try {
             storedPatients = JSON.parse(localStorage.getItem('mpl_patients'));
             storedReports = JSON.parse(localStorage.getItem('mpl_reports'));
             storedTestDB = JSON.parse(localStorage.getItem('mpl_test_db'));
             storedAdminCreds = JSON.parse(localStorage.getItem('mpl_admin_creds'));
+            storedSessionUser = JSON.parse(localStorage.getItem('mpl_session_user'));
         } catch(e) {
             console.warn('LocalStorage parse warning:', e);
         }
@@ -1729,7 +1771,7 @@
         ];
 
         let appState = {
-            currentUser: null,
+            currentUser: storedSessionUser || null,
             loginMode: 'admin',
             activeCategoryFilter: 'All',
             adminCreds: storedAdminCreds || {
@@ -2224,6 +2266,12 @@
                 localStorage.setItem('mpl_reports', JSON.stringify(appState.reports));
                 localStorage.setItem('mpl_test_db', JSON.stringify(appState.testDB));
                 localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
+
+                if (appState.currentUser) {
+                    localStorage.setItem('mpl_session_user', JSON.stringify(appState.currentUser));
+                } else {
+                    localStorage.removeItem('mpl_session_user');
+                }
 
                 saveToIndexedDB('mpl_patients', appState.patients);
                 saveToIndexedDB('mpl_reports', appState.reports);
@@ -2723,6 +2771,7 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
             if (appState.loginMode === 'admin') {
                 if (idInput.toLowerCase() === adminCreds.username.toLowerCase() && passInput === adminCreds.password) {
                     appState.currentUser = { role: 'admin' };
+                    saveState();
                     closeLoginModal();
                     showToast('🔑 Welcome back, Admin!');
                     updateUI();
@@ -2733,6 +2782,7 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
                 const patient = appState.patients.find(p => p.pid.toUpperCase() === idInput.toUpperCase() && p.password === passInput);
                 if (patient) {
                     appState.currentUser = { role: 'patient', pid: patient.pid, name: patient.name };
+                    saveState();
                     closeLoginModal();
                     showToast(`👤 Welcome back, ${patient.name}!`);
                     updateUI();
@@ -2744,6 +2794,7 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
 
         function logout() {
             appState.currentUser = null;
+            saveState();
             showToast('Logged out successfully.');
             updateUI();
         }
@@ -2773,6 +2824,7 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
             event.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
             const age = document.getElementById('reg-age').value.trim();
+            const ageUnit = document.getElementById('reg-age-unit') ? document.getElementById('reg-age-unit').value : 'Years';
             const sex = document.getElementById('reg-sex').value;
             const mobile = document.getElementById('reg-mobile').value.trim();
             const email = '';
@@ -2783,7 +2835,7 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
             const password = 'pass' + pid;
             const portalUrl = window.location.href.split('#')[0];
 
-            const newPatient = { pid, name, age, sex, mobile, email, password, registeredAt: new Date().toLocaleString() };
+            const newPatient = { pid, name, age, ageUnit, sex, mobile, email, password, registeredAt: new Date().toLocaleString() };
             appState.patients.unshift(newPatient);
             saveState();
 
@@ -2891,6 +2943,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             document.getElementById('edit-p-pid').value = p.pid;
             document.getElementById('edit-p-name').value = p.name;
             document.getElementById('edit-p-age').value = p.age;
+            if (document.getElementById('edit-p-age-unit')) document.getElementById('edit-p-age-unit').value = p.ageUnit || 'Years';
             document.getElementById('edit-p-sex').value = p.sex;
             document.getElementById('edit-p-mobile').value = p.mobile || '';
             document.getElementById('edit-p-pass').value = p.password;
@@ -2908,6 +2961,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (p) {
                 p.name = document.getElementById('edit-p-name').value.trim();
                 p.age = document.getElementById('edit-p-age').value.trim();
+                p.ageUnit = document.getElementById('edit-p-age-unit') ? document.getElementById('edit-p-age-unit').value : 'Years';
                 p.sex = document.getElementById('edit-p-sex').value;
                 p.mobile = document.getElementById('edit-p-mobile').value.trim();
                 p.password = document.getElementById('edit-p-pass').value.trim();
@@ -2943,7 +2997,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             const patient = appState.patients.find(p => p.pid === pid);
             if (patient && banner) {
                 document.getElementById('pinfo-name').innerText = patient.name;
-                document.getElementById('pinfo-meta').innerText = `Age: ${patient.age} Y / ${patient.sex} | Ph: ${patient.mobile || 'N/A'}`;
+                document.getElementById('pinfo-meta').innerText = `Age: ${formatPatientAge(patient)} / ${patient.sex} | Ph: ${patient.mobile || 'N/A'}`;
                 document.getElementById('pinfo-pid').innerText = `UHID: ${patient.pid}`;
                 banner.classList.remove('hidden');
             }
@@ -3553,12 +3607,12 @@ Log in using your Patient ID and Password to view and download your pathology te
 
         function renderPDFPageForReport(doc, patient, reportObj, pageNum = 1, totalPages = 1) {
             const pName = (patient && patient.name) ? patient.name : (reportObj.patientName || 'SK MOHD SUHAIL');
-            const pAge = (patient && patient.age) ? patient.age : '20';
+            const pAgeFormatted = formatPatientAge(patient) || (reportObj.patientAge ? reportObj.patientAge : '20 Years');
             const pSex = (patient && patient.sex) ? patient.sex : 'Male';
             const pPid = (patient && patient.pid) ? patient.pid : (reportObj.pid || '556');
             const rDate = reportObj.date || '21 OCT, 2026 12:00 PM';
             const regTime = (patient && patient.registeredAt) ? patient.registeredAt : '21 OCT, 2026 10:00 AM';
-
+            
             // Palette Colors
             const navyColor = [15, 76, 129];
             const headerBlue = [27, 108, 172];
@@ -3658,7 +3712,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(71, 85, 105);
-            doc.text(`Age : ${pAge} Years`, 14, currentY + 5);
+            doc.text(`Age : ${pAgeFormatted}`, 14, currentY + 5);
             doc.text(`Sex : ${pSex}`, 14, currentY + 9.5);
 
             // Dynamic Sample Collection Info & Doctor
@@ -4613,7 +4667,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
                         <div class="col-span-5">
                             <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name}</h2>
-                            <p class="font-bold text-slate-700 mt-1">Age : ${patient.age} Years</p>
+                            <p class="font-bold text-slate-700 mt-1">Age : ${formatPatientAge(patient)}</p>
                             <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
                         </div>
                         <div class="col-span-4">
@@ -4925,7 +4979,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                 tr.innerHTML = `
                     <td class="p-3 font-bold text-cyan-400 font-mono text-xs">${p.pid}</td>
                     <td class="p-3 text-white font-medium text-xs">${p.name}</td>
-                    <td class="p-3 text-xs text-slate-300">${p.age} Y / ${p.sex}</td>
+                    <td class="p-3 text-xs text-slate-300">${formatPatientAgeShort(p)} / ${p.sex}</td>
                     <td class="p-3 text-xs text-slate-400">${p.mobile || 'N/A'}</td>
                     <td class="p-3 font-mono text-xs text-amber-400 font-bold">${p.password}</td>
                     <td class="p-3 text-right flex justify-end gap-2 flex-wrap">
