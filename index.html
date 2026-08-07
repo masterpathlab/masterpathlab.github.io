@@ -3641,10 +3641,10 @@ Log in using your Patient ID and Password to view and download your pathology te
                 try {
                     let imgProps = doc.getImageProperties(MAIN_LOGO_B64);
                     let ratio = imgProps.width / imgProps.height;
-                    let drawWidth = 16; // Fit perfectly before text at x=28
+                    let drawWidth = 12.5; // Scaled down to match preview exactly
                     let drawHeight = drawWidth / ratio;
                     let yPos = 18.5 - (drawHeight / 2); // Center vertically with text
-                    doc.addImage(MAIN_LOGO_B64, 'JPEG', 10, yPos, drawWidth, drawHeight);
+                    doc.addImage(MAIN_LOGO_B64, 'JPEG', 13, yPos, drawWidth, drawHeight);
                 } catch(e) {
                     doc.setFillColor(...navyColor);
                     doc.circle(18.5, 18.5, 7.5, 'F');
