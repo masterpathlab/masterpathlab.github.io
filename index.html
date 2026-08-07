@@ -33,6 +33,7 @@
         window.jsPDF = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF || {});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -3982,15 +3983,210 @@ Log in using your Patient ID and Password to view and download your pathology te
 
         function generateMasterPathLabPDFReport(patient, reportObj) {
             try {
-                const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-                if (!jsPDFClass) {
+                if (typeof html2pdf === 'undefined') {
                     showToast('PDF Library loading... Please try again in 2 seconds.', 'error');
                     return;
                 }
-                const doc = new jsPDFClass({ unit: 'mm', format: 'a4' });
-                renderPDFPageForReport(doc, patient, reportObj, 1, 1);
+                const rep = reportObj;
+                let paramsHtml = '';
+                let isFirstRow = true;
+                (rep.params || []).forEach(p => {
+                    if (p.isGroup) {
+                        paramsHtml += `
+                            <tr class="border-b border-slate-300">
+                                <td colspan="4" class="py-1.5 font-extrabold text-slate-900 uppercase text-xs">${p.groupName}</td>
+                            </tr>
+                        `;
+                    } else {
+                        let flagText = '';
+                        let colorClass = 'text-slate-900';
+                        if (p.flag === 'Low') {
+                            flagText = 'Low';
+                            colorClass = 'text-[#1b6cac] font-extrabold';
+                        } else if (p.flag === 'High') {
+                            flagText = 'High';
+                            colorClass = 'text-[#dc2626] font-extrabold';
+                        } else if (p.flag === 'Borderline') {
+                            flagText = 'Borderline';
+                            colorClass = 'text-[#d97706] font-extrabold';
+                        } else if (p.flag === 'Critical') {
+                            flagText = 'Critical';
+                            colorClass = 'text-[#dc2626] font-black uppercase';
+                        }
+                        const borderStyle = isFirstRow ? 'border-b-2 border-slate-300' : 'border-b border-slate-150';
+                        isFirstRow = false;
+                        paramsHtml += `
+                            <tr class="${borderStyle}">
+                                <td class="py-1.5 font-bold text-slate-800">${p.inv} ${p.sub ? `<div class="text-[10px] text-slate-500 font-normal">${p.sub}</div>` : ''}</td>
+                                <td class="py-1.5 ${colorClass}">${p.res} ${flagText ? `<span class="ml-4 font-extrabold">${flagText}</span>` : ''}</td>
+                                <td class="py-1.5 font-bold text-slate-700">${p.ref}</td>
+                                <td class="py-1.5 font-bold text-slate-700">${p.unit}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                const htmlString = `
+                    <div style="width: 800px; padding: 20px; background: white; box-sizing: border-box;">
+                        <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none text-xs leading-relaxed max-w-4xl mx-auto">
+                            <!-- 1. HEADER SECTION -->
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-3">
+                                    <img src="logo.jpg" class="h-12 w-auto object-contain bg-white rounded-md p-0.5 shadow-sm">
+                                    <div>
+                                        <h1 class="text-xl font-extrabold text-[#0f4c81] tracking-wide">MASTER PATH LAB</h1>
+                                        <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                                    <span>+91 9235747517</span>
+                                    <span class="text-slate-400 font-normal">|</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="${typeof GMAIL_LOGO_B64 !== 'undefined' ? GMAIL_LOGO_B64 : ''}" class="h-3.5 object-contain">
+                                        <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center text-[10px] text-slate-600 mb-2">
+                                Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
+                            </div>
+
+                            <!-- 2. BLUE STRIPE ACCENT BAR -->
+                            <div class="flex h-5 mb-4 font-bold text-[10px]">
+                                <div class="bg-[#82b1ff] w-3/5 h-full"></div>
+                                <div class="bg-[#0f4c81] w-2/5 h-full text-white text-right pr-4 flex items-center justify-end">
+                                    Master Path Lab
+                                </div>
+                            </div>
+
+                            <!-- 3. PATIENT METADATA BLOCK -->
+                            <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
+                                <div class="col-span-5">
+                                    <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name}</h2>
+                                    <p class="font-bold text-slate-700 mt-1">Age : ${patient.age} Years</p>
+                                    <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
+                                </div>
+                                <div class="col-span-4">
+                                    ${rep.location && rep.location.trim() ? `
+                                        <p class="font-bold text-slate-900">Sample Collected At:</p>
+                                        <p class="text-slate-700 font-normal leading-tight">${rep.location.trim()}</p>
+                                    ` : ''}
+                                    <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Self'}</p>
+                                </div>
+                                <div class="col-span-3 text-right">
+                                    <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
+                                    <p class="text-[10px] text-slate-500 font-mono">UHID:${patient.pid}</p>
+                                    <p class="text-[10px] text-slate-600">Registered: ${patient.registeredAt || '21 OCT, 2026 10:00 AM'}</p>
+                                    <p class="text-[10px] text-slate-600">Reported: ${rep.date}</p>
+                                </div>
+                            </div>
+
+                            <!-- 4. TEST HEADER TITLE -->
+                            <div class="border-y border-slate-800 py-1 text-center font-extrabold text-xs text-slate-900 uppercase tracking-wide mb-3">
+                                ${rep.testTitle || 'COMPLETE BLOOD COUNT (CBC)'}
+                            </div>
+
+                            <!-- 5. INVESTIGATION PARAMETERS TABLE -->
+                            <table class="w-full text-left border-collapse mb-4 text-xs font-bold">
+                                <thead>
+                                    <tr class="text-slate-900 border-b border-slate-300">
+                                        <th class="py-1.5 w-2/5">Investigation</th>
+                                        <th class="py-1.5 w-1/4">Result</th>
+                                        <th class="py-1.5 w-1/4">Reference Value</th>
+                                        <th class="py-1.5 w-1/12">Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${(rep.sampleType && rep.sampleType.trim()) || (rep.tat && rep.tat.trim()) ? `
+                                        <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
+                                            ${rep.sampleType && rep.sampleType.trim() ? `<td>Primary Sample Type :</td><td class="font-bold text-slate-900">${rep.sampleType.trim()}</td>` : `<td colspan="2"></td>`}
+                                            <td colspan="2" class="text-slate-500">${rep.tat ? (rep.tat.startsWith('TAT') ? rep.tat : 'TAT : ' + rep.tat) : ''}</td>
+                                        </tr>
+                                    ` : ''}
+                                    ${paramsHtml}
+                                </tbody>
+                            </table>
+
+                            ${rep.instruments ? `<p class="text-[11px] font-bold text-slate-900 mb-1">Instruments: <span class="font-normal text-slate-800">${rep.instruments}</span></p>` : ''}
+                            ${rep.interpNote ? `<p class="text-[11px] font-bold text-slate-900 mb-2">Interpretation: <span class="font-normal text-slate-800">${rep.interpNote}</span></p>` : ''}
+                            
+                            ${rep.bulletComments ? `
+                                <div class="mb-2 text-[11px]">
+                                    <p class="font-bold text-slate-900">Comments :</p>
+                                    <ul class="list-disc list-inside text-slate-700 font-normal pl-2">${rep.bulletComments.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>
+                                </div>
+                            ` : ''}
+
+                            ${rep.bulletLowCauses ? `
+                                <div class="mb-2 text-[11px]">
+                                    <p class="font-bold text-slate-900">Low Causes :</p>
+                                    <ul class="list-disc list-inside text-slate-700 font-normal pl-2">${rep.bulletLowCauses.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>
+                                </div>
+                            ` : ''}
+
+                            ${rep.bulletHighCauses ? `
+                                <div class="mb-2 text-[11px]">
+                                    <p class="font-bold text-slate-900">High Causes :</p>
+                                    <ul class="list-disc list-inside text-slate-700 font-normal pl-2">${rep.bulletHighCauses.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>
+                                </div>
+                            ` : ''}
+
+                            <div class="text-center my-4 text-[10px] text-slate-500">
+                                <p>Thanks for Reference</p>
+                                <p class="font-bold">****End of Report****</p>
+                            </div>
+
+                            <!-- 6. DIGITAL SIGNATURE FOOTER -->
+                            <div class="flex justify-end pt-6 border-t border-slate-200 text-right">
+                                <div class="text-center min-w-[220px]">
+                                    <div class="text-[10px] font-bold text-emerald-600 mb-2 flex items-center justify-center gap-1">
+                                        <span class="text-xs">✔</span> <span>Digitally Electronically Generated Signature</span>
+                                    </div>
+                                    <p class="font-extrabold text-slate-900 text-xs">Mahtab Anwar</p>
+                                    <p class="text-[10px] font-bold text-slate-600">(BMLT)</p>
+                                </div>
+                            </div>
+
+                            <!-- 7. BOTTOM FOOTER STRIPE -->
+                            <div class="mt-6 border-t border-slate-300 pt-1 flex justify-between text-[9px] text-slate-500">
+                                <span>Generated on : ${rep.date}</span>
+                                <span>Page 1 of 1</span>
+                            </div>
+                            <div class="bg-[#0f4c81] text-white px-4 py-2 flex justify-between items-center text-[10px] font-bold mt-1">
+                                <span>Master Path Lab</span>
+                                <div class="flex items-center gap-1">
+                                    <span>🛵</span>
+                                    <span>Sample Collection</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span>+91 9235747517</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlString;
+                
+                // html2pdf usually needs the element in DOM to apply CSS rules from global stylesheets correctly
+                tempDiv.style.position = 'absolute';
+                tempDiv.style.left = '-9999px';
+                document.body.appendChild(tempDiv);
+                
                 const pName = (patient && patient.name) ? patient.name : (reportObj.patientName || 'Patient');
-                doc.save(`${pName.replace(/\s+/g, '_')}_BMLT_Exact_Lab_Report.pdf`);
+                const opt = {
+                    margin:       [0, 0, 0, 0],
+                    filename:     `${pName.replace(/\s+/g, '_')}_BMLT_Exact_Lab_Report.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+                
+                html2pdf().set(opt).from(tempDiv.firstElementChild).save().then(() => {
+                    document.body.removeChild(tempDiv);
+                });
+                
             } catch (err) {
                 console.error(err);
                 showToast('Failed to generate PDF: ' + err.message, 'error');
@@ -4002,28 +4198,222 @@ Log in using your Patient ID and Password to view and download your pathology te
             const patientReports = appState.reports.filter(r => r.pid === pid);
 
             if (patientReports.length === 0) {
-                showToast(`No reports found for Patient UHID: ${pid}`, 'error');
+                showToast(`No report records found for Patient UHID: ${pid}`, 'error');
                 return;
             }
 
             try {
-                const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-                if (!jsPDFClass) {
+                if (typeof html2pdf === 'undefined') {
                     showToast('PDF Library loading... Please try again in 2 seconds.', 'error');
                     return;
                 }
-                const doc = new jsPDFClass({ unit: 'mm', format: 'a4' });
+                
+                let combinedHtml = `<div style="width: 800px; padding: 20px; background: white; box-sizing: border-box;" class="space-y-8">`;
+                patientReports.forEach((rep, idx) => {
+                    let paramsHtml = '';
+                    let isFirstRow = true;
+                    (rep.params || []).forEach(p => {
+                        if (p.isGroup) {
+                            paramsHtml += `
+                                <tr class="border-b border-slate-300">
+                                    <td colspan="4" class="py-1.5 font-extrabold text-slate-900 uppercase text-xs">${p.groupName}</td>
+                                </tr>
+                            `;
+                        } else {
+                            let flagText = '';
+                            let colorClass = 'text-slate-900';
+                            if (p.flag === 'Low') {
+                                flagText = 'Low';
+                                colorClass = 'text-[#1b6cac] font-extrabold';
+                            } else if (p.flag === 'High') {
+                                flagText = 'High';
+                                colorClass = 'text-[#dc2626] font-extrabold';
+                            } else if (p.flag === 'Borderline') {
+                                flagText = 'Borderline';
+                                colorClass = 'text-[#d97706] font-extrabold';
+                            } else if (p.flag === 'Critical') {
+                                flagText = 'Critical';
+                                colorClass = 'text-[#dc2626] font-black uppercase';
+                            }
 
-                for (let i = 0; i < patientReports.length; i++) {
-                    if (i > 0) {
-                        doc.addPage();
-                    }
-                    renderPDFPageForReport(doc, patient, patientReports[i], i + 1, patientReports.length);
-                }
+                            const borderStyle = isFirstRow ? 'border-b-2 border-slate-300' : 'border-b border-slate-150';
+                            isFirstRow = false;
 
+                            paramsHtml += `
+                                <tr class="${borderStyle}">
+                                    <td class="py-1.5 font-bold text-slate-800">${p.inv} ${p.sub ? `<div class="text-[10px] text-slate-500 font-normal">${p.sub}</div>` : ''}</td>
+                                    <td class="py-1.5 ${colorClass}">${p.res} ${flagText ? `<span class="ml-4 font-extrabold">${flagText}</span>` : ''}</td>
+                                    <td class="py-1.5 font-bold text-slate-700">${p.ref}</td>
+                                    <td class="py-1.5 font-bold text-slate-700">${p.unit}</td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    // Add page break before every page except the first one
+                    const pageBreakClass = idx > 0 ? 'html2pdf__page-break ' : '';
+
+                    combinedHtml += `
+                        <div class="${pageBreakClass}bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none text-xs leading-relaxed max-w-4xl mx-auto mb-8">
+                            <!-- 1. HEADER SECTION -->
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-3">
+                                    <img src="logo.jpg" class="h-12 w-auto object-contain bg-white rounded-md p-0.5 shadow-sm">
+                                    <div>
+                                        <h1 class="text-xl font-extrabold text-[#0f4c81] tracking-wide">MASTER PATH LAB</h1>
+                                        <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-[11px] font-bold text-slate-800 flex items-center justify-end gap-2 flex-wrap">
+                                    <span>+91 9235747517</span>
+                                    <span class="text-slate-400 font-normal">|</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="${typeof GMAIL_LOGO_B64 !== 'undefined' ? GMAIL_LOGO_B64 : ''}" class="h-3.5 object-contain">
+                                        <span class="font-normal text-slate-700">mahtabanwar.ma@gmail.com</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center text-[10px] text-slate-600 mb-2">
+                                Moh. Purani Basti, Unchi Takiya Katra Road, Mubarakpur, Distt. Azamgarh
+                            </div>
+
+                            <!-- 2. BLUE STRIPE ACCENT BAR -->
+                            <div class="flex h-5 mb-4 font-bold text-[10px]">
+                                <div class="bg-[#82b1ff] w-3/5 h-full"></div>
+                                <div class="bg-[#0f4c81] w-2/5 h-full text-white text-right pr-4 flex items-center justify-end">
+                                    Master Path Lab
+                                </div>
+                            </div>
+
+                            <!-- 3. PATIENT METADATA BLOCK -->
+                            <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
+                                <div class="col-span-5">
+                                    <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name}</h2>
+                                    <p class="font-bold text-slate-700 mt-1">Age : ${patient.age} Years</p>
+                                    <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
+                                </div>
+                                <div class="col-span-4">
+                                    ${rep.location && rep.location.trim() ? `
+                                        <p class="font-bold text-slate-900">Sample Collected At:</p>
+                                        <p class="text-slate-700 font-normal leading-tight">${rep.location.trim()}</p>
+                                    ` : ''}
+                                    <p class="font-bold text-slate-900 ${rep.location && rep.location.trim() ? 'mt-2' : ''}">Ref. By: ${rep.doctor || 'Self'}</p>
+                                </div>
+                                <div class="col-span-3 text-right">
+                                    <div class="font-mono text-[9px] tracking-widest bg-slate-100 p-1 border border-slate-300 inline-block mb-1">|||| ||||| ||||||| |||</div>
+                                    <p class="text-[10px] text-slate-500 font-mono">UHID:${patient.pid}</p>
+                                    <p class="text-[10px] text-slate-600">Registered: ${patient.registeredAt || '21 OCT, 2026 10:00 AM'}</p>
+                                    <p class="text-[10px] text-slate-600">Reported: ${rep.date}</p>
+                                </div>
+                            </div>
+
+                            <!-- 4. TEST HEADER TITLE -->
+                            <div class="border-y border-slate-800 py-1 text-center font-extrabold text-xs text-slate-900 uppercase tracking-wide mb-3">
+                                ${rep.testTitle || 'COMPLETE BLOOD COUNT (CBC)'}
+                            </div>
+
+                            <!-- 5. INVESTIGATION PARAMETERS TABLE -->
+                            <table class="w-full text-left border-collapse mb-4 text-xs font-bold">
+                                <thead>
+                                    <tr class="text-slate-900 border-b border-slate-300">
+                                        <th class="py-1.5 w-2/5">Investigation</th>
+                                        <th class="py-1.5 w-1/4">Result</th>
+                                        <th class="py-1.5 w-1/4">Reference Value</th>
+                                        <th class="py-1.5 w-1/12">Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${(rep.sampleType && rep.sampleType.trim()) || (rep.tat && rep.tat.trim()) ? `
+                                        <tr class="text-[11px] text-slate-600 font-normal border-b border-slate-200">
+                                            ${rep.sampleType && rep.sampleType.trim() ? `<td>Primary Sample Type :</td><td class="font-bold text-slate-900">${rep.sampleType.trim()}</td>` : `<td colspan="2"></td>`}
+                                            <td colspan="2" class="text-slate-500">${rep.tat ? (rep.tat.startsWith('TAT') ? rep.tat : 'TAT : ' + rep.tat) : ''}</td>
+                                        </tr>
+                                    ` : ''}
+                                    ${paramsHtml}
+                                </tbody>
+                            </table>
+
+                            ${rep.instruments ? `<p class="text-[11px] font-bold text-slate-900 mb-1">Instruments: <span class="font-normal text-slate-800">${rep.instruments}</span></p>` : ''}
+                            ${rep.interpNote ? `<p class="text-[11px] font-bold text-slate-900 mb-2">Interpretation: <span class="font-normal text-slate-800">${rep.interpNote}</span></p>` : ''}
+                            
+                            ${rep.bulletComments ? `
+                                <div class="mb-2 text-[11px]">
+                                    <p class="font-bold text-slate-900">Comments :</p>
+                                    <ul class="list-disc list-inside text-slate-700 font-normal pl-2">${rep.bulletComments.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>
+                                </div>
+                            ` : ''}
+
+                            ${rep.bulletLowCauses ? `
+                                <div class="mb-2 text-[11px]">
+                                    <p class="font-bold text-slate-900">Low Causes :</p>
+                                    <ul class="list-disc list-inside text-slate-700 font-normal pl-2">${rep.bulletLowCauses.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>
+                                </div>
+                            ` : ''}
+
+                            ${rep.bulletHighCauses ? `
+                                <div class="mb-2 text-[11px]">
+                                    <p class="font-bold text-slate-900">High Causes :</p>
+                                    <ul class="list-disc list-inside text-slate-700 font-normal pl-2">${rep.bulletHighCauses.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>
+                                </div>
+                            ` : ''}
+
+                            <div class="text-center my-4 text-[10px] text-slate-500">
+                                <p>Thanks for Reference</p>
+                                <p class="font-bold">****End of Report****</p>
+                            </div>
+
+                            <!-- 6. DIGITAL SIGNATURE FOOTER -->
+                            <div class="flex justify-end pt-6 border-t border-slate-200 text-right">
+                                <div class="text-center min-w-[220px]">
+                                    <div class="text-[10px] font-bold text-emerald-600 mb-2 flex items-center justify-center gap-1">
+                                        <span class="text-xs">✔</span> <span>Digitally Electronically Generated Signature</span>
+                                    </div>
+                                    <p class="font-extrabold text-slate-900 text-xs">Mahtab Anwar</p>
+                                    <p class="text-[10px] font-bold text-slate-600">(BMLT)</p>
+                                </div>
+                            </div>
+
+                            <!-- 7. BOTTOM FOOTER STRIPE -->
+                            <div class="mt-6 border-t border-slate-300 pt-1 flex justify-between text-[9px] text-slate-500">
+                                <span>Generated on : ${rep.date}</span>
+                                <span>Page ${idx + 1} of ${patientReports.length}</span>
+                            </div>
+                            <div class="bg-[#0f4c81] text-white px-4 py-2 flex justify-between items-center text-[10px] font-bold mt-1">
+                                <span>Master Path Lab</span>
+                                <div class="flex items-center gap-1">
+                                    <span>🛵</span>
+                                    <span>Sample Collection</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span>+91 9235747517</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                combinedHtml += `</div>`;
+                
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = combinedHtml;
+                tempDiv.style.position = 'absolute';
+                tempDiv.style.left = '-9999px';
+                document.body.appendChild(tempDiv);
+                
                 const pName = (patient && patient.name) ? patient.name : 'Patient';
-                doc.save(`${pName.replace(/\s+/g, '_')}_UHID_${pid}_Combined_${patientReports.length}_Reports.pdf`);
-                showToast(`📥 Combined multi-page PDF created for ${pName} (${patientReports.length} Reports)!`);
+                const opt = {
+                    margin:       [0, 0, 0, 0],
+                    filename:     `${pName.replace(/\s+/g, '_')}_UHID_${pid}_Combined_${patientReports.length}_Reports.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+                
+                html2pdf().set(opt).from(tempDiv.firstElementChild).save().then(() => {
+                    document.body.removeChild(tempDiv);
+                    showToast(`📥 Combined multi-page PDF created for ${pName} (${patientReports.length} Reports)!`);
+                });
+                
             } catch (err) {
                 console.error(err);
                 showToast('Failed to generate combined PDF: ' + err.message, 'error');
