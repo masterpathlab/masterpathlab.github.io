@@ -3619,7 +3619,7 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         function renderPDFPageForReport(doc, patient, reportObj, pageNum = 1, totalPages = 1) {
-            const pName = (patient && patient.name) ? patient.name : (reportObj.patientName || 'SK MOHD SUHAIL');
+            const pName = ((patient && patient.name) ? patient.name : (reportObj.patientName || 'SK MOHD SUHAIL')).toUpperCase();
             const pAgeFormatted = formatPatientAge(patient) || (reportObj.patientAge ? reportObj.patientAge : '20 Years');
             const pSex = (patient && patient.sex) ? patient.sex : 'Male';
             const pPid = (patient && patient.pid) ? patient.pid : (reportObj.pid || '556');
@@ -3706,11 +3706,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setFillColor(...lightStripeBlue);
             doc.rect(0, 30.5, 130, 4.5, 'F');
 
-            doc.setDrawColor(255, 255, 255);
-            doc.setLineWidth(0.7);
-            for (let s = 0; s < 7; s++) {
-                doc.line(82 + (s * 3), 35, 86 + (s * 3), 30.5);
-            }
+            // Removed diagonal lines to match solid blue style in preview
 
             doc.setFillColor(...navyColor);
             doc.rect(130, 30.5, 80, 4.5, 'F');
@@ -3783,7 +3779,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             doc.setFontSize(11);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(...textDark);
-            doc.text((reportObj.testTitle || 'Complete Blood Count (CBC)'), 105, currentY + 1, { align: 'center' });
+            doc.text((reportObj.testTitle || 'Complete Blood Count (CBC)').toUpperCase(), 105, currentY + 1, { align: 'center' });
 
             doc.line(14, currentY + 4, 196, currentY + 4);
 
