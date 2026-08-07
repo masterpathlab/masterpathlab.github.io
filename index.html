@@ -3619,7 +3619,7 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         function renderPDFPageForReport(doc, patient, reportObj, pageNum = 1, totalPages = 1) {
-            const pName = ((patient && patient.name) ? patient.name : (reportObj.patientName || 'SK MOHD SUHAIL')).toUpperCase();
+            const pName = ((patient && patient.name) ? patient.name : (reportObj.patientName || 'SK MOHD SUHAIL')).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
             const pAgeFormatted = formatPatientAge(patient) || (reportObj.patientAge ? reportObj.patientAge : '20 Years');
             const pSex = (patient && patient.sex) ? patient.sex : 'Male';
             const pPid = (patient && patient.pid) ? patient.pid : (reportObj.pid || '556');
