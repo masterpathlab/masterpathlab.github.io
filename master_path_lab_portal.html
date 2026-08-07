@@ -2728,7 +2728,11 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
             const pinInput = document.getElementById('change-admin-pin');
             if (uInput) uInput.value = creds.username;
             if (pInput) pInput.value = creds.password;
-            if (mInput) mInput.value = creds.mobile || '9235747517';
+            if (mInput) {
+                let mob = creds.mobile || '9235747517';
+                if (mob.includes('9455097721')) mob = '9235747517';
+                mInput.value = mob;
+            }
             if (pinInput) pinInput.value = creds.pin || '1234';
             const modal = document.getElementById('modal-change-admin');
             if (modal) modal.classList.remove('hidden');
