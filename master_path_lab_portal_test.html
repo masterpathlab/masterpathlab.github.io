@@ -1789,6 +1789,14 @@
         if (!appState.adminCreds.backupCodes || !Array.isArray(appState.adminCreds.backupCodes) || appState.adminCreds.backupCodes.length === 0) {
             appState.adminCreds.backupCodes = generateNewBackupCodesSet();
         }
+        
+        // Force override old cached mobile number
+        if (appState.adminCreds && appState.adminCreds.mobile === '9455097721') {
+            appState.adminCreds.mobile = '9235747517';
+            try {
+                localStorage.setItem('mpl_admin_creds', JSON.stringify(appState.adminCreds));
+            } catch (e) { console.warn(e); }
+        }
 
         // --- PERMANENT INDEXEDDB BROWSER DATABASE ENGINE ---
         const IDB_NAME = 'MasterPathLab_DB';
