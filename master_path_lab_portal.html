@@ -24,6 +24,9 @@
     const GMAIL_LOGO_B64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATdSURBVHhe7ZxPixxFHIbzTQS/Q0DwlqgoghIx5BAUFkGCSgghh9WYoMuCspAYohgQEb3klFxiDskl7CF6EA+CIEYi/kH8N7vJZmbjZmNMh3egMfy6dzpd9euerp7ngecybLq7qt6pqq6qybZtAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBMMF984srYwv+zlbwtvXvj+1VeWZ0WV19ZBjMN3j75u26hRBi/u+nmwc3v2t5M/zr2QffHwQzOjymvrIFS1g9rDtlGj6IbjB3is+EAhEoA4pxcAJwlAnAQgMaMCUNLrdisAO0o+q5AAxNmtAOzcnv1V8tkk/1w4nP164r2ZUeW1dRBj5wJQ1/XPPspmCZXX1kGMBCAxCICRAMSZRgBKZq+5BOB/686fZBoBmCABiJMAJAYBMBKAOFsPwMpLe36wDxFivqE0qwHw2lBbmXv+qm2jRtEWZMhkZStvHFu0ddRrRieXJk6K66h2UHvYNmoU3XD8AAHLvlt58/Sntp56ycaFz7PBE48Uyh/j9ALg7I2jh7K7o6Gts15wd3MzG514p1BmD3sTALm695ns9nff2vpLmju//JRde3lvoaxBlvS63QqAw9g2eOrR7J9zZ209JsnGpYvZ4NkdhTJ62q0AOM5uh4uHkx0S1OWvf3i8UKYQq+qzcwHwdHVud/bv1Su2fjvNnT9+z66/NlcoS1P2OgBSQ4Jmzymw+dWXjXf51t4HIHe49Pa4a+0q6x9/UHjmNkwjACWz1xA1m9asukv8t7ri1uVXjfdlphEAR9XFanbdBW5/83W2svvJwjO2aXIBCEl5mVpYmeaQ4L2pE2pyAfBUXa9m3W2iV9O1+f2FZ5mWMx0AqSHh1uVl206NoFVKry7fa0Mt+QCs7nm68FmImoU3yc0zpwv3DHHw3ONuk2KZfAA0lnq9QmlI0KzcE3X52qiy9wpRr7KjT04VPo+xFwEQ6sY9FlF0Dc3OPdAqpDao7D3qev/+hvfksTcBEJ7LqLEnjdRgajh73bra5WwCYLQN5bl3vnZwX+0NJf29NqLstUIs29AiAEYbgByvrVTN2h/0jIFWGfWNtdeoq3oOTRrLIADGrQIgPA9TVB07Gx/X8ujyKw61EADjpAAIDQmaPdt/F2LZsTPXIWd+f+H6FgJgrApAThPf0DZ7mBwCYHzQAIjxa5nTGK1vfdtzDEEAjHUCIDxn6bHqLaPuwhMBMNYNQI7Xe3qooc9NAIyhFSnU9Xqs1NVRw4aOfoVCAIwxARCea/VVeuw1EABjbAByNAu31/ZUx7w9IABGrwAIz/36XO/zBgTA6BkAMT6xc3Bf4T4hjg+hOp84IgBG7wDkxFZ0U2cOY5/LSgAmoHMBdRd7mj51TACMTQZA1Dm3r1XGpn93QACMTQcgp+rYWVu/PCIAxrYCIMqOnbX9c3QCYGwzAOL+Y2f2uFYbEABj2wEQ6ur1ra/au28CAmCcRgCmCQEwEoA4CUBiEAAjAYiTACQGATASgDgJQGIQACMBiJMAJAYBMBKAOAlAYhAAIwGIkwAkBgEwEoA4CUBiEAAjAYiTACQGATASgDgJQGIkH4DR+0sHdFMvN86f1f+t8tasqPLaOohR7WHbCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAesk9pKT2WoYYuVMAAAAASUVORK5CYII=';
     </script>
     
+    <!-- Custom Lab Logo -->
+    <script src="custom_logo.js"></script>
+
     <!-- jsPDF and AutoTable for PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
@@ -100,9 +103,8 @@
     <header class="bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 p-4 sticky top-0 z-40 shadow-2xl">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="updateUI()">
-                <div class="bg-gradient-to-br from-cyan-400 via-teal-400 to-blue-600 text-slate-950 font-extrabold p-2.5 rounded-xl text-xl shadow-lg shadow-cyan-500/30 border border-cyan-300/40 transform hover:scale-105 transition">
-                    🧪
-                </div>
+                <img id="main-logo-img" src="" alt="Master Path Lab" class="h-11 w-11 object-contain rounded-xl shadow-lg bg-white p-0.5 transform hover:scale-105 transition">
+                <script>document.getElementById('main-logo-img').src = (typeof MAIN_LOGO_B64 !== 'undefined') ? MAIN_LOGO_B64 : '';</script>
                 <div>
                     <h1 class="font-black text-lg tracking-wider text-white flex items-center gap-2">
                         MASTER PATH LAB
@@ -3640,17 +3642,15 @@ Log in using your Patient ID and Password to view and download your pathology te
             const lineGray = [226, 232, 240];
 
             // --- 1. HEADER SECTION ---
-            doc.setFillColor(...navyColor);
-            doc.circle(18, 19, 7.2, 'F');
-
-            doc.setFillColor(255, 255, 255);
-            doc.setDrawColor(255, 255, 255);
-            doc.setLineWidth(0.6);
-            doc.rect(14.8, 23.2, 6.4, 1.1, 'F');
-            doc.rect(17.4, 15, 1.4, 7, 'F');
-            doc.circle(18.1, 20.8, 1.7, 'F');
-            doc.line(18.1, 15, 20.5, 12.8);
-            doc.circle(20.5, 12.8, 0.8, 'F');
+            if (typeof MAIN_LOGO_B64 !== 'undefined' && MAIN_LOGO_B64) {
+                try { doc.addImage(MAIN_LOGO_B64, 'PNG', 11, 11, 15, 15); } catch(e) {
+                    doc.setFillColor(...navyColor);
+                    doc.circle(18, 19, 7.2, 'F');
+                }
+            } else {
+                doc.setFillColor(...navyColor);
+                doc.circle(18, 19, 7.2, 'F');
+            }
 
             doc.setTextColor(...navyColor);
             doc.setFontSize(16);
