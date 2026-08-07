@@ -2869,9 +2869,8 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
 
             showToast(`✅ Patient registered! UHID: ${pid}, Password: ${password}`);
 
-            if (mobile) {
-                setTimeout(() => sendCustomerSMS(), 500);
-            }
+            // Automatic WhatsApp redirection disabled
+            // User can manually click the "Send WhatsApp SMS" button in the modal.
         }
 
         function sendCustomerSMS(targetPid = null) {
