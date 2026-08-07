@@ -3619,7 +3619,7 @@ Log in using your Patient ID and Password to view and download your pathology te
         }
 
         function renderPDFPageForReport(doc, patient, reportObj, pageNum = 1, totalPages = 1) {
-            const pName = ((patient && patient.name) ? patient.name : (reportObj.patientName || 'SK MOHD SUHAIL')).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+            const pName = ((patient && patient.name) ? patient.name : (reportObj.patientName || 'SK MOHD SUHAIL')).toUpperCase();
             const pAgeFormatted = formatPatientAge(patient) || (reportObj.patientAge ? reportObj.patientAge : '20 Years');
             const pSex = (patient && patient.sex) ? patient.sex : 'Male';
             const pPid = (patient && patient.pid) ? patient.pid : (reportObj.pid || '556');
@@ -4115,7 +4115,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <!-- 3. PATIENT METADATA BLOCK -->
                     <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
                         <div class="col-span-5">
-                            <h2 class="text-sm font-extrabold text-slate-900 capitalize">${patient.name.toLowerCase()}</h2>
+                            <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name.toUpperCase()}</h2>
                             <p class="font-bold text-slate-700 mt-1">Age : ${patient.age} Years</p>
                             <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
                         </div>
@@ -4307,7 +4307,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                         </div>
                         <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
                             <div class="col-span-5">
-                                <h2 class="text-sm font-extrabold text-slate-900 capitalize">${patient.name.toLowerCase()}</h2>
+                                <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name.toUpperCase()}</h2>
                                 <p class="font-bold text-slate-700 mt-1">Age : ${patient.age} Years</p>
                                 <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
                             </div>
@@ -4681,7 +4681,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <!-- 3. PATIENT METADATA BLOCK -->
                     <div class="border-b border-slate-300 pb-3 mb-3 grid grid-cols-12 gap-2 items-start text-[11px]">
                         <div class="col-span-5">
-                            <h2 class="text-sm font-extrabold text-slate-900 capitalize">${patient.name.toLowerCase()}</h2>
+                            <h2 class="text-sm font-extrabold text-slate-900 uppercase">${patient.name.toUpperCase()}</h2>
                             <p class="font-bold text-slate-700 mt-1">Age : ${formatPatientAge(patient)}</p>
                             <p class="font-bold text-slate-700">Sex : ${patient.sex}</p>
                         </div>
