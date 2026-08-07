@@ -3364,7 +3364,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             }
         }
 
-        function loadTestFromDB(testId) {
+        function loadTestFromDB(testId, silent = false) {
             const test = appState.testDB.find(t => t.id === testId);
             if (!test) return;
             const titleInput = document.getElementById('rep-test-title');
@@ -3399,7 +3399,9 @@ Log in using your Patient ID and Password to view and download your pathology te
             }
             if (test.genderRanges) test.genderRanges.forEach(g => addRefRow(g.gender, g.range));
 
-            showToast(`Loaded Master Path Lab "${test.title}" panel template.`);
+            if (!silent) {
+                showToast(`Loaded Master Path Lab "${test.title}" panel template.`);
+            }
         }
 
         function clearReportFormRows() {
@@ -3520,7 +3522,7 @@ Log in using your Patient ID and Password to view and download your pathology te
 
         // Initialize default rows on load
         window.onload = function() {
-            loadTestFromDB('TDB-CBC');
+            loadTestFromDB('TDB-CBC', true);
             updateUI();
 
             const urlInput = document.getElementById('cloud-sync-url');
