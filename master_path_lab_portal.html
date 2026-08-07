@@ -853,6 +853,100 @@
         </div>
     </div>
 
+    <!-- Edit Pathology Test Template Modal -->
+    <div id="modal-edit-testdb" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-slate-900 border border-amber-500/40 p-6 rounded-2xl max-w-3xl w-full shadow-2xl relative my-8 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">✏️</span>
+                    <h3 class="text-lg font-bold text-white">Edit Pathology Test Template</h3>
+                </div>
+                <button type="button" onclick="closeEditTestDBModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+            </div>
+            
+            <form onsubmit="handleSaveEditTestDB(event)" class="space-y-4 overflow-y-auto pr-1 custom-scrollbar">
+                <input type="hidden" id="edit-tdb-id">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Test Title (e.g. LIVER FUNCTION TEST)</label>
+                        <input type="text" id="edit-tdb-title" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white text-xs outline-none focus:border-cyan-500 font-bold uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Category</label>
+                        <select id="edit-tdb-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white text-xs outline-none focus:border-cyan-500 font-semibold">
+                            <option value="Biochemistry">Biochemistry</option>
+                            <option value="Hematology">Hematology</option>
+                            <option value="Serology">Serology</option>
+                            <option value="Endocrinology">Endocrinology</option>
+                            <option value="Clinical Pathology">Clinical Pathology</option>
+                            <option value="Nutritional">Nutritional</option>
+                            <option value="Coagulation">Coagulation</option>
+                            <option value="Tumor Markers">Tumor Markers</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Specialized">Specialized</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Sample Type (e.g. Serum (2 ml))</label>
+                        <input type="text" id="edit-tdb-sample" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white text-xs outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Instruments / Equipment</label>
+                        <input type="text" id="edit-tdb-instruments" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white text-xs outline-none focus:border-cyan-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Clinical Interpretation / Notes</label>
+                    <textarea id="edit-tdb-interp" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white text-xs outline-none focus:border-cyan-500"></textarea>
+                </div>
+
+                <!-- Parameters Editor -->
+                <div class="border border-slate-800 p-4 rounded-xl bg-slate-950/60 space-y-3">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <span class="text-xs font-bold text-cyan-400">Test Parameters & Reference Values Editor</span>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="addEditTdbGroupRow()" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg text-xs font-bold hover:bg-amber-500 hover:text-slate-950 transition">
+                                + Add Group Header
+                            </button>
+                            <button type="button" onclick="addEditTdbParamRow()" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded-lg text-xs font-bold hover:bg-cyan-500 hover:text-slate-950 transition">
+                                + Add Parameter Row
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300 border-collapse">
+                            <thead class="bg-slate-900 text-[10px] uppercase text-slate-400 border-b border-slate-800">
+                                <tr>
+                                    <th class="p-2 w-2/5">Investigation Parameter</th>
+                                    <th class="p-2 w-2/5">Reference Value / Normal Range</th>
+                                    <th class="p-2 w-1/5">Unit</th>
+                                    <th class="p-2 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="edit-tdb-params-container" class="divide-y divide-slate-800/80">
+                                <!-- Dynamic parameter rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeEditTestDBModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl text-xs transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 btn-3d-active font-black py-3 rounded-xl text-xs transition shadow-lg">
+                        💾 Save Template to Database & Cloud
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Change Admin Credentials Modal -->
     <div id="modal-change-admin" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-amber-500/40 p-6 rounded-2xl max-w-md w-full shadow-2xl relative">
@@ -2898,6 +2992,173 @@ Log in using your Patient ID and Password to view and download your pathology te
             });
         }
 
+        // Pathology Test Master Database Table Renderer & Edit Manager
+        function renderTestDBTable() {
+            const tbody = document.getElementById('test-db-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (!appState.testDB || appState.testDB.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">No test definitions found in database.</td></tr>`;
+                return;
+            }
+
+            appState.testDB.forEach(test => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-800/80 hover:bg-slate-950/40 transition';
+                const itemsCount = test.params ? test.params.length : 0;
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-white text-xs">${test.title}</div>
+                        <div class="text-[10px] text-cyan-400 font-mono mt-0.5">${test.category || 'Biochemistry'}</div>
+                    </td>
+                    <td class="p-3 text-xs text-slate-300">${test.sampleType || 'N/A'}</td>
+                    <td class="p-3 text-xs text-slate-400 font-mono">${test.instruments ? (test.instruments.length > 25 ? test.instruments.slice(0, 25) + '...' : test.instruments) : 'Standard Analyzer'}</td>
+                    <td class="p-3 text-xs text-slate-300 font-mono"><span class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-bold">${itemsCount} Items</span></td>
+                    <td class="p-3 text-right flex justify-end gap-2 flex-wrap">
+                        <button type="button" onclick="previewTestDBTemplate('${test.id}')" class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-cyan-500 hover:text-slate-950 transition">
+                            👁️ Preview
+                        </button>
+                        <button type="button" onclick="openEditTestDBModal('${test.id}')" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-amber-500 hover:text-slate-950 transition">
+                            ✏️ Edit Template
+                        </button>
+                        <button type="button" onclick="downloadTestDBTemplatePDF('${test.id}')" class="btn-3d-active px-2.5 py-1 rounded-lg text-xs font-bold transition shadow-sm">
+                            📄 Sample PDF
+                        </button>
+                        <button type="button" onclick="deleteTestFromDB('${test.id}')" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
+                            ✕
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openEditTestDBModal(testId) {
+            const test = appState.testDB.find(t => t.id === testId);
+            if (!test) {
+                showToast('Test template not found.', 'error');
+                return;
+            }
+
+            document.getElementById('edit-tdb-id').value = test.id;
+            document.getElementById('edit-tdb-title').value = test.title || '';
+            document.getElementById('edit-tdb-category').value = test.category || 'Biochemistry';
+            document.getElementById('edit-tdb-sample').value = test.sampleType || '';
+            document.getElementById('edit-tdb-instruments').value = test.instruments || '';
+            document.getElementById('edit-tdb-interp').value = test.interpNote || '';
+
+            const container = document.getElementById('edit-tdb-params-container');
+            if (container) {
+                container.innerHTML = '';
+                if (test.params && Array.isArray(test.params)) {
+                    test.params.forEach(p => {
+                        if (p.isGroup) {
+                            addEditTdbGroupRow(p.groupName);
+                        } else {
+                            addEditTdbParamRow(p.inv, p.sub, p.ref, p.unit);
+                        }
+                    });
+                }
+            }
+
+            document.getElementById('modal-edit-testdb').classList.remove('hidden');
+        }
+
+        function closeEditTestDBModal() {
+            const modal = document.getElementById('modal-edit-testdb');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function addEditTdbGroupRow(groupName = '') {
+            const container = document.getElementById('edit-tdb-params-container');
+            if (!container) return;
+            const tr = document.createElement('tr');
+            tr.className = 'bg-slate-900/90 border-y border-slate-700 edit-tdb-row edit-tdb-group-row';
+            tr.setAttribute('data-is-group', 'true');
+            tr.innerHTML = `
+                <td colspan="3" class="p-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Group Header:</span>
+                        <input type="text" value="${groupName}" placeholder="e.g. BILIRUBIN PANEL" class="flex-grow bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-xs font-extrabold outline-none focus:border-amber-400 edit-tdb-group-name uppercase">
+                    </div>
+                </td>
+                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-xs">✕</button></td>
+            `;
+            container.appendChild(tr);
+        }
+
+        function addEditTdbParamRow(inv = '', sub = '', ref = '', unit = '') {
+            const container = document.getElementById('edit-tdb-params-container');
+            if (!container) return;
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-slate-800/80 edit-tdb-row edit-tdb-param-row hover:bg-slate-950/40 transition';
+            tr.innerHTML = `
+                <td class="p-2">
+                    <input type="text" value="${inv}" placeholder="Investigation Name (e.g. Bilirubin Total)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 edit-tdb-inv font-semibold">
+                    <input type="text" value="${sub}" placeholder="Method/Sub-label (e.g. DSA Method)" class="w-full bg-slate-950/60 border border-slate-800/80 rounded p-1 text-[11px] text-slate-400 outline-none mt-1 edit-tdb-sub">
+                </td>
+                <td class="p-2"><input type="text" value="${ref}" placeholder="Reference Range (e.g. 0.2 - 1.2)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 edit-tdb-ref font-medium"></td>
+                <td class="p-2"><input type="text" value="${unit}" placeholder="Unit (e.g. mg/dL)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 edit-tdb-unit font-mono"></td>
+                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 transition text-xs">✕</button></td>
+            `;
+            container.appendChild(tr);
+        }
+
+        function handleSaveEditTestDB(event) {
+            if (event && event.preventDefault) event.preventDefault();
+            const id = document.getElementById('edit-tdb-id').value;
+            const test = appState.testDB.find(t => t.id === id);
+            if (!test) return;
+
+            test.title = document.getElementById('edit-tdb-title').value.trim();
+            test.category = document.getElementById('edit-tdb-category').value;
+            test.sampleType = document.getElementById('edit-tdb-sample').value.trim();
+            test.instruments = document.getElementById('edit-tdb-instruments').value.trim();
+            test.interpNote = document.getElementById('edit-tdb-interp').value.trim();
+
+            const container = document.getElementById('edit-tdb-params-container');
+            const rows = container ? container.querySelectorAll('.edit-tdb-row') : [];
+            const newParams = [];
+
+            rows.forEach(row => {
+                if (row.classList.contains('edit-tdb-group-row')) {
+                    const groupName = row.querySelector('.edit-tdb-group-name').value.trim();
+                    if (groupName) newParams.push({ isGroup: true, groupName });
+                } else if (row.classList.contains('edit-tdb-param-row')) {
+                    const inv = row.querySelector('.edit-tdb-inv').value.trim();
+                    const sub = row.querySelector('.edit-tdb-sub') ? row.querySelector('.edit-tdb-sub').value.trim() : '';
+                    const ref = row.querySelector('.edit-tdb-ref') ? row.querySelector('.edit-tdb-ref').value.trim() : '';
+                    const unit = row.querySelector('.edit-tdb-unit') ? row.querySelector('.edit-tdb-unit').value.trim() : '';
+                    if (inv) {
+                        newParams.push({ inv, sub, res: '', flag: 'Normal', ref: ref || 'Normal Range', unit });
+                    }
+                }
+            });
+
+            if (newParams.length > 0) {
+                test.params = newParams;
+            }
+
+            saveState();
+            renderTestDBTable();
+            renderTestDBPresets();
+            closeEditTestDBModal();
+            showToast(`✅ Test "${test.title}" updated & saved to Cloud!`);
+        }
+
+        function deleteTestFromDB(testId) {
+            const test = appState.testDB.find(t => t.id === testId);
+            if (!test) return;
+            if (confirm(`Delete test template "${test.title}" from Database?`)) {
+                appState.testDB = appState.testDB.filter(t => t.id !== testId);
+                saveState();
+                renderTestDBTable();
+                renderTestDBPresets();
+                showToast(`Deleted "${test.title}" test template.`);
+            }
+        }
+
         function loadTestFromDB(testId) {
             const test = appState.testDB.find(t => t.id === testId);
             if (!test) return;
@@ -4369,6 +4630,29 @@ Log in using your Patient ID and Password to view and download your pathology te
             const testData = getModalTestDefinitionData();
             const { patient, reportObj } = getSampleReportObjectForTest(testData);
             generateMasterPathLabPDFReport(patient, reportObj);
+        }
+
+        function handleSaveNewTestDefinition(event) {
+            if (event && event.preventDefault) event.preventDefault();
+            const testData = getModalTestDefinitionData();
+            const newId = 'TDB-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            const newTestObj = {
+                id: newId,
+                title: testData.title,
+                category: testData.category,
+                sampleType: testData.sampleType,
+                tat: testData.tat,
+                instruments: testData.instruments,
+                interpNote: '',
+                params: testData.params
+            };
+
+            appState.testDB.push(newTestObj);
+            saveState();
+            renderTestDBPresets();
+            renderTestDBTable();
+            closeNewTestModal();
+            showToast(`✅ New Test Template "${newTestObj.title}" added to Master Database!`);
         }
 
         // Ledger & Directory Rendering with Search Filtering
