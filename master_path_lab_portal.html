@@ -2137,6 +2137,9 @@
                 if (remoteTestDB && Array.isArray(remoteTestDB) && remoteTestDB.length > 0) {
                     appState.testDB = mergeById(appState.testDB, remoteTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
                     needsLocalUpdate = true;
+                } else if (appState.testDB && Array.isArray(appState.testDB) && appState.testDB.length > 0) {
+                    // Push local customized testDB to cloud if cloud document was empty
+                    saveToIndexedDB('mpl_test_db', appState.testDB);
                 }
 
                 if (needsLocalUpdate) {
@@ -2372,19 +2375,22 @@ Contact / Support: +91 9235747517 (mahtabanwar.ma@gmail.com)
         }
 
         function restoreDefaultData() {
-            appState.patients = JSON.parse(JSON.stringify(sampleDemoPatients));
-            appState.reports = JSON.parse(JSON.stringify(sampleDemoReports));
-            appState.testDB = [...defaultTestDB];
-            saveState();
-            populatePatientDropdown();
-            renderTestDBPresets();
-            renderTestDBTable();
-            renderAdminLedger();
-            renderPatientsDirectory();
-            if (appState.currentUser && appState.currentUser.role === 'patient') {
-                renderPatientReports();
+            if (confirm('Restore sample demo patients & reports? Note: Your customized Pathology Test Master Database templates will remain SAFE & UNTOUCHED.')) {
+                appState.patients = JSON.parse(JSON.stringify(sampleDemoPatients));
+                appState.reports = JSON.parse(JSON.stringify(sampleDemoReports));
+                // Non-destructive merge of defaultTestDB into existing appState.testDB so user edits/custom tests are NEVER lost!
+                appState.testDB = mergeById(appState.testDB, defaultTestDB, t => t && (t.id || t.title) ? String(t.id || t.title).trim() : null);
+                saveState();
+                populatePatientDropdown();
+                renderTestDBPresets();
+                renderTestDBTable();
+                renderAdminLedger();
+                renderPatientsDirectory();
+                if (appState.currentUser && appState.currentUser.role === 'patient') {
+                    renderPatientReports();
+                }
+                showToast('📋 Demo reports & sample patients restored! Master Database protected.');
             }
-            showToast('📋 Demo reports & sample patients restored successfully!');
         }
 
         function clearAllLedgerData() {
