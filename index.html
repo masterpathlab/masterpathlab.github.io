@@ -489,9 +489,7 @@
                         <p class="text-xs text-slate-400">Historical log of issued Master Path Lab diagnostic reports.</p>
                     </div>
                     <div class="flex gap-2 items-center flex-wrap">
-                        <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
-                            🔄 Restore All Patients & Reports
-                        </button>
+                        <!-- Restore Default Data button removed -->
                         <input type="text" id="ledger-search-input" onkeyup="renderAdminLedger()" placeholder="🔍 Search by patient, test, or ID..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
                     </div>
                 </div>
@@ -522,9 +520,7 @@
                         <p class="text-xs text-slate-400">Manage active patient profiles and access credentials.</p>
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
-                            🔄 Restore All Patients & Reports
-                        </button>
+                        <!-- Restore Default Data button removed -->
                         <input type="text" id="patients-search-input" onkeyup="renderPatientsDirectory()" placeholder="🔍 Search patients by name, UHID, or phone..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-64">
                     </div>
                 </div>
@@ -4869,9 +4865,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (filteredReports.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">
                     <p class="mb-3 text-sm text-slate-400 font-medium">No diagnostic reports found.</p>
-                    <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg inline-flex items-center gap-2">
-                        🔄 Click Here to Restore All Demo Patients & Reports
-                    </button>
+                    <!-- Restore Default Data button removed -->
                 </td></tr>`;
                 return;
             }
@@ -4985,9 +4979,7 @@ Log in using your Patient ID and Password to view and download your pathology te
             if (filteredPatients.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">
                     <p class="mb-3 text-sm text-slate-400 font-medium">No registered patients found.</p>
-                    <button type="button" onclick="restoreDefaultData()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg inline-flex items-center gap-2">
-                        🔄 Click Here to Restore All Demo Patients & Reports
-                    </button>
+                    <!-- Restore Default Data button removed -->
                 </td></tr>`;
                 return;
             }
