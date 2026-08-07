@@ -103,7 +103,7 @@
     <header class="bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 p-4 sticky top-0 z-40 shadow-2xl">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="updateUI()">
-                <img src="logo.jpg" alt="Master Path Lab" class="h-11 w-11 object-contain rounded-xl shadow-lg bg-white p-0.5 transform hover:scale-105 transition">
+                <img src="logo.jpg" alt="Master Path Lab" class="h-11 w-11 object-cover rounded-full shadow-lg transform hover:scale-105 transition border border-slate-700 bg-white">
                 <div>
                     <h1 class="font-black text-lg tracking-wider text-white flex items-center gap-2">
                         MASTER PATH LAB
@@ -3642,7 +3642,7 @@ Log in using your Patient ID and Password to view and download your pathology te
 
             // --- 1. HEADER SECTION ---
             if (typeof MAIN_LOGO_B64 !== 'undefined' && MAIN_LOGO_B64) {
-                try { doc.addImage(MAIN_LOGO_B64, 'JPEG', 11, 11, 15, 15); } catch(e) {
+                try { doc.addImage(MAIN_LOGO_B64, 'JPEG', 11, 11, 15, 15); doc.setDrawColor(255, 255, 255); doc.setLineWidth(4.5); doc.circle(18.5, 18.5, 9.5, 'S'); doc.setLineWidth(0.5); doc.setDrawColor(15, 76, 129); doc.circle(18.5, 18.5, 7.5, 'S'); } catch(e) {
                     doc.setFillColor(...navyColor);
                     doc.circle(18, 19, 7.2, 'F');
                 }
@@ -4081,9 +4081,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <!-- 1. HEADER SECTION -->
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-[#0f4c81] rounded-full flex items-center justify-center text-white font-black text-xl shadow">
-                                🔬
-                            </div>
+                            <img src="logo.jpg" class="w-12 h-12 rounded-full object-cover shadow border border-slate-700 bg-white">
                             <div>
                                 <h1 class="text-xl font-extrabold text-[#0f4c81] tracking-wide">MASTER PATH LAB</h1>
                                 <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
@@ -4284,7 +4282,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <div class="bg-white text-slate-900 font-sans p-4 md:p-6 rounded-none shadow-xl border border-slate-200 text-xs leading-relaxed max-w-4xl mx-auto">
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 bg-[#0f4c81] rounded-full flex items-center justify-center text-white font-black text-xl shadow">🔬</div>
+                                <img src="logo.jpg" class="w-12 h-12 rounded-full object-cover shadow border border-slate-700 bg-white">
                                 <div>
                                     <h1 class="text-xl font-extrabold text-[#0f4c81] tracking-wide">MASTER PATH LAB</h1>
                                     <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>
@@ -4652,9 +4650,7 @@ Log in using your Patient ID and Password to view and download your pathology te
                     <!-- 1. HEADER SECTION -->
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-[#0f4c81] rounded-full flex items-center justify-center text-white font-black text-xl shadow">
-                                🔬
-                            </div>
+                            <img src="logo.jpg" class="w-12 h-12 rounded-full object-cover shadow border border-slate-700 bg-white">
                             <div>
                                 <h1 class="text-xl font-extrabold text-[#0f4c81] tracking-wide">MASTER PATH LAB</h1>
                                 <p class="text-[11px] font-bold text-slate-700">Accurate &nbsp;|&nbsp; Caring &nbsp;|&nbsp; Instant</p>

@@ -1,4 +1,4 @@
-﻿
+
 // Universal Fail-Safe AutoTable Invoker
         function callAutoTable(doc, options) {
             try {
@@ -59,8 +59,8 @@
                 interpNote: 'Thyroid function evaluated via total hormone levels',
                 params: [
                     { inv: 'Total Triiodothyronine (T3)', sub: 'CLIA', res: '1.25', flag: 'Low', ref: '0.8 - 2.0', unit: 'ng/mL' },
-                    { inv: 'Total Thyroxine (T4)', sub: 'CLIA', res: '7.8', flag: 'High', ref: '5.1 - 14.1', unit: 'µg/dL' },
-                    { inv: 'Thyroid Stimulating Hormone (TSH)', sub: 'CLIA', res: '2.4', flag: 'Critical', ref: '0.5 - 4.5', unit: 'µIU/mL' }
+                    { inv: 'Total Thyroxine (T4)', sub: 'CLIA', res: '7.8', flag: 'High', ref: '5.1 - 14.1', unit: '�g/dL' },
+                    { inv: 'Thyroid Stimulating Hormone (TSH)', sub: 'CLIA', res: '2.4', flag: 'Critical', ref: '0.5 - 4.5', unit: '�IU/mL' }
                 ],
                 bulletComments: 'Thyroid hormones regulate metabolism, energy balance, and cellular activity. TSH levels respond inversely to T3 and T4 via pituitary feedback loop.'
             },
@@ -297,8 +297,8 @@
                 instruments: 'Colorimetric & CLIA Immunoassay',
                 interpNote: 'Differentiates iron deficiency from chronic disease anemia',
                 params: [
-                    { inv: 'Serum Iron', sub: 'Ferrozine', res: '45', flag: 'Low', ref: '60 - 170', unit: 'µg/dL' },
-                    { inv: 'Total Iron Binding Capacity (TIBC)', sub: 'Direct', res: '410', flag: 'High', ref: '250 - 400', unit: 'µg/dL' },
+                    { inv: 'Serum Iron', sub: 'Ferrozine', res: '45', flag: 'Low', ref: '60 - 170', unit: '�g/dL' },
+                    { inv: 'Total Iron Binding Capacity (TIBC)', sub: 'Direct', res: '410', flag: 'High', ref: '250 - 400', unit: '�g/dL' },
                     { inv: 'Transferrin Saturation', sub: 'Calculated', res: '10.9', flag: 'Low', ref: '20 - 50', unit: '%' },
                     { inv: 'Serum Ferritin', sub: 'CLIA', res: '12.0', flag: 'Low', ref: '30 - 300', unit: 'ng/mL' }
                 ]
@@ -707,7 +707,7 @@
                 if (authSection) {
                     authSection.innerHTML = `
                         <span class="text-xs text-cyan-400 font-semibold bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg mr-2 shadow-sm">
-                            🔑 Admin Logged In
+                            ?? Admin Logged In
                         </span>
                         <button onclick="logout()" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">Logout</button>
                     `;
@@ -722,7 +722,7 @@
                 if (authSection) {
                     authSection.innerHTML = `
                         <span class="text-xs text-cyan-400 font-semibold bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg mr-3 shadow-sm">
-                            👤 ${appState.currentUser.name} (UHID: ${appState.currentUser.pid})
+                            ?? ${appState.currentUser.name} (UHID: ${appState.currentUser.pid})
                         </span>
                     `;
                 }
@@ -925,16 +925,16 @@
             const searchInput = (document.getElementById('preset-search-input') ? document.getElementById('preset-search-input').value.toLowerCase().trim() : '');
             
             const categoryIcons = {
-                'Hematology': '🩸',
-                'Serology': '🧫',
-                'Biochemistry': '🧪',
-                'Endocrinology': '🦋',
-                'Clinical Pathology': '💧',
-                'Nutritional': '💊',
-                'Coagulation': '🩸',
-                'Tumor Markers': '🎯',
-                'Cardiology': '🫀',
-                'Specialized': '🔬'
+                'Hematology': '??',
+                'Serology': '??',
+                'Biochemistry': '??',
+                'Endocrinology': '??',
+                'Clinical Pathology': '??',
+                'Nutritional': '??',
+                'Coagulation': '??',
+                'Tumor Markers': '??',
+                'Cardiology': '??',
+                'Specialized': '??'
             };
 
             const filteredTests = appState.testDB.filter(test => {
@@ -949,7 +949,7 @@
             }
 
             filteredTests.forEach(test => {
-                const icon = categoryIcons[test.category] || '📄';
+                const icon = categoryIcons[test.category] || '??';
                 const card = document.createElement('div');
                 card.onclick = () => loadTestFromDB(test.id);
                 card.className = 'preset-3d-card p-3 rounded-xl cursor-pointer group flex flex-col justify-between';
@@ -1027,7 +1027,7 @@
                         <input type="text" value="${groupName}" placeholder="e.g. BLOOD INDICES or WBC COUNT" class="flex-grow bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-xs font-extrabold outline-none focus:border-amber-400 group-name-input uppercase">
                     </div>
                 </td>
-                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-xs">✕</button></td>
+                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-xs">?</button></td>
             `;
             tbody.appendChild(tr);
         }
@@ -1054,7 +1054,7 @@
                 </td>
                 <td class="p-2"><input type="text" value="${ref}" placeholder="Reference Range" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-ref"></td>
                 <td class="p-2"><input type="text" value="${unit}" placeholder="Unit" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none focus:border-cyan-500 test-unit"></td>
-                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 transition text-xs">✕</button></td>
+                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 transition text-xs">?</button></td>
             `;
             tbody.appendChild(tr);
         }
@@ -1067,7 +1067,7 @@
             tr.innerHTML = `
                 <td class="p-2"><input type="text" value="${gender}" placeholder="Male / Female / Children" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none ref-gender"></td>
                 <td class="p-2"><input type="text" value="${range}" placeholder="e.g. 13.5 - 17.5" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs outline-none ref-range"></td>
-                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-xs">✕</button>
+                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300 font-bold px-2 py-1 text-xs">?</button>
             `;
             tbody.appendChild(tr);
         }
@@ -1079,7 +1079,7 @@
                 reader.onload = function(e) {
                     appState.customWALogo = e.target.result;
                     saveState();
-                    showToast('✅ Custom WhatsApp Logo uploaded & saved!');
+                    showToast('? Custom WhatsApp Logo uploaded & saved!');
                 };
                 reader.readAsDataURL(file);
             }
@@ -1092,7 +1092,7 @@
                 reader.onload = function(e) {
                     appState.customGmailLogo = e.target.result;
                     saveState();
-                    showToast('✅ Custom Gmail Logo uploaded & saved!');
+                    showToast('? Custom Gmail Logo uploaded & saved!');
                 };
                 reader.readAsDataURL(file);
             }
@@ -1502,7 +1502,7 @@
                         if (line.trim()) {
                             doc.setFont('helvetica', 'normal');
                             doc.setFontSize(7.5);
-                            doc.text(`• ${line.trim()}`, 16, currentY, { maxWidth: 175 });
+                            doc.text(`� ${line.trim()}`, 16, currentY, { maxWidth: 175 });
                             currentY += 4.5;
                         }
                     });
@@ -1521,7 +1521,7 @@
                         if (line.trim()) {
                             doc.setFont('helvetica', 'normal');
                             doc.setFontSize(7.5);
-                            doc.text(`• ${line.trim()}`, 16, currentY, { maxWidth: 175 });
+                            doc.text(`� ${line.trim()}`, 16, currentY, { maxWidth: 175 });
                             currentY += 4.5;
                         }
                     });
@@ -1540,7 +1540,7 @@
                         if (line.trim()) {
                             doc.setFont('helvetica', 'normal');
                             doc.setFontSize(7.5);
-                            doc.text(`• ${line.trim()}`, 16, currentY, { maxWidth: 175 });
+                            doc.text(`� ${line.trim()}`, 16, currentY, { maxWidth: 175 });
                             currentY += 4.5;
                         }
                     });
@@ -1744,7 +1744,7 @@
                             Use in Report
                         </button>
                         <button onclick="deleteTestFromDB('${test.id}')" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
-                            ✕
+                            ?
                         </button>
                     </td>
                 `;
@@ -1775,7 +1775,7 @@
                             1:1 BMLT PDF
                         </button>
                         <button onclick="deleteReport('${rep.id}')" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
-                            ✕
+                            ?
                         </button>
                     </td>
                 `;
@@ -1814,7 +1814,7 @@
                             Create Report
                         </button>
                         <button onclick="deletePatient('${p.pid}')" class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg text-xs hover:bg-red-500 hover:text-white transition">
-                            ✕
+                            ?
                         </button>
                     </td>
                 `;
@@ -1861,7 +1861,7 @@
             if (myReports.length === 0) {
                 list.innerHTML = `
                     <div class="text-center py-8 text-slate-500">
-                        <p class="text-2xl mb-2">📂</p>
+                        <p class="text-2xl mb-2">??</p>
                         <p class="text-sm font-semibold">No lab reports issued yet.</p>
                         <p class="text-xs">Reports created by the lab will automatically show up here.</p>
                     </div>
@@ -1881,7 +1881,7 @@
                         <p class="text-xs text-slate-400">Report Date: <span class="text-slate-200 font-mono">${rep.date}</span> | Ref: ${rep.doctor}</p>
                     </div>
                     <button onclick="downloadExistingReport('${rep.id}')" class="btn-3d-active font-black px-4 py-2 rounded-xl text-xs transition shadow-lg">
-                        📥 Download 1:1 BMLT PDF
+                        ?? Download 1:1 BMLT PDF
                     </button>
                 `;
                 list.appendChild(card);
